@@ -200,4 +200,15 @@ public class Request
 		return port;
 
 	}
+	
+	public static String[] getParameterValues(String name) {
+		String[] parameterValues = null;
+		FacesContext fc = FacesContext.getCurrentInstance();
+		if (fc != null) {
+			HttpServletRequest request = (HttpServletRequest) fc
+					.getExternalContext().getRequest();
+			parameterValues = request.getParameterValues(name);
+		}
+		return parameterValues;
+	}
 }
