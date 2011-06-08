@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="id">statement0001</field>
+		<field name="name">John</field>
+		<field name="dob">1980</field>
+		<field name="city">Bowie</field>
+		<field name="state">MD</field>
+		<field name="country">USA</field>
+		<field name="homepage">http://dbpedia.org/page/George_Washington_University_Law_School</field>
+		<field name="job">Photographer</field>
+	</doc>
+	<doc>
+		<field name="id">statement0002</field>
+		<field name="name">Bob</field>
+		<field name="dob">1972</field>
+		<field name="city">Annapolis</field>
+		<field name="state">MD</field>
+		<field name="country">USA</field>
+		<field name="homepage">www.bob.com</field>
+		<field name="job">Programmer</field>
+	</doc>
+	<doc>
+		<field name="id">statement0003</field>
+		<field name="name">Terry</field>
+		<field name="dob">1979</field>
+		<field name="city">Baltimore</field>
+		<field name="state">MD</field>
+		<field name="country">USA</field>
+		<field name="homepage">www.terry.com</field>
+		<field name="job">Housewife</field>
+	</doc>
+	<doc>
+		<field name="id">statement0004</field>
+		<field name="name">Marsha</field>
+		<field name="dob">1984</field>
+		<field name="city">Baltimore</field>
+		<field name="state">MD</field>
+		<field name="country">USA</field>
+		<field name="homepage">www.terry.com</field>
+		<field name="job">CEO</field>
+	</doc>
+	<doc>
+		<field name="id">statement0005</field>
+		<field name="name">Tom</field>
+		<field name="dob">1980</field>
+		<field name="city">Washington</field>
+		<field name="state">DC</field>
+		<field name="country">USA</field>
+		<field name="homepage">www.tomkulish.com</field>
+		<field name="job">Computer Scientist</field>
+	</doc>
+	<doc>
+		<field name="id">statement0006</field>
+		<field name="name">Tom Walter</field>
+		<field name="dob">1956</field>
+		<field name="city">Easton</field>
+		<field name="state">MD</field>
+		<field name="country">USA</field>
+		<field name="job">Sales Manager</field>
+	</doc>
+	<doc>
+		<field name="id">statement0007</field>
+		<field name="name">Steven</field>
+		<field name="dob">1981</field>
+		<field name="city">Bowie</field>
+		<field name="state">MD</field>
+		<field name="country">USA</field>
+		<field name="job">Sales Manager</field>
+	</doc>
+	<doc>
+		<field name="id">statement0008</field>
+		<field name="name">Doug</field>
+		<field name="dob">1955</field>
+		<field name="state">VA</field>
+		<field name="country">USA</field>
+	</doc>
+</add>		
+
