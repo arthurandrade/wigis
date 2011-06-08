@@ -38,11 +38,11 @@ import java.util.Set;
 import javax.faces.context.FacesContext;
 
 import net.wigis.graph.PaintBean;
+import net.wigis.graph.RecommendationBean;
 import net.wigis.graph.dnv.layout.Springs;
 import net.wigis.graph.dnv.utilities.SortByFloatProperty;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
-import net.wigis.graph.RecommendationBean;
 import net.wigis.stats.StatsBean;
 import net.wigis.svetlin.__Math;
 import net.wigis.svetlin.__String;
