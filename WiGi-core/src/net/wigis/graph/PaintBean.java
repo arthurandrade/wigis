@@ -1202,7 +1202,7 @@ public class PaintBean
 			FacesContext fc = FacesContext.getCurrentInstance();
 			String webPath = fc.getExternalContext().getRequestContextPath();
 			webPath += "/wigi/";
-			System.out.println( webPath );
+//			System.out.println( webPath );
 			return webPath;
 		}
 		catch( Exception e )
@@ -1211,6 +1211,29 @@ public class PaintBean
 		}
 		
 		return "/WiGi/wigi/";
+	}
+	
+	public String getContextPath()
+	{
+		try
+		{
+			FacesContext fc = FacesContext.getCurrentInstance();
+			String contextPath = fc.getExternalContext().getRequestContextPath();
+//			System.out.println( webPath );
+			return contextPath;
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		
+		return "/WiGi";
+
+	}
+	
+	public static String getCurrentInstanceContextPath()
+	{
+		return getCurrentInstance().getContextPath();
 	}
 	
 	public static String getCurrentInstanceWebPath()
