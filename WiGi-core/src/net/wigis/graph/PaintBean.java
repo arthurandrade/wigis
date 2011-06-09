@@ -1080,7 +1080,7 @@ public class PaintBean
 		{
 			if( isRenderJS() )
 			{
-				return "createEmbedSVG(" + width + "," + height + ",'" + Settings.WEBPATH + "');";
+				return "createEmbedSVG(" + width + "," + height + ",'" + getWebPath() + "');";
 			}
 		}
 		catch( Exception e )
@@ -1197,9 +1197,32 @@ public class PaintBean
 	 */
 	public String getWebPath()
 	{
-		return Settings.WEBPATH;
+		try
+		{
+			FacesContext fc = FacesContext.getCurrentInstance();
+			String webPath = fc.getExternalContext().getRequestContextPath();
+			webPath += "/wigi/";
+			System.out.println( webPath );
+			return webPath;
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+		}
+		
+		return "/WiGi/wigi/";
+	}
+	
+	public static String getCurrentInstanceWebPath()
+	{
+		return getCurrentInstance().getWebPath();
 	}
 
+	public static PaintBean getCurrentInstance()
+	{
+		return (PaintBean)ContextLookup.lookup( "paintBean", FacesContext.getCurrentInstance() );
+	}
+	
 	// Dummy function to get rid of a warning message
 	/**
 	 * Sets the web path.
@@ -1582,7 +1605,7 @@ public class PaintBean
 	 */
 	public String getOverviewPage()
 	{
-		return Settings.WEBPATH + "GraphServlet?width=200&height=200&overview=true&r=qual&UUID=" + UUID.randomUUID();
+		return getWebPath() + "GraphServlet?width=200&height=200&overview=true&r=qual&UUID=" + UUID.randomUUID();
 	}
 
 	/** The embed count. */

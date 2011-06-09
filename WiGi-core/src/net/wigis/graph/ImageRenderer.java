@@ -2678,10 +2678,16 @@ public class ImageRenderer
 	public static String getURL( int radius, String iconName, Vector3D color, boolean showIcons, boolean isSelected, int id )
 	{
 		String url;
+		String webPath = "/WiGi/wigi/";
+		PaintBean pb = PaintBean.getCurrentInstance();
+		if( pb != null )
+		{
+			webPath = pb.getWebPath();
+		}
 		if( !showIcons )
-			url = Settings.WEBPATH + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id;
+			url = webPath + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id;
 		else
-			url = Settings.WEBPATH + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id
+			url = webPath + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id
 					+ "&i=" + iconName;
 
 		if( isSelected )

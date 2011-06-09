@@ -60,7 +60,7 @@ public class Settings
 
 	// public static final String WEBPATH = "/blackbook/wigi/";
 	/** The Constant WEBPATH. */
-	public static final String WEBPATH = "/WiGi/wigi/";
+//	public static final String WEBPATH = "/WiGi/wigi/";
 
 	/** The Constant DEFAULT_JS_THRESHOLD. */
 	public static final int DEFAULT_JS_THRESHOLD = 0;

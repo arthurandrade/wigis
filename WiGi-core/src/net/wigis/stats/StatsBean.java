@@ -392,7 +392,16 @@ public class StatsBean
 	 */
 	public String getChartURL()
 	{
-		return "/WiGi/wigi/LineChartServlet?a=" + Math.random();
+		String webPath = "/WiGi/wigi/";
+		try
+		{
+			webPath = PaintBean.getCurrentInstanceWebPath();
+		}
+		catch( NullPointerException e )
+		{
+			e.printStackTrace();
+		}
+		return webPath + "LineChartServlet?a=" + Math.random();
 	}
 	
 	
