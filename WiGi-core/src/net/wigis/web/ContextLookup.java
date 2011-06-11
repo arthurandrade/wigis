@@ -135,4 +135,18 @@ public class ContextLookup
 
 		return null;
 	}
+	
+	public static void setBean( String beanName, Object bean, FacesContext fc )
+	{
+		if( fc != null )
+		{
+			HttpSession session = (HttpSession)fc.getExternalContext().getSession( true );
+			setBean( beanName, bean, session );
+		}
+	}
+	
+	public static void setBean( String beanName, Object bean, HttpSession session )
+	{
+		session.setAttribute( beanName, bean );
+	}
 }

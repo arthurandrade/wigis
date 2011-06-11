@@ -452,7 +452,7 @@ public class RecommendationLayout
 			// Generate string containing the recommendations list
 			StringBuilder recommendations = new StringBuilder();
 			recommendations.append( "<table border=\"0\" style=\"font-size:small\" width=\"400px\">\n" );
-			recommendations.append( "<tr><td>Rank</td><td>Title</td><td>Type</td><td>Score</td>\n" );
+			recommendations.append( "<tr><td>Rank</td><td>Title</td><td>Type</td><td>Score</td></tr>\n" );
 			SortByFloatProperty sbfp = new SortByFloatProperty( "rank", false );
 			Collections.sort( nodes, sbfp );
 			String tempScore;
@@ -1266,6 +1266,14 @@ public class RecommendationLayout
 					{
 						fb.addToUserProfile( selectedNode, false );
 						lastDistance = currentDistance;
+						List<DNVNode> neighbors = selectedNode.getNeighbors();
+						for( DNVNode neighbor : neighbors )
+						{
+							if( !neighbor.hasProperty( "manualUserWeight" ) )
+							{
+								neighbor.setProperty( "userWeight", "1" );
+							}
+						}
 						moveNode( graph, selectedNode, centralNode, newPosition, 1, circle, request, sameNode );
 						return;
 					}

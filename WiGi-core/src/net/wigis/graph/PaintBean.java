@@ -46,6 +46,7 @@ import java.util.UUID;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 
 import net.wigis.graph.data.utilities.FileOperations;
 import net.wigis.graph.data.utilities.StringUtils;
@@ -1236,14 +1237,42 @@ public class PaintBean
 		return getCurrentInstance().getContextPath();
 	}
 	
+	public static String getCurrentInstanceContextPath( HttpServletRequest request )
+	{
+		return getCurrentInstance( request ).getContextPath();
+	}
+
 	public static String getCurrentInstanceWebPath()
 	{
 		return getCurrentInstance().getWebPath();
 	}
 
+	public static String getCurrentInstanceWebPath( HttpServletRequest request )
+	{
+		return getCurrentInstance( request ).getWebPath();
+	}
 	public static PaintBean getCurrentInstance()
 	{
-		return (PaintBean)ContextLookup.lookup( "paintBean", FacesContext.getCurrentInstance() );
+		PaintBean pb =  (PaintBean)ContextLookup.lookup( "paintBean", FacesContext.getCurrentInstance() );
+		if( pb == null )
+		{
+			pb = new PaintBean();
+			ContextLookup.setBean( "paintBean", pb, FacesContext.getCurrentInstance() );
+		}
+		
+		return pb;
+	}
+	
+	public static PaintBean getCurrentInstance( HttpServletRequest request )
+	{
+		PaintBean pb = (PaintBean)ContextLookup.lookup( "paintBean", request );
+		if( pb == null )
+		{
+			pb = new PaintBean();
+			ContextLookup.setBean( "paintBean", pb, request.getSession() );
+		}
+		
+		return pb;
 	}
 	
 	// Dummy function to get rid of a warning message

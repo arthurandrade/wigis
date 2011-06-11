@@ -39,6 +39,7 @@ import net.wigis.graph.dnv.utilities.Vector3D;
 public class DNVEntity
 {
 	// public static int ID = 0;
+	public static final String LABEL_RECTANGLE = "LabelRectangle";
 	/** The Constant NO_COLOR. */
 	public static final Vector3D NO_COLOR = new Vector3D( -1, -1, -1 );
 
@@ -310,6 +311,7 @@ public class DNVEntity
 		value = value.replaceAll( "Þ", "Th" );
 		value = value.replaceAll( "Æ", "AE" );
 		value = value.replaceAll( "Ö", "O" );
+		value = value.replaceAll( " & ", " and " );
 		return value;
 	}
 
@@ -588,7 +590,11 @@ public class DNVEntity
 	 */
 	public void setLabelSize( Integer labelSize )
 	{
-		this.labelSize = labelSize;
+		if( this.labelSize != labelSize )
+		{
+			removeAttribute( LABEL_RECTANGLE );
+			this.labelSize = labelSize;
+		}
 	}
 
 	/**

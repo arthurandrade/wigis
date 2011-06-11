@@ -1471,13 +1471,12 @@ public class ImageRenderer
 	 *            the bold labels
 	 * @return the rectangle bounding the label
 	 */
-	private static final String LABEL_RECTANGLE = "LabelRectangle";
 	public static Rectangle getRectangleBoundingTheLabel( DNVNode tempNode, Vector2D tempPos, Graphics g, int nodeWidth, String label,
 			boolean curvedLabels, double labelSize, double minXPercent, double maxXPercent, double ratio, boolean scaleLabels, int maxLabelLength,
 			int curvedLabelAngle, boolean boldLabels, boolean roughEstimate )
 	{
 		labelSize = getLabelSize( tempNode, labelSize, minXPercent, maxXPercent, ratio, scaleLabels );
-		Rectangle r = (Rectangle)tempNode.getAttribute( LABEL_RECTANGLE );
+		Rectangle r = (Rectangle)tempNode.getAttribute( DNVEntity.LABEL_RECTANGLE );
 		if( r != null )
 		{
 			r.setPosition( tempPos );
@@ -1567,7 +1566,7 @@ public class ImageRenderer
 			r.setPosition( tempPos );
 		}
 
-		tempNode.setAttribute( LABEL_RECTANGLE, r );
+		tempNode.setAttribute( DNVEntity.LABEL_RECTANGLE, r );
 		
 		return r;
 	}
