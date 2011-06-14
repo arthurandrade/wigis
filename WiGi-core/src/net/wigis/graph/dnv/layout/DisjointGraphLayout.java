@@ -44,7 +44,7 @@ import net.wigis.settings.Settings;
  * 
  * @author Brynjar Gretarsson
  */
-public class DisjointGraphLayout
+public class DisjointGraphLayout implements SimpleLayoutInterface
 {
 
 	/**
@@ -53,13 +53,13 @@ public class DisjointGraphLayout
 	 * @param filename
 	 *            the filename
 	 */
-	public static void layout( String filename )
+	public static void runLayout( String filename )
 	{
 		System.out.println( "Starting layout for " + filename );
 
 		DNVGraph graph = new DNVGraph( filename );
 
-		layout( graph );
+		runLayout( graph );
 
 		graph.writeGraph( filename.substring( 0, filename.length() - 4 ) + "_laid_out.dnv" );
 
@@ -72,15 +72,10 @@ public class DisjointGraphLayout
 	 * @param graph
 	 *            the graph
 	 */
-	public static void layout( DNVGraph graph )
+	public static void runLayout( DNVGraph graph )
 	{
-		// System.out.println( "Clustering..." );
-		GraphFunctions.clearHigherLevels( 0, graph );
-		ConnectedClustering.cluster( graph, 0 );
-		// System.out.println( "Laying out subnodes." );
-		layoutSubnodes( graph, 1 );
-		// System.out.println( "Laying out based on subnodes." );
-		layoutBasedOnNumberOfSubnodes( graph, 1 );
+		DisjointGraphLayout layout = new DisjointGraphLayout();
+		layout.runLayout( graph, 0 );
 	}
 
 	/**
@@ -123,7 +118,7 @@ public class DisjointGraphLayout
 		float maxX;
 		float minY;
 		float maxY;
-		FruchtermanReingold
+		new FruchtermanReingold()
 				.runLayout( width, width, supernode.getSubGraph().getNodesList(), supernode.getSubGraph().getEdges().values(), 0.1f, false );
 
 		minX = Integer.MAX_VALUE;
@@ -301,8 +296,28 @@ public class DisjointGraphLayout
 	 */
 	public static void main( String[] args )
 	{
-		layout( Settings.GRAPHS_PATH + "_bb_al qaeda.dnv" );
+		runLayout( Settings.GRAPHS_PATH + "_bb_al qaeda.dnv" );
 		// layout( Settings.GRAPHS_PATH + "authors_graph_50k.dnv" );
+	}
+
+	@Override
+	public void runLayout( DNVGraph graph, int level )
+	{
+		// System.out.println( "Clustering..." );
+		GraphFunctions.clearHigherLevels( level, graph );
+		ConnectedClustering.cluster( graph, level );
+		// System.out.println( "Laying out subnodes." );
+		layoutSubnodes( graph, level+1 );
+		// System.out.println( "Laying out based on subnodes." );
+		layoutBasedOnNumberOfSubnodes( graph, level+1 );
+	}
+
+	public static final String LABEL = "Disjoint Graph Layout";
+	
+	@Override
+	public String getLabel()
+	{
+		return LABEL;
 	}
 
 }

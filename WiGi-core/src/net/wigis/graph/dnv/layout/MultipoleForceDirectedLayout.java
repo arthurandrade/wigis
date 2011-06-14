@@ -39,7 +39,7 @@ import net.wigis.graph.dnv.utilities.Vector2D;
  * 
  * @author Brynjar Gretarsson
  */
-public class MultipoleForceDirectedLayout
+public class MultipoleForceDirectedLayout implements SpaceRestrictedLayoutInterface
 {
 
 	/**
@@ -231,7 +231,7 @@ public class MultipoleForceDirectedLayout
 	 * @param useNumberOfSubnodes
 	 *            the use number of subnodes
 	 */
-	public static void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
+	public void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
 			boolean useNumberOfSubnodes )
 	{
 		if( layoutAllLevels )
@@ -267,10 +267,10 @@ public class MultipoleForceDirectedLayout
 	 * @param useNumberOfSubnodes
 	 *            the use number of subnodes
 	 */
-	public static void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
+	public void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
 			boolean useNumberOfSubnodes )
 	{
-		layoutLevel( width, height, nodes, edges, coolingFactor, useNumberOfSubnodes );
+		runLayout( width, height, nodes, edges, coolingFactor, useNumberOfSubnodes, false, false );
 	}
 
 	/**
@@ -310,5 +310,32 @@ public class MultipoleForceDirectedLayout
 				// System.out.println( "Temperature : " + temperature );
 			}
 		}
+	}
+
+	@Override
+	public void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor, boolean useNumberOfSubnodes,
+			boolean useEdgeRestingDistance, boolean useNodeSize )
+	{
+		layoutLevel( width, height, nodes, edges, coolingFactor, useNumberOfSubnodes );		
+	}
+
+	@Override
+	public void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels, boolean useNumberOfSubnodes,
+			boolean useEdgeRestingDistance, boolean useNodeSize )
+	{
+		layoutLevel( width, height, graph.getNodes( level ), graph.getEdges( level ), coolingFactor, useNumberOfSubnodes );
+	}
+
+	@Override
+	public void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels, boolean useNumberOfSubnodes,
+			boolean useEdgeRestingDistance )
+	{
+		layoutLevel( width, height, graph.getNodes( level ), graph.getEdges( level ), coolingFactor, useNumberOfSubnodes );		
+	}
+
+	@Override
+	public String getLabel()
+	{
+		return "Multipole Force Directed Layout";
 	}
 }

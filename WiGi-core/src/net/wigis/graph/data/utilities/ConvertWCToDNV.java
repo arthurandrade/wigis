@@ -208,9 +208,10 @@ public class ConvertWCToDNV
 	{
 		if( yearGraph != null )
 		{
-			FruchtermanReingold.runLayout( 100, 100, yearGraph, 0.1f, 0, false, false, true );
+			FruchtermanReingold fr = new FruchtermanReingold();
+			fr.runLayout( 100, 100, yearGraph, 0.1f, 0, false, false, true );
 			yearGraph.writeGraph( Settings.GRAPHS_PATH + "WC_" + yearGraph.getName() + ".dnv" );
-			FruchtermanReingold.runLayout( 100, 100, totalGraph, 0.1f, 0, false, false, true );
+			fr.runLayout( 100, 100, totalGraph, 0.1f, 0, false, false, true );
 			totalGraph.writeGraph( Settings.GRAPHS_PATH + "WC_until_" + yearGraph.getName() + ".dnv" );
 		}
 	}

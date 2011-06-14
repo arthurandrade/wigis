@@ -38,7 +38,7 @@ import net.wigis.graph.dnv.utilities.Vector2D;
  * 
  * @author Brynjar Gretarsson
  */
-public class HopDistanceLayout
+public class HopDistanceLayout implements NodeCentralizedLayoutInterface
 {
 
 	/**
@@ -53,7 +53,8 @@ public class HopDistanceLayout
 	 * @param circle
 	 *            the circle
 	 */
-	public static void runLayout( DNVGraph graph, DNVNode centralNode, int level, boolean circle )
+	@Override
+	public void runLayout( DNVGraph graph, DNVNode centralNode, int level, boolean circle )
 	{
 		for( DNVNode node : graph.getNodes( level ) )
 		{
@@ -347,6 +348,12 @@ public class HopDistanceLayout
 				}
 			}
 		}
+	}
+
+	@Override
+	public String getLabel()
+	{
+		return "Hop Distance Layout";
 	}
 
 }

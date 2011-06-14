@@ -492,21 +492,21 @@ public class CSVUploadBean
 			{
 				Logger.write( "Format is XML, Invoking XML Parser" );
 				DNVGraph graph = XMLToDNV.read( csvPath + lastFile );
-				FruchtermanReingold.runLayout( 80, 80, graph, 0.1f, 0, false, false );
+				new FruchtermanReingold().runLayout( 80, 80, graph, 0.1f, 0, false, false );
 				graph.writeGraph( Settings.GRAPHS_PATH + UPLOAD_FILE_PREFIX + lastFile + ".dnv" );
 			}
 			else if( lastFile.endsWith( ".csv" ) )
 			{
 				Logger.write( "Format is CSV, Invoking CSV Parser" );
 				DNVGraph graph = ReadCSVtoDNVGraph.read( csvPath + lastFile, "," );
-				FruchtermanReingold.runLayout( 80, 80, graph, 0.1f, 0, false, false );
+				new FruchtermanReingold().runLayout( 80, 80, graph, 0.1f, 0, false, false );
 				graph.writeGraph( Settings.GRAPHS_PATH + UPLOAD_FILE_PREFIX + lastFile + ".dnv" );
 			}
 			else if( lastFile.endsWith( ".tup" ) )
 			{
 				Logger.write( "Format is simple tuples, Invoking tuple Parser" );
 				DNVGraph graph = SimpleEdgeTuplesToDNVGraph.read( csvPath + lastFile, "," );
-				FruchtermanReingold.runLayout( 80, 80, graph, 0.1f, 0, false, false );
+				new FruchtermanReingold().runLayout( 80, 80, graph, 0.1f, 0, false, false );
 				graph.writeGraph( Settings.GRAPHS_PATH + UPLOAD_FILE_PREFIX + lastFile + ".dnv" );
 			}
 			else if( lastFile.endsWith( ".dnv" ) )

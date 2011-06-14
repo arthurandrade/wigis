@@ -60,18 +60,17 @@ import net.wigis.graph.dnv.clustering.KMostConnected;
 import net.wigis.graph.dnv.clustering.SolarSystemClustering;
 import net.wigis.graph.dnv.clustering.StructuralEquivalenceClustering;
 import net.wigis.graph.dnv.geometry.Text;
+import net.wigis.graph.dnv.layout.CenterPositionFixedLayoutInterface;
 import net.wigis.graph.dnv.layout.CircularLayout;
-import net.wigis.graph.dnv.layout.DisjointGraphLayout;
-import net.wigis.graph.dnv.layout.DocumentTopicRectangularLayout;
-import net.wigis.graph.dnv.layout.DocumentTopicSpiralLayout;
-import net.wigis.graph.dnv.layout.DocumentTopicsCircularLayout;
-import net.wigis.graph.dnv.layout.FruchtermanReingold;
-import net.wigis.graph.dnv.layout.MDSLayout;
-import net.wigis.graph.dnv.layout.MDSTopicsLayout;
-import net.wigis.graph.dnv.layout.PeerchooserLayout;
+import net.wigis.graph.dnv.layout.LayoutInterface;
+import net.wigis.graph.dnv.layout.MDSLayoutInterface;
+import net.wigis.graph.dnv.layout.RadiusRestrictedLayout;
 import net.wigis.graph.dnv.layout.RandomLayout;
-import net.wigis.graph.dnv.layout.RecommendationLayout;
-import net.wigis.graph.dnv.layout.Springs;
+import net.wigis.graph.dnv.layout.RecommendationLayoutInterface;
+import net.wigis.graph.dnv.layout.SimpleLayoutInterface;
+import net.wigis.graph.dnv.layout.SortingLayoutInterface;
+import net.wigis.graph.dnv.layout.SpaceRestrictedLayoutInterface;
+import net.wigis.graph.dnv.layout.TimeLimitedLayoutInterface;
 import net.wigis.graph.dnv.utilities.DescendingSort;
 import net.wigis.graph.dnv.utilities.GenerateHistogramOfConnectivity;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
@@ -316,17 +315,18 @@ public class PaintBean
 	/** The max layout time. */
 	private double maxLayoutTime = 5;
 
-	/** The circular layout buffer. */
-	private double circularLayoutBuffer = 0;
-
 	/** The number of clusters. */
 	private int numberOfClusters = 1;
 
 	/** The layout method list. */
 	private List<SelectItem> layoutMethodList = new ArrayList<SelectItem>();
 
+	private Map<String,LayoutInterface> layoutMethods = new HashMap<String,LayoutInterface>();
+	
 	/** The layout method. */
-	private String layoutMethod = Settings.LAYOUT_ALGORITHMS[0];
+//	private String layoutMethod = Settings.LAYOUT_ALGORITHMS[0];
+	
+	private LayoutInterface layoutMethod = Settings.LAYOUT_ALGORITHMS[0];
 
 	/** The circular layout sort list. */
 	private List<SelectItem> circularLayoutSortList = new ArrayList<SelectItem>();
@@ -602,7 +602,7 @@ public class PaintBean
 		buildInteractionMethodList();
 		printTime( "PainBean()", startTime );
 	}
-
+	
 	/**
 	 * Load graph.
 	 */
@@ -617,8 +617,6 @@ public class PaintBean
 			graph.setPaintBean( this );
 			loadTimer.setEnd();
 			System.out.println( "Loading '" + selectedFile + "' took " + loadTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
-//			setSelectedNode( null, false );
-//			setSelectedEdge( null, false );
 			int maxLevel = graph.getMaxLevel();
 			if( level > maxLevel )
 				level = maxLevel;
@@ -1981,7 +1979,7 @@ public class PaintBean
 	 *            the use number of subnodes
 	 */
 	public void runLayout( boolean clusterBeforeLayout, boolean layoutAllLevels, String clusteringMethod, DNVGraph graph, int level,
-			double maxLayoutTime, double nodeSize, float coolingFactor, boolean recommendationCircle, String layoutMethod, boolean useNumberOfSubnodes )
+			double maxLayoutTime, double nodeSize, float coolingFactor, boolean recommendationCircle, LayoutInterface layoutMethod, boolean useNumberOfSubnodes )
 	{
 		long startTime = System.currentTimeMillis();
 		if( clusterBeforeLayout && layoutAllLevels )
@@ -2067,36 +2065,36 @@ public class PaintBean
 
 		graph.storeCurrentPosition( level );
 
-		if( layoutMethod.equals( Settings.SPRING_LAYOUT ) )
+		if( layoutMethod instanceof TimeLimitedLayoutInterface )
 		{
 			// layoutStatus = "Running spring layout for " + maxLayoutTime +
 			// " seconds.";
 
-			Springs.runlayout( graph, level, maxLayoutTime, false, layoutAllLevels );
+			((TimeLimitedLayoutInterface)layoutMethod).runLayout( graph, level, maxLayoutTime, false, layoutAllLevels );
 
 			// layoutStatus = "Spring layout complete.";
 		}
-		else if( layoutMethod.equals( Settings.FRUCHTERMAN_REINGOLD_LAYOUT ) )
+		else if( layoutMethod instanceof SpaceRestrictedLayoutInterface )
 		{
 			// layoutStatus = "Running Fructerman-Reingold layout.";
 
 			float width = GraphFunctions.getGraphWidth( graph, 0, false );
 			float height = GraphFunctions.getGraphHeight( graph, 0, false );
 
-			FruchtermanReingold.runLayout( width, height, graph, coolingFactor, level, layoutAllLevels, useNumberOfSubnodes,
+			((SpaceRestrictedLayoutInterface)layoutMethod).runLayout( width, height, graph, coolingFactor, level, layoutAllLevels, useNumberOfSubnodes,
 					frUseEdgeRestingDistance, frUseNodeSize );
 
 			// layoutStatus = "Fructerman-Reingold layout complete.";
 		}
-		else if( layoutMethod.equals( Settings.CIRCULAR_LAYOUT ) )
+		else if( layoutMethod instanceof SortingLayoutInterface )
 		{
 			// layoutStatus = "Running Fructerman-Reingold layout.";
 
-			CircularLayout.runLayout( graph, level, circularLayoutSort );
+			((SortingLayoutInterface)layoutMethod).runLayout( graph, level, circularLayoutSort );
 
 			// layoutStatus = "Fructerman-Reingold layout complete.";
 		}
-		else if( layoutMethod.equals( Settings.RECOMMENDATION_LAYOUT ) )
+		else if( layoutMethod instanceof RecommendationLayoutInterface )
 		{
 			// layoutStatus = "Running Recommendation layout.";
 
@@ -2106,64 +2104,31 @@ public class PaintBean
 				DNVEntity userNode = users.values().iterator().next();
 				if( userNode != null )
 				{
-					RecommendationLayout.runLayout( graph, (DNVNode)userNode, level, 0, 0, recommendationCircle );
+					((RecommendationLayoutInterface)layoutMethod).runLayout( graph, (DNVNode)userNode, level, 0, 0, recommendationCircle );
 				}
 			}
 
 			// layoutStatus = "Recommendation layout complete.";
 		}
-		else if( layoutMethod.equals( Settings.PEERCHOOSER_LAYOUT ) )
+		else if( layoutMethod instanceof CenterPositionFixedLayoutInterface )
 		{
 			// layoutStatus = "Running Peerchooser layout.";
 
-			PeerchooserLayout.runLayout( graph, level, 0, 0 );
+			((CenterPositionFixedLayoutInterface)layoutMethod).runLayout( graph, level, 0, 0 );
 
 			// layoutStatus = "Peerchooser layout complete.";
 		}
-		else if( layoutMethod.equals( Settings.MDS_LAYOUT ) )
+		else if( layoutMethod instanceof MDSLayoutInterface )
 		{
-			MDSLayout.runLayout( graph, level, true );
+			((MDSLayoutInterface)layoutMethod).runLayout( graph, level, true );
 		}
-		else if( layoutMethod.equals( Settings.DISJOINT_GRAPH_LAYOUT ) )
+		else if( layoutMethod instanceof SimpleLayoutInterface )
 		{
-			DisjointGraphLayout.layout( graph );
+			((SimpleLayoutInterface)layoutMethod).runLayout( graph, level );
 		}
-		else if( layoutMethod.equals( Settings.DOCUMENT_TOPIC_SPIRAL_LAYOUT ) )
+		else if( layoutMethod instanceof RadiusRestrictedLayout )
 		{
-			DocumentTopicSpiralLayout.runLayout( graph, level, 400 );
-		}
-		else if( layoutMethod.equals( Settings.DOCUMENT_TOPIC_MDS_LAYOUT ) )
-		{
-			TopicVisualizationBean tvb = (TopicVisualizationBean)ContextLookup.lookup( "topicVisualizationBean", FacesContext.getCurrentInstance() );
-			if( tvb != null )
-			{
-				double[][] dissimilarityMatrix = tvb.getDissimilarityMatrix();
-				if( dissimilarityMatrix != null )
-				{
-					MDSTopicsLayout.runLayout( graph, level, dissimilarityMatrix, tvb.isUseStressMinimization() );
-				}
-			}
-		}
-		else if( layoutMethod.equals( Settings.DOCUMENT_TOPIC_CIRCULAR_LAYOUT ) )
-		{
-			boolean forceToCircle = false;
-			boolean keepDocumentsInOrder = true;
-			TopicVisualizationBean tvb = (TopicVisualizationBean)ContextLookup.lookup( "topicVisualizationBean", FacesContext.getCurrentInstance() );
-			if( tvb != null )
-			{
-				forceToCircle = tvb.isForceTopicsToCircle();
-				keepDocumentsInOrder = tvb.isCreateDocumentEdges() || tvb.isTimelineVisualization();
-
-				// Double width = MDSTopicsLayout.getWidth(
-				// tvb.getDissimilarityMatrix() );
-				DocumentTopicsCircularLayout.runLayout( graph, level, (float)circularLayoutBuffer, 0.05f, documentTopicsCircularLayoutDocIdPrefix,
-						null, documentTopicsCircularLayoutWidthMultiplier, forceToCircle, keepDocumentsInOrder,
-						( keepDocumentsInOrder && documentTopicsCircularLayoutOnlyDeformSelectedTopics ), tvb.getDissimilarityMatrix() );
-			}
-		}
-		else if( layoutMethod.equals( Settings.DOCUMENT_TOPIC_RECTANGULAR_LAYOUT ) )
-		{
-			DocumentTopicRectangularLayout.runLayout( graph, level );
+			((RadiusRestrictedLayout)layoutMethod).runLayout( graph, level, 400 );
 		}
 
 		if( graph.hasStoredPosition() )
@@ -2196,22 +2161,13 @@ public class PaintBean
 
 	}
 
-	/** The document topics circular layout doc id prefix. */
-	private String documentTopicsCircularLayoutDocIdPrefix = "doc";
-
-	/** The document topics circular layout width multiplier. */
-	private float documentTopicsCircularLayoutWidthMultiplier = 1;
-
-	/** The document topics circular layout only deform selected topics. */
-	private boolean documentTopicsCircularLayoutOnlyDeformSelectedTopics = true;
-
 	/**
 	 * Randomize positions.
 	 */
 	public void randomizePositions()
 	{
 		long startTime = System.currentTimeMillis();
-		RandomLayout.runLayout( graph, level, 100 );
+		new RandomLayout().runLayout( graph, level, 100 );
 		printTime( "randomizePositions", startTime );
 	}
 
@@ -2437,30 +2393,28 @@ public class PaintBean
 		this.edgeColor = edgeColor;
 	}
 
-	/**
-	 * Builds the layout method list.
-	 */
 	public void buildLayoutMethodList()
 	{
 		buildLayoutMethodList( Settings.LAYOUT_ALGORITHMS );
 	}
-
+	
 	/**
 	 * Builds the layout method list.
 	 * 
 	 * @param algorithms
 	 *            the algorithms
 	 */
-	public void buildLayoutMethodList( String[] algorithms )
+	public void buildLayoutMethodList( LayoutInterface[] algorithms )
 	{
 		layoutMethodList.clear();
+		layoutMethods.clear();
 		SelectItem layoutItem;
-		for( int i = 0; i < algorithms.length; i++ )
+		for( LayoutInterface layout : algorithms )
 		{
-			layoutItem = new SelectItem( algorithms[i], algorithms[i] );
+			layoutItem = new SelectItem( layout.getLabel(), layout.getLabel() );
 			layoutMethodList.add( layoutItem );
+			layoutMethods.put( layout.getLabel(), layout );
 		}
-
 	}
 
 	/**
@@ -2574,20 +2528,84 @@ public class PaintBean
 	 * 
 	 * @return the layout method
 	 */
-	public String getLayoutMethod()
+	public String getLayoutMethodLabel()
 	{
-		return layoutMethod;
+		return layoutMethod.getLabel();
 	}
 
+	public void setLayoutMethodLabel( String label )
+	{
+		setLayoutMethod( layoutMethods.get( label ) );
+	}
+	
 	/**
 	 * Sets the layout method.
 	 * 
 	 * @param layoutMethod
 	 *            the new layout method
 	 */
-	public void setLayoutMethod( String layoutMethod )
+	public void setLayoutMethod( LayoutInterface layoutMethod )
 	{
 		this.layoutMethod = layoutMethod;
+	}
+	
+	public LayoutInterface getLayoutMethod()
+	{
+		return layoutMethod;
+	}
+	
+	public LayoutInterface getLayoutMethod( String label )
+	{
+		return layoutMethods.get( label );
+	}
+
+	public boolean isShowCircularLayoutBuffer()
+	{
+		return getLayoutMethodLabel().equals( Settings.DOCUMENT_TOPIC_CIRCULAR_LAYOUT );
+	}
+	
+	/** The circular layout buffer. */
+	private double circularLayoutBuffer = 0;
+	/**
+	 * Gets the circular layout buffer.
+	 * 
+	 * @return the circular layout buffer
+	 */
+	public double getCircularLayoutBuffer()
+	{
+		return circularLayoutBuffer;
+	}
+
+	/** The ignore next circular layout buffer. */
+	private boolean ignoreNextCircularLayoutBuffer = false;
+
+	/**
+	 * Sets the ignore next circular layout buffer.
+	 * 
+	 * @param value
+	 *            the new ignore next circular layout buffer
+	 */
+	public void setIgnoreNextCircularLayoutBuffer( boolean value )
+	{
+		ignoreNextCircularLayoutBuffer = value;
+	}
+
+	/**
+	 * Sets the circular layout buffer.
+	 * 
+	 * @param circularLayoutBuffer
+	 *            the new circular layout buffer
+	 */
+	public void setCircularLayoutBuffer( double circularLayoutBuffer )
+	{
+		if( ignoreNextCircularLayoutBuffer )
+		{
+			System.out.println( "ignoring layout buffer = " + circularLayoutBuffer );
+			ignoreNextCircularLayoutBuffer = false;
+			return;
+		}
+		System.out.println( "setting layout buffer = " + circularLayoutBuffer );
+		this.circularLayoutBuffer = circularLayoutBuffer;
 	}
 
 	/**
@@ -3940,7 +3958,7 @@ public class PaintBean
 	 */
 	public boolean isShowMaxLayoutTime()
 	{
-		return layoutMethod.equals( Settings.SPRING_LAYOUT );
+		return layoutMethod instanceof TimeLimitedLayoutInterface;
 	}
 
 	/**
@@ -3950,7 +3968,7 @@ public class PaintBean
 	 */
 	public boolean isShowCoolingFactor()
 	{
-		return layoutMethod.equals( Settings.FRUCHTERMAN_REINGOLD_LAYOUT );
+		return layoutMethod instanceof SpaceRestrictedLayoutInterface;
 	}
 
 	/**
@@ -4177,7 +4195,7 @@ public class PaintBean
 	 */
 	public boolean isShowRecommendationCircle()
 	{
-		return layoutMethod.equals( Settings.RECOMMENDATION_LAYOUT );
+		return layoutMethod instanceof RecommendationLayoutInterface;
 	}
 
 	/**
@@ -4429,62 +4447,7 @@ public class PaintBean
 	 * this.hasBeenDisplayed = hasBeenDisplayed; }
 	 */
 
-	/**
-	 * Gets the circular layout buffer.
-	 * 
-	 * @return the circular layout buffer
-	 */
-	public double getCircularLayoutBuffer()
-	{
-		return circularLayoutBuffer;
-	}
 
-	/** The ignore next circular layout buffer. */
-	private boolean ignoreNextCircularLayoutBuffer = false;
-
-	/**
-	 * Sets the ignore next circular layout buffer.
-	 * 
-	 * @param value
-	 *            the new ignore next circular layout buffer
-	 */
-	public void setIgnoreNextCircularLayoutBuffer( boolean value )
-	{
-		ignoreNextCircularLayoutBuffer = value;
-	}
-
-	/**
-	 * Sets the circular layout buffer.
-	 * 
-	 * @param circularLayoutBuffer
-	 *            the new circular layout buffer
-	 */
-	public void setCircularLayoutBuffer( double circularLayoutBuffer )
-	{
-		if( ignoreNextCircularLayoutBuffer )
-		{
-			System.out.println( "ignoring layout buffer = " + circularLayoutBuffer );
-			ignoreNextCircularLayoutBuffer = false;
-			return;
-		}
-		System.out.println( "setting layout buffer = " + circularLayoutBuffer );
-		this.circularLayoutBuffer = circularLayoutBuffer;
-		TopicVisualizationBean tvb = (TopicVisualizationBean)ContextLookup.lookup( "topicVisualizationBean", FacesContext.getCurrentInstance() );
-		if( tvb != null )
-		{
-			tvb.saveSettings();
-		}
-	}
-
-	/**
-	 * Checks if is show circular layout buffer.
-	 * 
-	 * @return true, if is show circular layout buffer
-	 */
-	public boolean isShowCircularLayoutBuffer()
-	{
-		return layoutMethod.equals( Settings.DOCUMENT_TOPIC_CIRCULAR_LAYOUT );
-	}
 
 	/**
 	 * Checks if is sort nodes.
@@ -4507,47 +4470,6 @@ public class PaintBean
 		this.sortNodes = sortNodes;
 	}
 
-	/**
-	 * Sets the document topics circular layout doc id prefix.
-	 * 
-	 * @param documentTopicsCircularLayoutDocIdPrefix
-	 *            the new document topics circular layout doc id prefix
-	 */
-	public void setDocumentTopicsCircularLayoutDocIdPrefix( String documentTopicsCircularLayoutDocIdPrefix )
-	{
-		this.documentTopicsCircularLayoutDocIdPrefix = documentTopicsCircularLayoutDocIdPrefix;
-	}
-
-	/**
-	 * Gets the document topics circular layout doc id prefix.
-	 * 
-	 * @return the document topics circular layout doc id prefix
-	 */
-	public String getDocumentTopicsCircularLayoutDocIdPrefix()
-	{
-		return documentTopicsCircularLayoutDocIdPrefix;
-	}
-
-	/**
-	 * Sets the document topics circular layout width multiplier.
-	 * 
-	 * @param documentTopicsCircularLayoutWidthMultiplier
-	 *            the new document topics circular layout width multiplier
-	 */
-	public void setDocumentTopicsCircularLayoutWidthMultiplier( float documentTopicsCircularLayoutWidthMultiplier )
-	{
-		this.documentTopicsCircularLayoutWidthMultiplier = documentTopicsCircularLayoutWidthMultiplier;
-	}
-
-	/**
-	 * Gets the document topics circular layout width multiplier.
-	 * 
-	 * @return the document topics circular layout width multiplier
-	 */
-	public float getDocumentTopicsCircularLayoutWidthMultiplier()
-	{
-		return documentTopicsCircularLayoutWidthMultiplier;
-	}
 
 	/**
 	 * Gets the node contents.
@@ -4759,37 +4681,6 @@ public class PaintBean
 	public void toggleScaleLabels()
 	{
 		setScaleLabels( !isScaleLabels() );
-	}
-
-	/**
-	 * Checks if is document topics circular layout only deform selected topics.
-	 * 
-	 * @return true, if is document topics circular layout only deform selected
-	 *         topics
-	 */
-	public boolean isDocumentTopicsCircularLayoutOnlyDeformSelectedTopics()
-	{
-		return documentTopicsCircularLayoutOnlyDeformSelectedTopics;
-	}
-
-	/**
-	 * Sets the document topics circular layout only deform selected topics.
-	 * 
-	 * @param documentTopicsCircularLayoutOnlyDeformSelectedTopics
-	 *            the new document topics circular layout only deform selected
-	 *            topics
-	 */
-	public void setDocumentTopicsCircularLayoutOnlyDeformSelectedTopics( boolean documentTopicsCircularLayoutOnlyDeformSelectedTopics )
-	{
-		this.documentTopicsCircularLayoutOnlyDeformSelectedTopics = documentTopicsCircularLayoutOnlyDeformSelectedTopics;
-	}
-
-	/**
-	 * Toggle document topics circular layout only deform selected topics.
-	 */
-	public void toggleDocumentTopicsCircularLayoutOnlyDeformSelectedTopics()
-	{
-		setDocumentTopicsCircularLayoutOnlyDeformSelectedTopics( !isDocumentTopicsCircularLayoutOnlyDeformSelectedTopics() );
 	}
 
 	/**
@@ -5547,7 +5438,7 @@ public class PaintBean
 	 */
 	public boolean isCircularLayoutSelected()
 	{
-		return layoutMethod.equals( Settings.CIRCULAR_LAYOUT );
+		return layoutMethod instanceof CircularLayout;
 	}
 
 	/**

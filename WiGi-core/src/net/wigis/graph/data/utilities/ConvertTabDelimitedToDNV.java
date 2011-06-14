@@ -80,7 +80,7 @@ public class ConvertTabDelimitedToDNV
 			graph.addNode( 0, edge );
 		}
 
-		FruchtermanReingold.runLayout( 100, 100, graph, 0.1f, 0, false, false );
+		new FruchtermanReingold().runLayout( 100, 100, graph, 0.1f, 0, false, false );
 		return graph;
 	}
 

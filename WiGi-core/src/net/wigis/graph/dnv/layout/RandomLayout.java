@@ -33,7 +33,7 @@ import net.wigis.graph.dnv.DNVNode;
  * 
  * @author Brynjar Gretarsson
  */
-public class RandomLayout
+public class RandomLayout implements AreaRestrictedLayoutInterface
 {
 
 	/**
@@ -46,7 +46,7 @@ public class RandomLayout
 	 * @param multiplier
 	 *            the multiplier
 	 */
-	public static void runLayout( DNVGraph graph, int level, float multiplier )
+	public void runLayout( DNVGraph graph, int level, float multiplier )
 	{
 		for( DNVNode n : graph.getNodes( level ) )
 		{

@@ -83,7 +83,7 @@ public class ConvertJavaDependenciesToDNV
 			}
 		}
 
-		FruchtermanReingold.runLayout( 100, 100, graph, 0.1f, 0, false, false );
+		new FruchtermanReingold().runLayout( 100, 100, graph, 0.1f, 0, false, false );
 		return graph;
 	}
 

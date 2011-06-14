@@ -24,6 +24,13 @@
 
 package net.wigis.settings;
 
+import net.wigis.graph.dnv.layout.CircularLayout;
+import net.wigis.graph.dnv.layout.DisjointGraphLayout;
+import net.wigis.graph.dnv.layout.FruchtermanReingold;
+import net.wigis.graph.dnv.layout.LayoutInterface;
+import net.wigis.graph.dnv.layout.MDSLayout;
+import net.wigis.graph.dnv.layout.Springs;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class Settings.
@@ -130,41 +137,36 @@ public class Settings
 	public static boolean DEBUG = false;
 
 	// Layout algorithms
-	/** The Constant SPRING_LAYOUT. */
-	public static final String SPRING_LAYOUT = "Spring Layout";
 
-	/** The Constant FRUCHTERMAN_REINGOLD_LAYOUT. */
-	public static final String FRUCHTERMAN_REINGOLD_LAYOUT = "Fructerman-Reingold";
-
-	/** The Constant CIRCULAR_LAYOUT. */
-	public static final String CIRCULAR_LAYOUT = "Circular Layout";
-
-	/** The Constant RECOMMENDATION_LAYOUT. */
-	public static final String RECOMMENDATION_LAYOUT = "Recommendation Layout";
-
-	/** The Constant PEERCHOOSER_LAYOUT. */
-	public static final String PEERCHOOSER_LAYOUT = "Peerchooser Layout";
-
-	/** The Constant DISJOINT_GRAPH_LAYOUT. */
-	public static final String DISJOINT_GRAPH_LAYOUT = "Disjoint Graph Layout";
-
-	/** The Constant MDS_LAYOUT. */
-	public static final String MDS_LAYOUT = "MDS Layout";
-
-	/** The Constant DOCUMENT_TOPIC_SPIRAL_LAYOUT. */
-	public static final String DOCUMENT_TOPIC_SPIRAL_LAYOUT = "Document Topic Spiral Layout";
-
+//	/** The Constant CIRCULAR_LAYOUT. */
+//	public static final String CIRCULAR_LAYOUT = "Circular Layout";
+//
+//	/** The Constant RECOMMENDATION_LAYOUT. */
+//	public static final String RECOMMENDATION_LAYOUT = "Recommendation Layout";
+//
+//	/** The Constant PEERCHOOSER_LAYOUT. */
+//	public static final String PEERCHOOSER_LAYOUT = "Peerchooser Layout";
+//
+//	/** The Constant DISJOINT_GRAPH_LAYOUT. */
+//	public static final String DISJOINT_GRAPH_LAYOUT = "Disjoint Graph Layout";
+//
+//	/** The Constant MDS_LAYOUT. */
+//	public static final String MDS_LAYOUT = "MDS Layout";
+//
+//	/** The Constant DOCUMENT_TOPIC_SPIRAL_LAYOUT. */
+//	public static final String DOCUMENT_TOPIC_SPIRAL_LAYOUT = "Document Topic Spiral Layout";
+//
 	/** The Constant DOCUMENT_TOPIC_CIRCULAR_LAYOUT. */
 	public static final String DOCUMENT_TOPIC_CIRCULAR_LAYOUT = "Document Topic Circular Layout";
-
-	/** The Constant DOCUMENT_TOPIC_RECTANGULAR_LAYOUT. */
-	public static final String DOCUMENT_TOPIC_RECTANGULAR_LAYOUT = "Document Topic Rectangular Layout";
-
-	/** The Constant DOCUMENT_TOPIC_MDS_LAYOUT. */
-	public static final String DOCUMENT_TOPIC_MDS_LAYOUT = "Document Topic MDS Layout";
+//
+//	/** The Constant DOCUMENT_TOPIC_RECTANGULAR_LAYOUT. */
+//	public static final String DOCUMENT_TOPIC_RECTANGULAR_LAYOUT = "Document Topic Rectangular Layout";
+//
+//	/** The Constant DOCUMENT_TOPIC_MDS_LAYOUT. */
+//	public static final String DOCUMENT_TOPIC_MDS_LAYOUT = "Document Topic MDS Layout";
 
 	/** The LAYOU t_ algorithms. */
-	public static String[] LAYOUT_ALGORITHMS = { FRUCHTERMAN_REINGOLD_LAYOUT, CIRCULAR_LAYOUT, MDS_LAYOUT, DISJOINT_GRAPH_LAYOUT, SPRING_LAYOUT };
+	public static LayoutInterface[] LAYOUT_ALGORITHMS = { new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new Springs() };
 
 	// Clustering algorithms
 	/** The Constant K_MOST_CONNECTED_CLUSTERING. */

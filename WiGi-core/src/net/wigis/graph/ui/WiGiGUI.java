@@ -49,7 +49,6 @@ import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.layout.RecommendationLayout;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.SortByLabelSize;
 import net.wigis.graph.dnv.utilities.Timer;
@@ -489,9 +488,6 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		moveNode( e.getPoint().x, e.getPoint().y );
 	}
 
-	/** The recommendation layout. */
-	private RecommendationLayout recommendationLayout = new RecommendationLayout();
-
 	/**
 	 * Move node.
 	 * 
@@ -527,7 +523,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		globalMinX -= xBuffer;
 
 		GraphServlet.moveSelectedNode( null, pb, graph, level, getWidth(), getHeight(), pb.getMinX(), pb.getMinY(), pb.getMaxX(), pb.getMaxY(),
-				mouseUpX, mouseUpY, false, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, recommendationLayout );
+				mouseUpX, mouseUpY, false, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, null );
 
 		repaint();
 	}

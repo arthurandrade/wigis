@@ -15,7 +15,6 @@ import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.svetlin.__Color;
 import net.wigis.svetlin.__jsf;
-import net.wigis.web.ContextLookup;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -353,6 +352,24 @@ public class StatsBean
 			}
 		});
 		
+		ArrayList<Integer> selectedIndexes = getSelectedIndexes( points, nodes );
+
+		
+		//Call to the line LineChart function to create the dataset, create the graph and save it.
+		
+			BufferedImage chart = LineChart(chartH, chartW, points, selectedIndexes);
+			try
+			{
+				ImageIO.write(chart, "png", out);
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+	}
+
+	private ArrayList<Integer> getSelectedIndexes( ArrayList<Double> points, List<DNVNode> nodes )
+	{
 		ArrayList<Integer> selectedIndexes = new ArrayList<Integer>();
 		
 		// show max 200 nodes
@@ -368,21 +385,21 @@ public class StatsBean
 			if (i%iStep == 0)
 				points.add((double)nodes.get(i).getDegree());
 		}
-
-		
-		//Call to the line LineChart function to create the dataset, create the graph and save it.
-		
-			BufferedImage chart = LineChart(chartH, chartW, points, selectedIndexes);
-			try
-			{
-				ImageIO.write(chart, "png", out);
-			}
-			catch( IOException e )
-			{
-				e.printStackTrace();
-			}
+		return selectedIndexes;
 	}
 	
+	private String getSelectedIndexesString()
+	{
+		List<DNVNode> nodes = new ArrayList<DNVNode>(graph.getVisibleNodes(0).values());
+		List<Integer> selectedIndexes = getSelectedIndexes( new ArrayList<Double>(), nodes );
+		StringBuilder sb = new StringBuilder();
+		for( Integer i : selectedIndexes )
+		{
+			sb.append( i ).append( "," );
+		}
+		
+		return sb.toString();
+	}
 	
 	/**
 	 * Getter returning the chartURL
@@ -392,16 +409,7 @@ public class StatsBean
 	 */
 	public String getChartURL()
 	{
-		String webPath = "/WiGi/wigi/";
-		try
-		{
-			webPath = PaintBean.getCurrentInstanceWebPath();
-		}
-		catch( NullPointerException e )
-		{
-			e.printStackTrace();
-		}
-		return webPath + "LineChartServlet?a=" + Math.random();
+		return "/wigi/LineChartServlet?graphSize=" + getGraphSize() + "&graph=" + getGraph() + "&selected=" + getSelectedIndexesString();
 	}
 	
 	
@@ -599,7 +607,7 @@ public class StatsBean
 	// =========================================
 	private static PaintBean getPaintBean()
 	{
-		PaintBean pb = (PaintBean) ContextLookup.lookup("paintBean", FacesContext.getCurrentInstance());
+		PaintBean pb = PaintBean.getCurrentInstance();
 		
 		if (pb == null)
 		{
@@ -668,5 +676,22 @@ public class StatsBean
 	public void setChartH( int chartH )
 	{
 		this.chartH = chartH;
+	}
+	
+	private boolean statsExpanded = true;
+	
+	public void expandStats()
+	{
+		statsExpanded = true;
+	}
+	
+	public void collapseStats()
+	{
+		statsExpanded = false;
+	}
+	
+	public boolean isStatsExpanded()
+	{
+		return statsExpanded;
 	}
 }

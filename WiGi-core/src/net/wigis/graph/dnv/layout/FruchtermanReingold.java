@@ -32,6 +32,7 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Vector2D;
+import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,7 +40,7 @@ import net.wigis.graph.dnv.utilities.Vector2D;
  * 
  * @author Brynjar Gretarsson
  */
-public class FruchtermanReingold
+public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 {
 
 	/**
@@ -259,7 +260,8 @@ public class FruchtermanReingold
 	 * @param useNumberOfSubnodes
 	 *            the use number of subnodes
 	 */
-	public static void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
+	@Override
+	public void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
 			boolean useNumberOfSubnodes )
 	{
 		runLayout( width, height, graph, coolingFactor, level, layoutAllLevels, useNumberOfSubnodes, false, false );
@@ -285,7 +287,8 @@ public class FruchtermanReingold
 	 * @param useEdgeRestingDistance
 	 *            the use edge resting distance
 	 */
-	public static void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
+	@Override
+	public void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
 			boolean useNumberOfSubnodes, boolean useEdgeRestingDistance )
 	{
 		runLayout( width, height, graph, coolingFactor, level, layoutAllLevels, useNumberOfSubnodes, useEdgeRestingDistance, false );
@@ -313,7 +316,8 @@ public class FruchtermanReingold
 	 * @param useNodeSize
 	 *            the use node size
 	 */
-	public static void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
+	@Override
+	public void runLayout( float width, float height, DNVGraph graph, float coolingFactor, int level, boolean layoutAllLevels,
 			boolean useNumberOfSubnodes, boolean useEdgeRestingDistance, boolean useNodeSize )
 	{
 		if( layoutAllLevels )
@@ -351,7 +355,8 @@ public class FruchtermanReingold
 	 * @param useNumberOfSubnodes
 	 *            the use number of subnodes
 	 */
-	public static void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
+	@Override
+	public void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
 			boolean useNumberOfSubnodes )
 	{
 		runLayout( width, height, nodes, edges, coolingFactor, useNumberOfSubnodes, false, false );
@@ -377,7 +382,8 @@ public class FruchtermanReingold
 	 * @param useNodeSize
 	 *            the use node size
 	 */
-	public static void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
+	@Override
+	public void runLayout( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
 			boolean useNumberOfSubnodes, boolean useEdgeRestingDistance, boolean useNodeSize )
 	{
 		layoutLevel( width, height, nodes, edges, coolingFactor, useNumberOfSubnodes, useEdgeRestingDistance, useNodeSize );
@@ -423,5 +429,14 @@ public class FruchtermanReingold
 				// System.out.println( "Temperature : " + temperature );
 			}
 		}
+	}
+
+	/** The Constant FRUCHTERMAN_REINGOLD_LAYOUT. */
+	public static final String LABEL = "Fructerman-Reingold";
+
+	@Override
+	public String getLabel()
+	{
+		return LABEL;
 	}
 }

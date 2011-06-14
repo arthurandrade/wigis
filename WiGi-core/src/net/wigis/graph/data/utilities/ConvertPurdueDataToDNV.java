@@ -168,7 +168,7 @@ public class ConvertPurdueDataToDNV
 			tempNode.setColor( color );
 		}
 		
-		FruchtermanReingold.runLayout( 100, 100, graph, 0.01f, 0, false, false );
+		new FruchtermanReingold().runLayout( 100, 100, graph, 0.01f, 0, false, false );
 
 		System.out.println( "Graph has " + graph.getGraphSize( 0 ) + " nodes and " + graph.getEdgeMap( 0 ).size() + " edges." );
 

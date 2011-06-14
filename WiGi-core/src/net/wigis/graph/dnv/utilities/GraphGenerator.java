@@ -503,7 +503,7 @@ public class GraphGenerator
 		nNodes = dnvGraph.getNodes( 0 ).size();
 		if( runLayout )
 		{
-			FruchtermanReingold.runLayout( 100, 100, dnvGraph, 0.1f, 0, false, false );
+			new FruchtermanReingold().runLayout( 100, 100, dnvGraph, 0.1f, 0, false, false );
 		}
 		dnvGraph.writeGraph( Settings.GRAPHS_PATH + graphName + "_" + nNodes + "_" + nEdges + ".dnv" );
 

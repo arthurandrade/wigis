@@ -38,14 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import net.wigis.graph.ImageCacher;
 import net.wigis.graph.ImageRenderer;
 import net.wigis.graph.PaintBean;
-import net.wigis.graph.TopicVisualizationBean;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.layout.DocumentTopicsCircularLayout;
 import net.wigis.graph.dnv.layout.FruchtermanReingold;
 import net.wigis.graph.dnv.layout.HopDistanceLayout;
-import net.wigis.graph.dnv.layout.RecommendationLayout;
+import net.wigis.graph.dnv.layout.RecommendationLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.InterpolationMethod;
 import net.wigis.graph.dnv.utilities.SortByLabelSize;
@@ -120,7 +118,7 @@ public class GraphServlet extends HttpServlet
 	}
 
 	/** The recommendation layout. */
-	private RecommendationLayout recommendationLayout = new RecommendationLayout();
+	private RecommendationLayoutInterface recommendationLayout;
 
 	/**
 	 * Draw graph.
@@ -386,7 +384,7 @@ public class GraphServlet extends HttpServlet
 							if( pb.getSelectedNode() != null )
 							{
 								pb.setSelectedNode( null, ctrlPressed );
-								runDocumentTopicsCircularLayout( request, pb, graph, level );
+//								runDocumentTopicsCircularLayout( request, pb, graph, level );
 							}
 						}
 					}
@@ -514,7 +512,7 @@ public class GraphServlet extends HttpServlet
 	 */
 	public static void moveNode( DNVNode selectedNode, HttpServletRequest request, PaintBean pb, DNVGraph graph, int level, int width, int height,
 			double minX, double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, RecommendationLayout recommendationLayout )
+			double globalMinY, double globalMaxY, RecommendationLayoutInterface recommendationLayout )
 	{
 		if( selectedNode != null )
 		{
@@ -530,10 +528,10 @@ public class GraphServlet extends HttpServlet
 
 		if( pb.getInteractionMethod().equals( Settings.INTERPOLATION_INTERACTION ) )
 		{
-			if( !sameNode && selectedNode != null )
-			{
-				runDocumentTopicsCircularLayout( request, pb, graph, level );
-			}
+//			if( !sameNode && selectedNode != null )
+//			{
+//				runDocumentTopicsCircularLayout( request, pb, graph, level );
+//			}
 			performInterpolation( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX, globalMaxX,
 					globalMinY, globalMaxY, selectedNode );
 		}
@@ -573,7 +571,7 @@ public class GraphServlet extends HttpServlet
 		{
 			if( selectedNode != null && !sameNode )
 			{
-				HopDistanceLayout.runLayout( graph, selectedNode, level, false );
+				new HopDistanceLayout().runLayout( graph, selectedNode, level, false );
 			}
 		}
 		else if( pb.getInteractionMethod().equals( Settings.SPRING_INTERACTION ) )
@@ -669,7 +667,7 @@ public class GraphServlet extends HttpServlet
 	 */
 	public static void moveSelectedNode( HttpServletRequest request, PaintBean pb, DNVGraph graph, int level, int width, int height, double minX,
 			double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, DNVNode selectedNode, RecommendationLayout recommendationLayout )
+			double globalMinY, double globalMaxY, DNVNode selectedNode, RecommendationLayoutInterface recommendationLayout )
 	{
 		if( selectedNode == null && sameNode )
 		{
@@ -710,33 +708,33 @@ public class GraphServlet extends HttpServlet
 		return nodeWidth;
 	}
 
-	/**
-	 * Run document topics circular layout.
-	 * 
-	 * @param request
-	 *            the request
-	 * @param pb
-	 *            the pb
-	 * @param graph
-	 *            the graph
-	 * @param level
-	 *            the level
-	 */
-	public static void runDocumentTopicsCircularLayout( HttpServletRequest request, PaintBean pb, DNVGraph graph, int level )
-	{
-		TopicVisualizationBean tvb = (TopicVisualizationBean)ContextLookup.lookup( "topicVisualizationBean", request );
-		if( tvb != null )
-		{
-			if( pb.getLayoutMethod().equals( Settings.DOCUMENT_TOPIC_CIRCULAR_LAYOUT ) && pb.isDocumentTopicsCircularLayoutOnlyDeformSelectedTopics() )
-			{
-				// Double circularWidth = MDSTopicsLayout.getWidth(
-				// tvb.getDissimilarityMatrix() );
-				DocumentTopicsCircularLayout.runLayout( graph, level, (float)pb.getCircularLayoutBuffer(), 0.1f, pb
-						.getDocumentTopicsCircularLayoutDocIdPrefix(), null, pb.getDocumentTopicsCircularLayoutWidthMultiplier(), tvb
-						.isForceTopicsToCircle(), tvb.isCreateDocumentEdges() || tvb.isTimelineVisualization(), true, tvb.getDissimilarityMatrix() );
-			}
-		}
-	}
+//	/**
+//	 * Run document topics circular layout.
+//	 * 
+//	 * @param request
+//	 *            the request
+//	 * @param pb
+//	 *            the pb
+//	 * @param graph
+//	 *            the graph
+//	 * @param level
+//	 *            the level
+//	 */
+//	public static void runDocumentTopicsCircularLayout( HttpServletRequest request, PaintBean pb, DNVGraph graph, int level )
+//	{
+//		TopicVisualizationBean tvb = (TopicVisualizationBean)ContextLookup.lookup( "topicVisualizationBean", request );
+//		if( tvb != null )
+//		{
+//			if( pb.getLayoutMethod().equals( Settings.DOCUMENT_TOPIC_CIRCULAR_LAYOUT ) && pb.isDocumentTopicsCircularLayoutOnlyDeformSelectedTopics() )
+//			{
+//				// Double circularWidth = MDSTopicsLayout.getWidth(
+//				// tvb.getDissimilarityMatrix() );
+//				DocumentTopicsCircularLayout.runLayout( graph, level, (float)pb.getCircularLayoutBuffer(), 0.1f, pb
+//						.getDocumentTopicsCircularLayoutDocIdPrefix(), null, pb.getDocumentTopicsCircularLayoutWidthMultiplier(), tvb
+//						.isForceTopicsToCircle(), tvb.isCreateDocumentEdges() || tvb.isTimelineVisualization(), true, tvb.getDissimilarityMatrix() );
+//			}
+//		}
+//	}
 
 	/**
 	 * Gets the point line distance.

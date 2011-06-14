@@ -177,7 +177,7 @@ public class GenerateLargeFacebookGraph
 		}
 		
 		graph.removeIsolatedNodes();
-		FruchtermanReingold.runLayout( 80, 80, graph, 0.1f, 0, false, false );
+		new FruchtermanReingold().runLayout( 80, 80, graph, 0.1f, 0, false, false );
 		graph.writeGraph( directory + outputFileName );			
 	}
 }

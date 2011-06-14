@@ -88,8 +88,8 @@ public class MDSJExperiment
 
 		float width = GraphFunctions.getGraphWidth( graph, 0, false );
 
-		RandomLayout.runLayout( graph, 0, width );
-		FruchtermanReingold.runLayout( width, width, graph, 0.01f, 0, false, false );
+		new RandomLayout().runLayout( graph, 0, width );
+		new FruchtermanReingold().runLayout( width, width, graph, 0.01f, 0, false, false );
 		graph.writeGraph( Settings.GRAPHS_PATH + "MDS_FR.dnv" );
 	}
 

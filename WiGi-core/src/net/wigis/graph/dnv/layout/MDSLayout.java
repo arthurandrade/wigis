@@ -39,7 +39,7 @@ import net.wigis.settings.Settings;
  * 
  * @author Brynjar Gretarsson
  */
-public class MDSLayout
+public class MDSLayout implements MDSLayoutInterface
 {
 
 	/**
@@ -52,7 +52,7 @@ public class MDSLayout
 	 * @param useStressMinimization
 	 *            the use stress minimization
 	 */
-	public static void runLayout( DNVGraph graph, int level, boolean useStressMinimization )
+	public void runLayout( DNVGraph graph, int level, boolean useStressMinimization )
 	{
 		List<DNVNode> nodes = graph.getNodes( level );
 		double dissimilarityMatrix[][] = createDissimilarityMatrix( nodes );
@@ -180,7 +180,15 @@ public class MDSLayout
 	{
 		GraphsPathFilter.init();
 		DNVGraph graph = new DNVGraph( Settings.GRAPHS_PATH + "_UCI_venezuela.dnv" );
-		runLayout( graph, 0, true );
+		new MDSLayout().runLayout( graph, 0, true );
 		graph.writeGraph( Settings.GRAPHS_PATH + "_UCI_venezuela_MDS.dnv" );
+	}
+
+	public static final String LABEL = "MDS Layout";
+	
+	@Override
+	public String getLabel()
+	{
+		return LABEL;
 	}
 }

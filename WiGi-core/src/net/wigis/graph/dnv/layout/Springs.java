@@ -38,6 +38,7 @@ import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Statistics;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
+import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -45,7 +46,7 @@ import net.wigis.graph.dnv.utilities.Vector2D;
  * 
  * @author Brynjar Gretarsson
  */
-public class Springs
+public class Springs implements TimeLimitedLayoutInterface
 {
 
 	/** The graph. */
@@ -72,6 +73,10 @@ public class Springs
 	 */
 	// // private static Log logger = LogFactory.getLog( Springs.class );
 
+	public Springs()
+	{		
+	}
+	
 	public Springs( DNVGraph graph, Integer level, boolean initializePositions )
 	{
 		this.graph = graph;
@@ -871,7 +876,8 @@ public class Springs
 	 * @param layoutAllLevels
 	 *            the layout all levels
 	 */
-	public static void runlayout( DNVGraph graph, int level, double maxSeconds, boolean initializePositions, boolean layoutAllLevels )
+	@Override
+	public void runLayout( DNVGraph graph, int level, double maxSeconds, boolean initializePositions, boolean layoutAllLevels )
 	{
 		if( layoutAllLevels )
 		{
@@ -917,5 +923,14 @@ public class Springs
 			activeNodes = graph.getActiveNodes( level ).size();
 			totalTime = timer.getTotalTime( Timer.SECONDS );
 		}
+	}
+
+	/** The Constant SPRING_LAYOUT. */
+	public static final String LABEL = "Spring Layout";
+
+	@Override
+	public String getLabel()
+	{
+		return LABEL;
 	}
 }

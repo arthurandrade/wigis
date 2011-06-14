@@ -35,6 +35,7 @@ import net.wigis.graph.dnv.utilities.NumberOfNeighborSort;
 import net.wigis.graph.dnv.utilities.Randomize;
 import net.wigis.graph.dnv.utilities.SortByLongProperty;
 import net.wigis.graph.dnv.utilities.Vector2D;
+import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -42,7 +43,7 @@ import net.wigis.graph.dnv.utilities.Vector2D;
  * 
  * @author Brynjar Gretarsson
  */
-public class CircularLayout
+public class CircularLayout implements SortingLayoutInterface
 {
 
 	/** The Constant NO_SORT. */
@@ -88,7 +89,8 @@ public class CircularLayout
 	 * @param sort
 	 *            the sort
 	 */
-	public static void runLayout( DNVGraph graph, int level, String sort )
+	@Override
+	public void runLayout( DNVGraph graph, int level, String sort )
 	{
 		List<DNVNode> nodes = graph.getNodes( level );
 		Vector2D center = new Vector2D( 0, 0 );
@@ -200,5 +202,13 @@ public class CircularLayout
 		float y_pos = (float)( Math.sin( radians ) * radius );
 
 		return new Vector2D( center.getX() + x_pos, center.getY() + y_pos );
+	}
+
+	public static final String LABEL = "Circular Layout";
+	
+	@Override
+	public String getLabel()
+	{
+		return LABEL;
 	}
 }
