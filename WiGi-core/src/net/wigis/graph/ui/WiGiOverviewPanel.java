@@ -2,6 +2,7 @@ package net.wigis.graph.ui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -28,6 +29,8 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	private PaintBean pb;
 	
 	public static final int OVERVIEW_SIZE = 250;
+	
+	private Component renderComponent = null;
 	
 	public WiGiOverviewPanel( PaintBean pb )
 	{
@@ -58,14 +61,17 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 		g2d.setStroke( new BasicStroke( 2 ) );
 		Vector3D color = GraphFunctions.convertColor( "#4a75b5" );
 		g2d.setColor( new Color( color.getX(), color.getY(), color.getZ() ) );
-		g2d.drawRect( minX, minY, maxX - minX, maxY - minY );
+		g2d.drawRect( minX, minY, maxX - minX - 1, maxY - minY - 1 );
 		
-		g2d.drawLine( maxX-10, maxY, maxX, maxY-10 );
-		g2d.drawLine( maxX-6, maxY, maxX, maxY-6 );
+		g2d.drawLine( maxX-10, maxY-1, maxX-1, maxY-10 );
+		g2d.drawLine( maxX-6, maxY-1, maxX-1, maxY-6 );
+		
 		g2d.drawLine( maxX-10, minY, maxX, minY+10 );
 		g2d.drawLine( maxX-6, minY, maxX, minY+6 );
+		
 		g2d.drawLine( minX+10, minY, minX, minY+10 );
 		g2d.drawLine( minX+6, minY, minX, minY+6 );
+		
 		g2d.drawLine( minX+10, maxY, minX, maxY-10 );
 		g2d.drawLine( minX+6, maxY, minX, maxY-6 );
 ////		g2d.drawRect( maxX-5, maxY-5, 10, 10 );
@@ -92,6 +98,10 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 			pb.setMaxX( 1 );
 			pb.setMinY( 0 );
 			pb.setMaxY( 1 );
+			if( renderComponent != null )
+			{
+				renderComponent.repaint();
+			}
 		}
 	}
 	
@@ -162,6 +172,10 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 		draggingNECorner = false;
 		draggingNWCorner = false;
 		draggingSWCorner = false;
+		if( renderComponent != null )
+		{
+			renderComponent.repaint();
+		}
 	}
 
 	@Override
@@ -218,6 +232,10 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 
 		mouseDownX = x;
 		mouseDownY = y;
+		if( renderComponent != null )
+		{
+			renderComponent.repaint();
+		}
 	}
 	
 	private static final Cursor SE_RESIZE_CURSOR = new Cursor( Cursor.SE_RESIZE_CURSOR ); 
@@ -274,5 +292,15 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 		}
 
 		this.setCursor( DEFAULT_CURSOR );
+	}
+
+	public void setRenderComponent( Component renderComponent )
+	{
+		this.renderComponent = renderComponent;
+	}
+
+	public Component getRenderComponent()
+	{
+		return renderComponent;
 	}
 }

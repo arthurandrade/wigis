@@ -35,6 +35,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +66,7 @@ import net.wigis.web.GraphServlet;
  * 
  * @author Brynjar Gretarsson
  */
-public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, MouseMotionListener, ComponentListener, FocusListener
+public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, FocusListener
 {
 
 	/** The Constant serialVersionUID. */
@@ -72,6 +74,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 
 	/** The pb. */
 	private PaintBean pb;
+	
+	private JFrame overviewFrame;
 
 	/**
 	 * Instantiates a new wi gi gui.
@@ -79,10 +83,11 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 * @param pb
 	 *            the pb
 	 */
-	public WiGiGUI( GLCapabilities caps, PaintBean pb )
+	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame overviewFrame )
 	{
 		super( caps );
 		this.pb = pb;
+		this.overviewFrame = overviewFrame;
 	}
 
 	private Timer timer = new Timer( Timer.NANOSECONDS );
@@ -107,6 +112,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		try
 		{
 			pb.paint( (Graphics2D)g, getWidth(), getHeight(), false, true );
+			overviewFrame.repaint();
 		}
 		catch( IOException e )
 		{
@@ -126,7 +132,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 		GraphsPathFilter.init();
 		PaintBean pb = new PaintBean();
-		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
+		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1small.dnv" );
 		pb.setWhiteSpaceBuffer( 0.14f );
 		pb.setDrawNeighborHighlight( true );
 		pb.setInterpolationMethodUseWholeGraph( true );
@@ -138,22 +144,25 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		GLCapabilities caps = new GLCapabilities();
 		caps.setDoubleBuffered( true );
-		WiGiGUI canvas = new WiGiGUI( caps, pb );
+		JFrame overviewFrame = new JFrame("Overview");
+		overviewFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		overviewFrame.setUndecorated( true );
+		overviewFrame.setSize( WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
+		overviewFrame.setResizable( false );
+		WiGiOverviewPanel overviewPanel = new WiGiOverviewPanel( pb );
+		overviewFrame.getContentPane().add( overviewPanel );
+		WiGiGUI canvas = new WiGiGUI( caps, pb, overviewFrame );
+		overviewPanel.setRenderComponent( canvas );
 		canvas.setBounds( 0, 0, pb.getWidthInt(), pb.getHeightInt() );
 //		canvas.setDoubleBuffered( true );
 		canvas.addMouseListener( canvas );
 		canvas.addMouseMotionListener( canvas );
+		canvas.addMouseWheelListener( canvas );
 		canvas.addKeyListener( canvas );
+		frame.addComponentListener( canvas );
 		frame.add( canvas );
 		frame.setVisible( true );
-		JFrame overviewFrame = new JFrame("Overview");
-		overviewFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-		overviewFrame.setUndecorated( true );
-//		overviewFrame.setSize( 200, 200 );
 //		moveOverview();
-		overviewFrame.setResizable( false );
-//		WiGiOverviewPanel overviewPanel = new WiGiOverviewPanel( pb );
-//		overviewFrame.getContentPane().add( overviewPanel );
 		overviewFrame.setBounds( frame.getX() + frame.getWidth() + 10, frame.getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setVisible(true);
 		
@@ -162,6 +171,69 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		
 	}
 
+	
+	@Override
+	public void mouseWheelMoved( MouseWheelEvent e )
+	{
+		int x = e.getX();
+		int y = e.getY();
+		
+		int amount = e.getWheelRotation();
+		
+		zoom( x, y, amount );
+		
+		this.repaint();
+	}
+
+	public void zoom( int x, int y, float amount )
+	{
+//		System.out.println( "Zooming " + x + ", " + y + " : " + amount );
+		int zoomOut = 0;
+		if( amount > 0 )
+			zoomOut = 1;
+		else if( amount < 0 )
+			zoomOut = -1;
+		
+		int minX = (int)Math.round( WiGiOverviewPanel.OVERVIEW_SIZE * pb.getMinX() );
+		int maxX = (int)Math.round( WiGiOverviewPanel.OVERVIEW_SIZE * pb.getMaxX() );
+		int minY = (int)Math.round( WiGiOverviewPanel.OVERVIEW_SIZE * pb.getMinY() );
+		int maxY = (int)Math.round( WiGiOverviewPanel.OVERVIEW_SIZE * pb.getMaxY() );
+
+		int width = maxX - minX;
+		int height = maxY - minY;
+		
+		if( zoomOut != 1 && width <= 10 )
+		{
+			return;
+		}
+		
+		int offset;
+		if( zoomOut == 1 )
+		{
+			offset = width / 3;
+		}
+		else
+		{
+			offset = width / 4;
+		}
+
+//	    if ( width + zoomOut*offset > 10)
+//   	    {
+   	        // zoom like in google maps, depends on where the mouse is at the time of the mouse wheel scroll
+   	        double percent = x / pb.getWidth();
+   	        
+   	        int zoomNewW = width + zoomOut*offset;
+   	        double zoomNewL = (percent*width + minX) - percent*zoomNewW;
+   	        pb.setMinX( zoomNewL / (double)WiGiOverviewPanel.OVERVIEW_SIZE );
+   	        pb.setMaxX( (zoomNewL+zoomNewW) / (double)WiGiOverviewPanel.OVERVIEW_SIZE );
+   	        
+   	        percent = y / pb.getHeight();
+   	        int zoomNewH = height + zoomOut*offset;
+   	        double zoomNewT = (percent*height + minY) - percent*zoomNewH;
+   	        pb.setMinY( zoomNewT / (double)WiGiOverviewPanel.OVERVIEW_SIZE );
+   	        pb.setMaxY( (zoomNewT+zoomNewH ) / (double)WiGiOverviewPanel.OVERVIEW_SIZE );
+//   	    }
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -206,8 +278,14 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void mouseClicked( MouseEvent e )
 	{
-	// TODO Auto-generated method stub
-
+		if( e.getClickCount() == 2 )
+		{
+			pb.setMinX( 0 );
+			pb.setMaxX( 1 );
+			pb.setMinY( 0 );
+			pb.setMaxY( 1 );
+			this.repaint();
+		}
 	}
 
 	/*
@@ -564,8 +642,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void componentMoved( ComponentEvent e )
 	{
-	// TODO Auto-generated method stub
-
+//		System.out.println( "Component Moved" );
+		overviewFrame.setBounds( e.getComponent().getX() + e.getComponent().getWidth() + 10, e.getComponent().getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 	}
 
 	/*
