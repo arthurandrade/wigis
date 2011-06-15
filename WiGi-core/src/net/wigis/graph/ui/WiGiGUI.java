@@ -24,8 +24,11 @@
 
 package net.wigis.graph.ui;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -38,23 +41,17 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLJPanel;
 import javax.swing.JFrame;
 
 import net.wigis.graph.GraphsPathFilter;
-import net.wigis.graph.ImageRenderer;
 import net.wigis.graph.PaintBean;
-import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
-import net.wigis.graph.dnv.utilities.SortByLabelSize;
 import net.wigis.graph.dnv.utilities.Timer;
-import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.settings.Settings;
 import net.wigis.web.GraphServlet;
 
@@ -76,6 +73,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	private PaintBean pb;
 	
 	private JFrame overviewFrame;
+	
+	private WiGiGUIHandler handler;
 
 	/**
 	 * Instantiates a new wi gi gui.
@@ -88,6 +87,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		super( caps );
 		this.pb = pb;
 		this.overviewFrame = overviewFrame;
+		handler = new WiGiGUIHandler( pb, overviewFrame );
 	}
 
 	private Timer timer = new Timer( Timer.NANOSECONDS );
@@ -139,6 +139,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		pb.setScalePositions( true );
 		pb.setWidth( 800 );
 		pb.setHeight( 800 );
+		pb.setPlaySound( true );
 		JFrame frame = new JFrame( "WiGi - GUI" );
 		frame.setSize( pb.getWidthInt(), pb.getHeightInt() );
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
@@ -159,16 +160,24 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		canvas.addMouseMotionListener( canvas );
 		canvas.addMouseWheelListener( canvas );
 		canvas.addKeyListener( canvas );
+		
+		
 		frame.addComponentListener( canvas );
 		frame.add( canvas );
-		frame.setVisible( true );
 //		moveOverview();
+		
+	    // Get the size of the screen
+	    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+	    // Determine the new location of the window
+	    int w = frame.getSize().width;
+	    int h = frame.getSize().height;
+	    int x = (dim.width-w)/2;
+	    int y = (dim.height-h)/2;
+	    // Move the window
+	    frame.setLocation(x, y);
+		frame.setVisible( true );
 		overviewFrame.setBounds( frame.getX() + frame.getWidth() + 10, frame.getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setVisible(true);
-		
-//		frame.createBufferStrategy( 2 );
-//		BufferStrategy strategy = frame.getBufferStrategy();
-		
 	}
 
 	
@@ -280,14 +289,30 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 		if( e.getClickCount() == 2 )
 		{
-			pb.setMinX( 0 );
-			pb.setMaxX( 1 );
-			pb.setMinY( 0 );
-			pb.setMaxY( 1 );
-			this.repaint();
+			handler.handleDoubleClick();
+			AnimationThread a = new AnimationThread( this );
+			a.start();
 		}
 	}
 
+	private class AnimationThread extends Thread
+	{
+		Component c;
+		public AnimationThread( Component c )
+		{
+			this.c = c;
+		}
+		
+		public void run()
+		{
+			DNVGraph graph = pb.getGraph();
+			while( graph.getAnimations().size() > 0 )
+			{
+				c.repaint();
+			}
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -324,6 +349,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	/** The ctrl pressed. */
 	boolean ctrlPressed = false;
 
+	private int selectionBuffer = 10;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -335,6 +362,14 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		mouseDownX = e.getPoint().x;
 		mouseDownY = e.getPoint().y;
 
+		selectedNode = handler.picking( mouseDownX, mouseDownY, selectionBuffer, ctrlPressed );
+		if( selectedNode != null )
+		{
+			handler.playSound( 0 );
+			GraphServlet.selectNode( pb, pb.getGraph(), Integer.MAX_VALUE, (int)pb.getLevel(), selectedNode );
+		}
+		pb.setSelectedNode( selectedNode, ctrlPressed );
+/*
 		DNVGraph graph = pb.getGraph();
 		int level = (int)pb.getLevel();
 
@@ -537,7 +572,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 				}
 			}
 		}
-
+*/
 		this.repaint();
 	}
 
@@ -643,7 +678,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	public void componentMoved( ComponentEvent e )
 	{
 //		System.out.println( "Component Moved" );
-		overviewFrame.setBounds( e.getComponent().getX() + e.getComponent().getWidth() + 10, e.getComponent().getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
+		handler.moveOverview( e.getComponent() );
 	}
 
 	/*
@@ -657,6 +692,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 		pb.setWidth( e.getComponent().getWidth() );
 		pb.setHeight( e.getComponent().getHeight() );
+		handler.moveOverview( e.getComponent() );
 		repaint();
 	}
 
