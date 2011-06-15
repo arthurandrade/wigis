@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="lib/arq-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/arq-extra-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/blackbook-sdk-3.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/bsh-2.0b4.jar"/>
 	<classpathentry kind="lib" path="lib/charts4j-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/collections-generic-4.01.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.7.0.jar"/>
@@ -36,41 +35,26 @@
 	<classpathentry kind="lib" path="lib/dnsjava-2.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/el-ri-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/ezmorph-1.0.6.jar"/>
-	<classpathentry kind="lib" path="lib/facebook-java-api-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/facebook-java-api-annotation-processor-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/facebook-java-api-schema-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/fastutil-5.0.3-heritrix-subset-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/flex-messaging-common.jar"/>
-	<classpathentry kind="lib" path="lib/flex-messaging-core.jar"/>
-	<classpathentry kind="lib" path="lib/flex-messaging-opt.jar"/>
-	<classpathentry kind="lib" path="lib/flex-messaging-proxy.jar"/>
-	<classpathentry kind="lib" path="lib/flex-messaging-remoting.jar"/>
-	<classpathentry kind="lib" path="lib/flex-rds-server.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="lib/graphml.jar"/>
-	<classpathentry kind="lib" path="lib/heritrix-1.14.3.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-2.7.jar"/>
 	<classpathentry kind="lib" path="lib/htmlunit-core-js-2.7.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j-3.4.4.jar"/>
 	<classpathentry kind="lib" path="lib/iri-0.7.jar"/>
-	<classpathentry kind="lib" path="lib/itext-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/Jama-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jasper-compiler-tomcat-4.1.30.jar"/>
 	<classpathentry kind="lib" path="lib/jasper-runtime-tomcat-4.1.30.jar"/>
 	<classpathentry kind="lib" path="lib/javaswf-CVS-SNAPSHOT-1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-api-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.1.9.jar"/>
-	<classpathentry kind="lib" path="lib/jcommon-1.0.16.jar"/>
 	<classpathentry kind="lib" path="lib/je-3.3.75.jar"/>
 	<classpathentry kind="lib" path="lib/jena-2.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/jericho-html-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jets3t-0.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-4.2.23.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-client-7.2.0.v20101020.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-http-7.2.0.v20101020.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-io-7.2.0.v20101020.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-util-7.2.0.v20101020.jar"/>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/jogl.jar"/>
 	<classpathentry kind="lib" path="lib/jsf-facelets-1.1.15.B1.jar"/>
 	<classpathentry kind="lib" path="lib/json-20080701.jar"/>
@@ -81,7 +65,6 @@
 	<classpathentry kind="lib" path="lib/jung-graph-impl-2.0-alpha3.jar"/>
 	<classpathentry kind="lib" path="lib/jung-visualization-2.0-alpha3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
-	<classpathentry kind="lib" path="lib/libidn-0.5.9.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-analyzers-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-2.4.0.jar"/>
@@ -93,8 +76,6 @@
 	<classpathentry kind="lib" path="lib/lucene-snowball-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-spellchecker-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/mdsj.jar"/>
-	<classpathentry kind="lib" path="lib/mg4j-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="lib/nekohtml-1.9.14.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/opengl.jar"/>
@@ -112,11 +93,12 @@
 	<classpathentry kind="lib" path="lib/servlet-tomcat-4.1.30.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.6.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-jcl-1.5.6.jar"/>
-	<classpathentry kind="lib" path="lib/stax-api-1.0-2.jar"/>
 	<classpathentry kind="lib" path="lib/tar.jar"/>
 	<classpathentry kind="lib" path="lib/wstx-asl-3.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/xalan-2.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis-1.3.04.jar"/>
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.13.jar"/>
+	<classpathentry kind="lib" path="lib/jcommon-1.0.16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

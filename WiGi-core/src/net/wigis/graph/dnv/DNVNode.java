@@ -50,7 +50,7 @@ import net.wigis.svetlin.__jsf;
 import net.wigis.web.ContextLookup;
 import blackbook.service.api.ResourceDecorator;
 
-import com.google.code.facebookapi.FacebookException;
+import com.restfb.exception.FacebookException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -2891,7 +2891,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void facebookAddToProfile() throws FacebookException, IOException
+	public void facebookAddToProfile() throws IOException
 	{
 		if( facebookCanAdd )
 		{
