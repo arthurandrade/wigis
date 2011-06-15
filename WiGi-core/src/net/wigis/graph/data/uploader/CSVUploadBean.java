@@ -476,7 +476,7 @@ public class CSVUploadBean
 	 * main graph
 	 */
 	/** The WIG i_ url. */
-	private final String WIGI_URL = "/WiGi/wigi/WiGiViewerPanel.faces";
+	private final String WIGI_URL = "/wigi/WiGiViewerPanel.faces";
 
 	/**
 	 * Convert.
@@ -537,7 +537,7 @@ public class CSVUploadBean
 			// redirect to visualizer
 			try
 			{
-				ec.redirect( WIGI_URL );
+				ec.redirect( p.getContextPath() + WIGI_URL );
 			}
 			catch( IOException e )
 			{

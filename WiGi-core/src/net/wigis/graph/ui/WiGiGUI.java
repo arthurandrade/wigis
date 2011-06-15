@@ -174,12 +174,11 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	    int x = (dim.width-w)/2;
 	    int y = (dim.height-h)/2;
 	    // Move the window
-	    frame.setLocation(x, y);
+	    frame.setLocation( x, y);
 		frame.setVisible( true );
 		overviewFrame.setBounds( frame.getX() + frame.getWidth() + 10, frame.getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setVisible(true);
 	}
-
 	
 	@Override
 	public void mouseWheelMoved( MouseWheelEvent e )

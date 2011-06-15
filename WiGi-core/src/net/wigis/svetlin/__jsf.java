@@ -29,6 +29,8 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import net.wigis.graph.PaintBean;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class jsf.
@@ -114,10 +116,11 @@ public class __jsf
 	
 	public static String getHtml_forHyperlink_toCall_JavaBean(String text, String formId, String hiddenButtonId, String param)
 	{
+		PaintBean pb = PaintBean.getCurrentInstance();
 		return 
 			"<a href='#' " +
 			"	onclick=\"" +
-			"		A4J.AJAX.Submit('_viewRoot','" + formId + "',event,{'similarityGroupingId':'" + formId + ":" + hiddenButtonId + "','parameters':{'" + PARAM_NAME + "':'" + param + "','" + formId + ":" + hiddenButtonId + "':'" + formId + ":" + hiddenButtonId + "'} ,'actionUrl':'/WiGi/wigi/WiGiViewerPanel.faces'} );" +
+			"		A4J.AJAX.Submit('_viewRoot','" + formId + "',event,{'similarityGroupingId':'" + formId + ":" + hiddenButtonId + "','parameters':{'" + PARAM_NAME + "':'" + param + "','" + formId + ":" + hiddenButtonId + "':'" + formId + ":" + hiddenButtonId + "'} ,'actionUrl':'" + pb.getContextPath() + "/wigi/WiGiViewerPanel.faces'} );" +
 			"\">" +
 				text + 
 			"</a>";

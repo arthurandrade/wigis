@@ -701,7 +701,6 @@ public final class GraphFunctions
 		float value = findShortestPathDistance( edgeQueue, visitedNodes, 0, Float.POSITIVE_INFINITY, startNode, goalNode, false, false );
 
 		return value;
-
 	}
 
 	/** The add timer. */

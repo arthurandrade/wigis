@@ -34,9 +34,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 
-//import com.googlecode.charts4j.Color;
-
-
 public class StatsBean
 {
 	public static void p(Object o)

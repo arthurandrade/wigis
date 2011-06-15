@@ -2721,7 +2721,8 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 				}
 				else
 				{
-					value = "<a href=\"/WiGi/wigi/components/viewContents.faces?id=" + id + "\" target=\"_blank\">" + "View contents" + "</a>";
+					PaintBean pb = PaintBean.getCurrentInstance();
+					value = "<a href=\"" + pb.getContextPath() + "/wigi/components/viewContents.faces?id=" + id + "\" target=\"_blank\">" + "View contents" + "</a>";
 					details.append( "<tr><td>" ).append( key ).append( ":</td><td>" ).append( value ).append( "</td></tr>" );
 				}
 			}
@@ -2742,7 +2743,8 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 				value = "";
 				if( neighbor.getProperty( "Contents" ) != null )
 				{
-					value = "<td><a href=\"/WiGi/wigi/components/viewContents.faces?id=" + neighbor.getId() + "\" target=\"_blank\">"
+					PaintBean pb = PaintBean.getCurrentInstance();
+					value = "<td><a href=\"" + pb.getContextPath() + "/wigi/components/viewContents.faces?id=" + neighbor.getId() + "\" target=\"_blank\">"
 							+ neighbor.getLabel() + "</a></td>";
 				}
 				else
@@ -3143,7 +3145,8 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 			}
 			else
 			{
-				value = "<a href=\"/WiGi/wigi/components/viewContents.faces?id=" + id + "\" target=\"_blank\">" + "View contents" + "</a>";
+				PaintBean pb = PaintBean.getCurrentInstance();
+				value = "<a href=\"" + pb.getContextPath() + "/wigi/components/viewContents.faces?id=" + id + "\" target=\"_blank\">" + "View contents" + "</a>";
 				propertiesHtml += "<tr><td>" + key + "</td><td>" + value + "</td></tr>";
 			}
 		}

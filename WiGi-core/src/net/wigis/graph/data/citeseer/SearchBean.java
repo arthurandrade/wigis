@@ -60,7 +60,7 @@ public class SearchBean
 	private final String OUTPUT_FILE_EXTENSION = ".dnv";
 
 	/** The IF v_ url. */
-	private final String IFV_URL = "/WiGi/wigi/WiGiViewerPanel.faces";
+	private final String IFV_URL = "/wigi/WiGiViewerPanel.faces";
 
 	/** The PUBLICATIO n_ nod e_ radius. */
 	private final int PUBLICATION_NODE_RADIUS = 3;
@@ -575,7 +575,7 @@ public class SearchBean
 		// this.searchResults = null;
 		g.writeGraph( selectedFile );
 		FacesContext fc = FacesContext.getCurrentInstance();
-		PaintBean pb = (PaintBean)ContextLookup.lookup( "paintBean", fc );
+		PaintBean pb = PaintBean.getCurrentInstance();
 		GraphsBean gb = (GraphsBean)ContextLookup.lookup( "graphsBean", fc );
 		if( gb != null )
 			gb.buildFileList();
@@ -590,13 +590,13 @@ public class SearchBean
 		// return the paintBean to the external context
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		ExternalContext ec = facesContext.getExternalContext();
-		ec.getRequestMap().put( "paintBean", p );
+		ec.getRequestMap().put( "paintBean", pb );
 
 		// redirect to visualizer
 		try
 		{
 			showMessage( "" );
-			ec.redirect( IFV_URL );
+			ec.redirect( pb.getContextPath() + IFV_URL );
 
 		}
 		catch( IOException e )
