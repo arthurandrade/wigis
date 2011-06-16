@@ -2226,8 +2226,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 			nodes = new HashMap<Integer, DNVNode>();
 			nodesAtDistance.put( distance, nodes );
 		}
-
-		nodes.put( node.getId(), node );
+		synchronized( nodes )
+		{
+			nodes.put( node.getId(), node );
+		}
 	}
 
 	/**

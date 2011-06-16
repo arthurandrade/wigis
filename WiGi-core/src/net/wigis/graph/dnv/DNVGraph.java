@@ -134,8 +134,11 @@ public class DNVGraph implements Serializable
 	/** The must draw labels. */
 	private Map<Integer, Map<Integer, DNVEntity>> mustDrawLabels = new HashMap<Integer, Map<Integer, DNVEntity>>();
 
-	/** The properties. */
+	/** The properties. (persisted to file) */
 	private Map<String, String> properties = new HashMap<String, String>();
+	
+	/** The attributes. (not persisted to file) */
+	private Map<String,Object> attributes;
 	
 	private List<Animation> animations = new ArrayList<Animation>();
 
@@ -3171,5 +3174,81 @@ public class DNVGraph implements Serializable
 		this.connectedComponents = connectedComponents;
 	}
 	
-	//======================================	
+	//======================================
+	
+	/**
+	 * Inits the attributes.
+	 */
+	protected void initAttributes()
+	{
+		if( attributes == null )
+		{
+			attributes = new HashMap<String, Object>();
+		}
+	}
+
+	/**
+	 * Removes the attribute.
+	 * 
+	 * @param key
+	 *            the key
+	 */
+	public void removeAttribute( String key )
+	{
+		initAttributes();
+		synchronized( attributes )
+		{
+			attributes.remove( key );
+		}
+
+	}
+
+	/**
+	 * Sets the attribute.
+	 * 
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 */
+	public void setAttribute( String key, Object value )
+	{
+		initAttributes();
+		synchronized( attributes )
+		{
+			attributes.put( key, value );
+		}
+	}
+
+	/**
+	 * Gets the attribute.
+	 * 
+	 * @param key
+	 *            the key
+	 * @return the attribute
+	 */
+	public Object getAttribute( String key )
+	{
+		initAttributes();
+		synchronized( attributes )
+		{
+			return attributes.get( key );
+		}
+	}
+
+	/**
+	 * Checks for attribute.
+	 * 
+	 * @param attribute
+	 *            the attribute
+	 * @return true, if successful
+	 */
+	public boolean hasAttribute( String attribute )
+	{
+		initAttributes();
+		synchronized( attributes )
+		{
+			return attributes.containsKey( attribute );
+		}
+	}
 }

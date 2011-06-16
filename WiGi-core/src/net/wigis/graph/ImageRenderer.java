@@ -51,6 +51,7 @@ import java.util.Map;
 
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVEntity;
+import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.SubGraph;
 import net.wigis.graph.dnv.animations.Animation;
@@ -376,32 +377,35 @@ public class ImageRenderer
 			Vector2D maxPos = new Vector2D(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY );
 			Vector2D minPos = new Vector2D(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY );
 			float maxRadius = Float.NEGATIVE_INFINITY;
-			for( DNVNode node : nodes.values() )
+			synchronized( nodes )
 			{
-				if( node.getPosition( true ).getX() > maxPos.getX() )
+				for( DNVNode node : nodes.values() )
 				{
-					maxPos.setX( node.getPosition( true ).getX() );
-				}
-				if( node.getPosition( true ).getY() > maxPos.getY() )
-				{
-					maxPos.setY( node.getPosition( true ).getY() );
-				}
-	
-				if( node.getPosition( true ).getX() < minPos.getX() )
-				{
-					minPos.setX( node.getPosition( true ).getX() );
-				}
-				if( node.getPosition( true ).getY() < minPos.getY() )
-				{
-					minPos.setY( node.getPosition( true ).getY() );
-				}
-				
-				if( node.getRadius() > maxRadius )
-				{
-					maxRadius = node.getRadius();
+					if( node.getPosition( true ).getX() > maxPos.getX() )
+					{
+						maxPos.setX( node.getPosition( true ).getX() );
+					}
+					if( node.getPosition( true ).getY() > maxPos.getY() )
+					{
+						maxPos.setY( node.getPosition( true ).getY() );
+					}
+		
+					if( node.getPosition( true ).getX() < minPos.getX() )
+					{
+						minPos.setX( node.getPosition( true ).getX() );
+					}
+					if( node.getPosition( true ).getY() < minPos.getY() )
+					{
+						minPos.setY( node.getPosition( true ).getY() );
+					}
+					
+					if( node.getRadius() > maxRadius )
+					{
+						maxRadius = node.getRadius();
+					}
 				}
 			}
-			
+				
 			Vector2D maxPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, maxPos );
 			Vector2D minPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, minPos );
 			maxPosScreen.setX( maxPosScreen.getX() + maxRadius * nodeWidth );
@@ -574,7 +578,7 @@ public class ImageRenderer
 			{
 				nodes = getNodesWithoutOverlappingLabels( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY,
 						maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors );
+						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
 			}
 			for( int i = 0; i < nodes.size(); i++ )
 			{
@@ -610,7 +614,7 @@ public class ImageRenderer
 				{
 					nodes = getNodesWithoutOverlappingLabels( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY,
 							maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-							curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors );
+							curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
 				}
 				for( int i = 0; i < nodes.size(); i++ )
 				{
@@ -640,7 +644,7 @@ public class ImageRenderer
 				Collections.sort( selectedNodes, sortByLabelSize );
 				selectedNodes = getNodesWithoutOverlappingLabels( selectedNodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX,
 						maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors );
+						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
 			}
 			int numberOfLabels = Math.min( maxNumberOfSelectedLabels, selectedNodes.size() );
 			for( int i = 0; i < numberOfLabels; i++ )
@@ -766,7 +770,7 @@ public class ImageRenderer
 			{
 				mustDrawNodes = getNodesWithoutOverlappingLabels( mustDrawNodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX,
 						maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors );
+						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
 			}
 			for( DNVNode node : mustDrawNodes )
 			{
@@ -1115,6 +1119,8 @@ public class ImageRenderer
 
 	}
 
+	
+	public static final int DEFAULT_LABEL_HEIGHT = 10;
 	/**
 	 * Gets the nodes without overlapping labels.
 	 * 
@@ -1167,7 +1173,7 @@ public class ImageRenderer
 	private static List<DNVNode> getNodesWithoutOverlappingLabels( List<DNVNode> nodes, Graphics2D g, int nodeWidth, boolean interpolationLabels,
 			boolean curvedLabels, double labelSize, double minX, double maxX, double minY, double maxY, double minXPercent, double maxXPercent,
 			double minYPercent, double maxYPercent, int width, int height, double ratio, boolean scaleLabels, int maxLabelLength,
-			int curvedLabelAngle, boolean boldLabels, float fadeFactor, boolean highlightNeighbors )
+			int curvedLabelAngle, boolean boldLabels, float fadeFactor, boolean highlightNeighbors, DNVGraph graph )
 	{
 		List<DNVNode> goodNodes = new ArrayList<DNVNode>();
 //		DNVNode node;
@@ -1177,7 +1183,7 @@ public class ImageRenderer
 		Rectangle boundingRectangle2;
 		float overlap = 1;
 		Map<Integer,Rectangle> boundingRectangles = new HashMap<Integer,Rectangle>();
-		float maxHeight = 10;
+		float maxHeight = DEFAULT_LABEL_HEIGHT;
 		Map<Integer,List<DNVNode>> nodesByYPos = new HashMap<Integer,List<DNVNode>>();
 		Map<Integer,Map<Integer,Integer>> nodeAndKeyToIndex = new HashMap<Integer,Map<Integer,Integer>>();
 		for( int i = 0; i < nodes.size(); i++ )
@@ -1192,11 +1198,13 @@ public class ImageRenderer
 					labelSize, minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, nodes.size() > 1000 );
 			boundingRectangles.put( tempNode.getId(), boundingRectangle );
 //			maxHeight = Math.max( maxHeight, boundingRectangle.height );
-			Integer key = getKey( boundingRectangle, maxHeight );
+			Integer key = getKey( boundingRectangle.positionY, maxHeight );
 			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key );
 			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key-1 );
 			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key+1 );
 		}
+		
+		graph.setAttribute( "nodesByYPos", nodesByYPos );
 		
 		for( DNVNode node : nodes )
 		{
@@ -1205,7 +1213,7 @@ public class ImageRenderer
 			{
 				overlap = 1;
 				boundingRectangle = boundingRectangles.get( node.getId() );
-				Integer key = getKey( boundingRectangle, maxHeight );
+				Integer key = getKey( boundingRectangle.positionY, maxHeight );
 				List<DNVNode> nodes2 = nodesByYPos.get( key );
 				try
 				{
@@ -1257,9 +1265,8 @@ public class ImageRenderer
 		return goodNodes;
 	}
 
-	private static Integer getKey( Rectangle boundingRectangle, float maxHeight )
+	public static Integer getKey( float y, float maxHeight )
 	{
-		float y  = boundingRectangle.positionY;
 		Integer key = (int)(y / maxHeight );
 		return key;
 	}

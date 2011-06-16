@@ -100,7 +100,21 @@ public class WiGiGUIHandler
 		int width = pb.getWidthInt();
 		int height = pb.getHeightInt();
 		
-		List<DNVNode> nodes = graph.getNodes( level );
+		List<DNVNode> nodes;
+		if( graph.hasAttribute( "nodesByYPos" ) )
+		{
+			@SuppressWarnings("unchecked")
+			Map<Integer,List<DNVNode>> nodesByYPos = (Map<Integer,List<DNVNode>>)graph.getAttribute( "nodesByYPos" );
+			nodes = nodesByYPos.get( ImageRenderer.getKey( mouseDownY, ImageRenderer.DEFAULT_LABEL_HEIGHT ) );
+			if( nodes == null )
+			{
+				nodes = new ArrayList<DNVNode>();
+			}
+		}
+		else
+		{
+			nodes = graph.getNodes( level );
+		}
 		if( nodes.size() < 1000 )
 		{
 			SortByLabelSize sbls = new SortByLabelSize( pb.isHighlightNeighbors() );
