@@ -14,7 +14,6 @@
 	<classpathentry kind="lib" path="lib/apache-solr-core-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-dataimporthandler-1.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/apache-solr-solrj-1.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/arq-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/arq-extra-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/charts4j-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/collections-generic-4.01.jar"/>
@@ -47,7 +46,6 @@
 	<classpathentry kind="lib" path="lib/jaxb-api-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.1.9.jar"/>
 	<classpathentry kind="lib" path="lib/je-3.3.75.jar"/>
-	<classpathentry kind="lib" path="lib/jena-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/jets3t-0.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-4.2.23.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-client-7.2.0.v20101020.jar"/>

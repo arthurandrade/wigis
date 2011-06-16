@@ -89,6 +89,24 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		this.pb = pb;
 		this.overviewFrame = overviewFrame;
 		handler = new WiGiGUIHandler( pb, overviewFrame );
+		new Thread()
+		{
+			public void run()
+			{
+				while( true )
+				{
+					repaint();
+					try
+					{
+						Thread.sleep( 30 );
+					}
+					catch( InterruptedException e )
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();
 	}
 
 	private Timer timer = new Timer( Timer.NANOSECONDS );
@@ -130,6 +148,14 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void main( String args[] ) throws IOException
+	{
+		init();
+	}
+
+	/**
+	 * 
+	 */
+	public static WiGiGUI init()
 	{
 		GraphsPathFilter.init();
 		PaintBean pb = new PaintBean();
@@ -181,6 +207,12 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 
 		pb.setWidth( canvas.getWidth() );
 		pb.setHeight( canvas.getHeight() );
+		return canvas;
+	}
+	
+	public PaintBean getPaintBean()
+	{
+		return pb;
 	}
 	
 	@Override
