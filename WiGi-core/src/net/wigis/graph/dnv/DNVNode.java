@@ -3161,7 +3161,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		
 		return propertiesHtml;
 	}
-
+	
 	//-------------------------------
 	// neighbors
 	//-------------------------------

@@ -82,7 +82,7 @@ public class WiGiGUIHandler
 		}
 	}
 
-	public DNVNode picking( int mouseDownX, int mouseDownY, int selectionBuffer, boolean ctrlPressed )
+	public DNVNode picking( int mouseDownX, int mouseDownY, int selectionBuffer, boolean ctrlPressed, boolean setSelected )
 	{
 //		System.out.println( "Pick node at " + mouseDownX + ", " + mouseDownY );
 		double minX = pb.getMinX();
@@ -219,7 +219,10 @@ public class WiGiGUIHandler
 //				{
 //					sameNode = true;
 //				}
-				pb.setSelectedNode( node, ctrlPressed );
+				if( setSelected )
+				{
+					pb.setSelectedNode( node, ctrlPressed );
+				}
 //				System.out.println( "Selected " + node.getLabel() + " " + node.getId() );
 				return node;
 			}

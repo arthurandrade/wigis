@@ -52,6 +52,7 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
+import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.settings.Settings;
 import net.wigis.web.GraphServlet;
 
@@ -137,12 +138,11 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		pb.setDrawNeighborHighlight( true );
 		pb.setInterpolationMethodUseWholeGraph( true );
 		pb.setScalePositions( true );
-		pb.setWidth( 800 );
-		pb.setHeight( 800 );
 		pb.setPlaySound( true );
 		JFrame frame = new JFrame( "WiGi - GUI" );
-		frame.setSize( pb.getWidthInt(), pb.getHeightInt() );
+		frame.setSize( 800, 800 );
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+//		frame.setUndecorated( true );
 		GLCapabilities caps = new GLCapabilities();
 		caps.setDoubleBuffered( true );
 		JFrame overviewFrame = new JFrame("Overview");
@@ -161,11 +161,11 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		canvas.addMouseWheelListener( canvas );
 		canvas.addKeyListener( canvas );
 		
-		
 		frame.addComponentListener( canvas );
 		frame.add( canvas );
 //		moveOverview();
 		
+		// Placing window in the center of the screen
 	    // Get the size of the screen
 	    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 	    // Determine the new location of the window
@@ -178,6 +178,9 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		frame.setVisible( true );
 		overviewFrame.setBounds( frame.getX() + frame.getWidth() + 10, frame.getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setVisible(true);
+
+		pb.setWidth( canvas.getWidth() );
+		pb.setHeight( canvas.getHeight() );
 	}
 	
 	@Override
@@ -361,13 +364,16 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		mouseDownX = e.getPoint().x;
 		mouseDownY = e.getPoint().y;
 
-		selectedNode = handler.picking( mouseDownX, mouseDownY, selectionBuffer, ctrlPressed );
+		selectedNode = handler.picking( mouseDownX, mouseDownY, selectionBuffer, ctrlPressed, true );
 		if( selectedNode != null )
 		{
 			handler.playSound( 0 );
 			GraphServlet.selectNode( pb, pb.getGraph(), Integer.MAX_VALUE, (int)pb.getLevel(), selectedNode );
 		}
-		pb.setSelectedNode( selectedNode, ctrlPressed );
+		else
+		{
+			pb.setSelectedNode( selectedNode, ctrlPressed );
+		}
 /*
 		DNVGraph graph = pb.getGraph();
 		int level = (int)pb.getLevel();
@@ -640,6 +646,10 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		repaint();
 	}
 
+	private DNVNode hoveredNode;
+	private Vector3D hoveredOldColor = null;
+	private boolean hoveredOldMustDrawLabel = false;
+	private Vector3D hoveredOldLabelOutlineColor = null;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -649,8 +659,40 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void mouseMoved( MouseEvent e )
 	{
-	// TODO Auto-generated method stub
 
+		synchronized( pb.getGraph() )
+		{
+			if( pb.getGraph().getGraphSize( (int)pb.getLevel() ) < 200 )
+			{
+				DNVNode node = handler.picking( e.getX(), e.getY(), 1, false, false );
+				if( node == null )
+				{	
+					if( hoveredNode != null && hoveredNode != node )
+					{
+						hoveredNode.setOutlineColor( hoveredOldColor );
+						hoveredNode.setForceLabel( hoveredOldMustDrawLabel );
+						hoveredNode.setLabelOutlineColor( hoveredOldLabelOutlineColor );
+						hoveredNode = null;
+					}
+					this.repaint();
+				}
+				else if( hoveredNode == null && node != null )
+				{
+					hoveredNode = node;
+					if( hoveredNode != null )
+					{
+	//					System.out.println( "Hovering over "+ hoveredNode.getLabel() );
+						hoveredOldColor = hoveredNode.getOutlineColor();
+						hoveredNode.setOutlineColor( "#FF0000" );
+						hoveredOldMustDrawLabel = hoveredNode.isForceLabel();
+						hoveredNode.setForceLabel( true );
+						hoveredOldLabelOutlineColor = hoveredNode.getLabelOutlineColor();
+						hoveredNode.setLabelOutlineColor( "#FF0000" );
+					}
+					this.repaint();
+				}
+			}
+		}
 	}
 
 	/*
@@ -689,8 +731,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void componentResized( ComponentEvent e )
 	{
-		pb.setWidth( e.getComponent().getWidth() );
-		pb.setHeight( e.getComponent().getHeight() );
+		pb.setWidth( this.getWidth() );
+		pb.setHeight( this.getHeight() );
 		handler.moveOverview( e.getComponent() );
 		repaint();
 	}
