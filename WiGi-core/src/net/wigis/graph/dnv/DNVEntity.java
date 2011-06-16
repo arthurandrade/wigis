@@ -323,15 +323,40 @@ public class DNVEntity
 	 */
 	public void setColor( String colorStr )
 	{
-		if( colorStr.startsWith( "#" ) )
+		if( colorStr != null )
 		{
-			setColor( GraphFunctions.convertColor( colorStr ) );
+			if( colorStr.startsWith( "#" ) || colorStr.length() == 6 )
+			{
+				try
+				{
+					setColor( GraphFunctions.convertColor( colorStr ) );
+				}
+				catch( NumberFormatException nfe )
+				{
+					throw new IllegalArgumentException( "Invalid color string [" + colorStr + "]" );					
+				}
+			}
+			else if( colorStr.startsWith( "[" ) )
+			{
+				setColor( new Vector3D( colorStr ) );
+			}
+			else if( colorStr.equals( "null" ) )
+			{
+				if( this instanceof DNVEdge )
+				{
+					color =  null;
+				}
+				else
+				{
+					setColor( new Vector3D( 0, 0, 0 ) );
+				}
+			}
+			else
+			{
+				throw new IllegalArgumentException( "Invalid color string [" + colorStr + "]" );
+			}
 		}
-		else if( colorStr.startsWith( "[" ) )
-		{
-			setColor( new Vector3D( colorStr ) );
-		}
-		else if( colorStr.equals( "null" ) )
+		else
 		{
 			if( this instanceof DNVEdge )
 			{
@@ -339,13 +364,11 @@ public class DNVEntity
 			}
 			else
 			{
-				setColor( new Vector3D( 0, 0, 0 ) );
+				setColor( new Vector3D( 0, 0, 0 ) );				
 			}
 		}
-		else
-		{
-			throw new IllegalArgumentException( "Invalid color string");
-		}
+
+			
 	}
 
 	/**

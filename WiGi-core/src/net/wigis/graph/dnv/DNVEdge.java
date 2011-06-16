@@ -27,7 +27,7 @@ package net.wigis.graph.dnv;
 import java.io.Serializable;
 
 import net.wigis.graph.dnv.utilities.Vector3D;
-import blackbook.service.api.EdgeDecorator;
+import blackbook.ejb.client.visualization.proxy.EdgeDecorator;
 
 // TODO: Auto-generated Javadoc
 /**

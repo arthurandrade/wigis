@@ -90,7 +90,7 @@ public class GraphsPathFilter implements Filter
 
 		System.out.println( "Using graphs path: " + Settings.GRAPHS_PATH );
 
-		__Print.header( "server init done" );
+//		__Print.header( "server init done" );
 	}
 
 	/**

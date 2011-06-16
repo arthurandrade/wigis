@@ -48,7 +48,7 @@ import net.wigis.svetlin.__Math;
 import net.wigis.svetlin.__String;
 import net.wigis.svetlin.__jsf;
 import net.wigis.web.ContextLookup;
-import blackbook.service.api.ResourceDecorator;
+import blackbook.ejb.client.visualization.proxy.ResourceDecorator;
 
 import com.restfb.exception.FacebookException;
 

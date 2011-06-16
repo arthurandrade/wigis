@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.animations.Animation;
@@ -50,8 +50,8 @@ import net.wigis.graph.dnv.geometry.Geometric;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
-import blackbook.service.api.EdgeDecorator;
-import blackbook.service.api.ResourceDecorator;
+import blackbook.ejb.client.visualization.proxy.EdgeDecorator;
+import blackbook.ejb.client.visualization.proxy.ResourceDecorator;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1614,53 +1614,56 @@ public class DNVGraph implements Serializable
 	 */
 	public void clearLevel( int level )
 	{
-		List<DNVNode> nodes = getNodes( level );
-		List<DNVEdge> edges = getEdges( level );
+		removeAllEdges( level );
+		removeAllNodes( level );
 
-		List<DNVNode> tempNodes;
-		if( nodes != null )
-		{
-			tempNodes = new ArrayList<DNVNode>( nodes );
-			nodes.clear();
-		}
-		else
-		{
-			tempNodes = new ArrayList<DNVNode>();
-		}
-
-		List<DNVEdge> tempEdges;
-		if( edges != null )
-		{
-			tempEdges = new ArrayList<DNVEdge>( edges );
-			edges.clear();
-		}
-		else
-		{
-			tempEdges = new ArrayList<DNVEdge>();
-		}
-
-		this.edges.remove( level );
-		this.nodes.remove( level );
-		this.nodesAndEdges.remove( level );
-		this.activeNodes.remove( level );
-
-		int numNodes = tempNodes.size();
-		DNVNode tempNode;
-		for( int i = 0; i < numNodes; i++ )
-		{
-			tempNode = tempNodes.get( i );
-			allNodesById.remove( tempNode.getId() );
-			allNodesByBbId.remove( tempNode.getBbId() );
-		}
-
-		int numEdges = tempEdges.size();
-		DNVEdge tempEdge;
-		for( int i = 0; i < numEdges; i++ )
-		{
-			tempEdge = tempEdges.get( i );
-			allNodesById.remove( tempEdge.getId() );
-			allNodesByBbId.remove( tempEdge.getBbId() );
-		}
+//		List<DNVNode> nodes = getNodes( level );
+//		List<DNVEdge> edges = getEdges( level );
+//
+//		List<DNVNode> tempNodes;
+//		if( nodes != null )
+//		{
+//			tempNodes = new ArrayList<DNVNode>( nodes );
+//			nodes.clear();
+//		}
+//		else
+//		{
+//			tempNodes = new ArrayList<DNVNode>();
+//		}
+//
+//		List<DNVEdge> tempEdges;
+//		if( edges != null )
+//		{
+//			tempEdges = new ArrayList<DNVEdge>( edges );
+//			edges.clear();
+//		}
+//		else
+//		{
+//			tempEdges = new ArrayList<DNVEdge>();
+//		}
+//
+//		this.edges.remove( level );
+//		this.nodes.remove( level );
+//		this.nodesAndEdges.remove( level );
+//		this.activeNodes.remove( level );
+//
+//		int numNodes = tempNodes.size();
+//		DNVNode tempNode;
+//		for( int i = 0; i < numNodes; i++ )
+//		{
+//			tempNode = tempNodes.get( i );
+//			allNodesById.remove( tempNode.getId() );
+//			allNodesByBbId.remove( tempNode.getBbId() );
+//		}
+//
+//		int numEdges = tempEdges.size();
+//		DNVEdge tempEdge;
+//		for( int i = 0; i < numEdges; i++ )
+//		{
+//			tempEdge = tempEdges.get( i );
+//			allNodesById.remove( tempEdge.getId() );
+//			allNodesByBbId.remove( tempEdge.getBbId() );
+//		}
 	}
 
 	/**
