@@ -3096,7 +3096,6 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	public int degree = 0;
 	public double degreeCentrality = 0;
 	public String neighborsHtmlList = "";
-	public String propertiesHtml = "";
 
 	//-------------------------------
 	// label non empty
@@ -3121,7 +3120,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	//-------------------------------
 	public String getPropertiesHtml()
 	{
-		propertiesHtml = "";
+		String propertiesHtml = "";
 		
 		String value;
 		initProperties();
@@ -3133,32 +3132,34 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 			if (!key.equals("Contents"))
 			{
 				value = getProperty(key);
-				if (value != null && value.startsWith("http://"))
+				key = key.replaceAll( "&", "&amp;" );
+				
+				if (value != null )
 				{
-					key = "<a href=\"" + value + "\" target=\"_blank\">" + key + "</a>";
-					propertiesHtml += "<tr><td colspan='2'>" + key + "</td></tr>";
-				}
-				else
-				{
-					propertiesHtml += "<tr><td>" + key + "</td><td>" + value + "</td></tr>";
+					if( value.startsWith("http://") )
+					{
+						key = "<a href=\"" + value + "\" target=\"_blank\">" + key + "</a>";
+						propertiesHtml += "\n\t<tr>\n\t\t<td colspan='2'>" + key + "</td>\n\t</tr>";
+					}
+					else
+					{
+						value = value.replaceAll( "&", "&amp;" );
+						propertiesHtml += "\n\t<tr>\n\t\t<td>" + key + "</td>\n\t\t<td>" + value + "</td>\n\t</tr>";
+					}
 				}
 			}
 			else
 			{
 				PaintBean pb = PaintBean.getCurrentInstance();
 				value = "<a href=\"" + pb.getContextPath() + "/wigi/components/viewContents.faces?id=" + id + "\" target=\"_blank\">" + "View contents" + "</a>";
-				propertiesHtml += "<tr><td>" + key + "</td><td>" + value + "</td></tr>";
+				key = key.replaceAll( "&", "&amp;" );
+				propertiesHtml += "\n\t<tr>\n\t\t<td>" + key + "</td>\n\t\t<td>" + value + "</td>\n\t</tr>";
 			}
 		}
 		
-		propertiesHtml += "</table>";
+		propertiesHtml += "\n</table>";
 		
 		return propertiesHtml;
-	}
-
-	public void setPropertiesHtml(String propertiesHtml)
-	{
-		this.propertiesHtml = propertiesHtml;
 	}
 
 	//-------------------------------
