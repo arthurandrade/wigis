@@ -272,6 +272,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		setProperty( "Field", details.getField() );
 		setProperty( "Label", details.getLabel() );
 		setProperty( "URI", details.getUri() );
+		setProperty( "Description", decorator.getDescription() );
 	}
 
 	/**
