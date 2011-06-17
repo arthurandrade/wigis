@@ -159,7 +159,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 		GraphsPathFilter.init();
 		PaintBean pb = new PaintBean();
-		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
+//		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
+//		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
 		pb.setWhiteSpaceBuffer( 0.14f );
 		pb.setDrawNeighborHighlight( true );
 		pb.setInterpolationMethodUseWholeGraph( true );
