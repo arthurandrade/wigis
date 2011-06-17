@@ -266,13 +266,20 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 
 		initialize( position, decorator.getLabel(), graph );
 
-		ResourceDetails details = decorator.getDetails();
-		String contents = details.getLabel() + "\n\n" + details.getValue();
-		setProperty( "Contents", contents );
-		setProperty( "Field", details.getField() );
-		setProperty( "Label", details.getLabel() );
-		setProperty( "URI", details.getUri() );
 		setProperty( "Description", decorator.getDescription() );
+		setProperty( "URI", decorator.getUri() );
+		ResourceDetails details = decorator.getDetails();
+		if( details != null )
+		{
+			String contents = details.getLabel() + "\n\n" + details.getValue();
+			setProperty( "Contents", contents );
+			setProperty( "Field", details.getField() );
+			setProperty( "Label", details.getLabel() );
+		}
+		else
+		{
+			setProperty( "Contents", decorator.getDescription() );
+		}
 	}
 
 	/**
