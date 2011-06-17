@@ -49,6 +49,7 @@ import net.wigis.svetlin.__String;
 import net.wigis.svetlin.__jsf;
 import net.wigis.web.ContextLookup;
 import blackbook.ejb.client.visualization.proxy.ResourceDecorator;
+import blackbook.ejb.client.visualization.proxy.ResourceDetails;
 
 import com.restfb.exception.FacebookException;
 
@@ -262,7 +263,15 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		this.decorator = decorator;
 		setColor( decorator.getDatasourceColor() );
 		this.bbId = decorator.getUri();
+
 		initialize( position, decorator.getLabel(), graph );
+
+		ResourceDetails details = decorator.getDetails();
+		String contents = details.getLabel() + "\n\n" + details.getValue();
+		setProperty( "Contents", contents );
+		setProperty( "Field", details.getField() );
+		setProperty( "Label", details.getLabel() );
+		setProperty( "URI", details.getUri() );
 	}
 
 	/**
