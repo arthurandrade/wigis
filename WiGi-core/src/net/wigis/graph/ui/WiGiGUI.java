@@ -53,7 +53,6 @@ import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector3D;
-import net.wigis.settings.Settings;
 import net.wigis.web.GraphServlet;
 
 // TODO: Auto-generated Javadoc
