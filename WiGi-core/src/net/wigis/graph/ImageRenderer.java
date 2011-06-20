@@ -981,8 +981,8 @@ public class ImageRenderer
 			{
 				for( DNVEdge tempEdge : edges )
 				{
-//					if( tempEdge.isVisible() )
-//					{
+					if( tempEdge.getFrom() != null && tempEdge.getTo() != null )
+					{
 						if( tempEdge.isSelected() || ( highlightNeighbors && ( tempEdge.getFrom().isSelected() || tempEdge.getTo().isSelected() ) ) )
 						{
 							selectedEdges.add( tempEdge );
@@ -992,7 +992,7 @@ public class ImageRenderer
 							drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, standardColor,
 									tempEdge, drawLabels, outlinedLabels, (int)labelSize, overview, nodeWidth, false, edgeThickness, boldLabels );
 						}
-//					}
+					}
 				}
 
 				// Draw the selected edges last
