@@ -208,11 +208,6 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		return canvas;
 	}
 	
-	public PaintBean getPaintBean()
-	{
-		return pb;
-	}
-	
 	@Override
 	public void mouseWheelMoved( MouseWheelEvent e )
 	{

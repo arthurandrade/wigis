@@ -1548,7 +1548,6 @@ public class DNVGraph implements Serializable
 	public void updateEdges( int level, Set<EdgeDecorator> edgeDecs )
 	{
 		updating = true;
-		Map<String, DNVEntity> allNodesAndEdges = new HashMap<String, DNVEntity>();
 		DNVEdge tempEdge = null;
 		int numEdges = 0;
 		// Add all the edges
@@ -1561,7 +1560,7 @@ public class DNVGraph implements Serializable
 			if( tempEdge != null )
 			{
 				numEdges++;
-				allNodesAndEdges.put( tempEdge.getBbId(), tempEdge );
+				addEntity( level, tempEdge );
 			}
 		}
 		updating = false;
