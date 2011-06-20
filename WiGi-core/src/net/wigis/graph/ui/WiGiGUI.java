@@ -72,7 +72,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	/** The pb. */
 	private PaintBean pb;
 	
-	private JFrame overviewFrame;
+	private JFrame mainFrame, overviewFrame;
 	
 	private WiGiGUIHandler handler;
 
@@ -82,10 +82,11 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 * @param pb
 	 *            the pb
 	 */
-	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame overviewFrame )
+	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame mainFrame, JFrame overviewFrame )
 	{
 		super( caps );
 		this.pb = pb;
+		this.mainFrame = mainFrame;
 		this.overviewFrame = overviewFrame;
 		handler = new WiGiGUIHandler( pb, overviewFrame );
 		new Thread()
@@ -151,11 +152,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		init();
 	}
 
-	/**
-	 * 
-	 */
-	public static WiGiGUI init()
-	{
+	public static WiGiGUI init() {
 		GraphsPathFilter.init();
 		PaintBean pb = new PaintBean();
 //		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
@@ -178,7 +175,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		overviewFrame.setResizable( false );
 		WiGiOverviewPanel overviewPanel = new WiGiOverviewPanel( pb );
 		overviewFrame.getContentPane().add( overviewPanel );
-		WiGiGUI canvas = new WiGiGUI( caps, pb, overviewFrame );
+		WiGiGUI canvas = new WiGiGUI( caps, pb, frame, overviewFrame );
 		overviewPanel.setRenderComponent( canvas );
 		canvas.setBounds( 0, 0, pb.getWidthInt(), pb.getHeightInt() );
 //		canvas.setDoubleBuffered( true );
@@ -207,6 +204,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 
 		pb.setWidth( canvas.getWidth() );
 		pb.setHeight( canvas.getHeight() );
+		
 		return canvas;
 	}
 	
@@ -806,4 +804,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	// TODO Auto-generated method stub
 
 	}
+	
+	public PaintBean getPaintBean() { return pb; }
+	public JFrame getFrame() { return mainFrame; }
+	public JFrame getOverviewFrame() { return overviewFrame; }
 }
