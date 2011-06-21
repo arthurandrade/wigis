@@ -292,4 +292,14 @@ public class WiGiGUIHandler
 			pb.setMaxY( 1 );
 		}
 	}
+	
+	public void performPanning( double movementX, double movementY )
+	{
+		pb.setMinX( pb.getMinX() + movementX/WiGiOverviewPanel.OVERVIEW_SIZE );
+		pb.setMaxX( pb.getMaxX() + movementX/WiGiOverviewPanel.OVERVIEW_SIZE );
+		pb.setMinY( pb.getMinY() + movementY/WiGiOverviewPanel.OVERVIEW_SIZE );
+		pb.setMaxY( pb.getMaxY() + movementY/WiGiOverviewPanel.OVERVIEW_SIZE );
+	}
+	
+
 }

@@ -52,6 +52,7 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
+import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.web.GraphServlet;
 
@@ -185,6 +186,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		canvas.addKeyListener( canvas );
 		
 		frame.addComponentListener( canvas );
+		frame.addKeyListener( canvas );
 		frame.add( canvas );
 //		moveOverview();
 		
@@ -278,8 +280,13 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void keyPressed( KeyEvent e )
 	{
-	// TODO Auto-generated method stub
-
+		if( e.getKeyCode() == KeyEvent.VK_L )
+		{
+			pb.setShowLabels( !pb.isShowLabels() );
+		}
+		
+		System.out.println( "code:" + e.getKeyCode() );
+		System.out.println( "char:" + e.getKeyChar() );
 	}
 
 	/*
@@ -394,10 +401,6 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		{
 			handler.playSound( 0 );
 			GraphServlet.selectNode( pb, pb.getGraph(), Integer.MAX_VALUE, (int)pb.getLevel(), selectedNode );
-		}
-		else
-		{
-			pb.setSelectedNode( selectedNode, ctrlPressed );
 		}
 /*
 		DNVGraph graph = pb.getGraph();
@@ -615,9 +618,18 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void mouseReleased( MouseEvent e )
 	{
-		moveNode( e.getPoint().x, e.getPoint().y );
+		if( selectedNode != null )
+		{
+			moveNode( e.getPoint().x, e.getPoint().y );
+		}
+		else
+		{
+			pb.setSelectedNode( null, false );
+		}
+		previousMovePos = null;
 	}
 
+	private Vector2D previousMovePos = null;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -628,7 +640,25 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void mouseDragged( MouseEvent e )
 	{
-		moveNode( e.getPoint().x, e.getPoint().y );
+		if( selectedNode != null )
+		{
+			moveNode( e.getPoint().x, e.getPoint().y );
+			previousMovePos = null;
+		}
+		else
+		{
+			// Panning
+			double xRatio = WiGiOverviewPanel.OVERVIEW_SIZE / pb.getWidth() * (pb.getMaxX() - pb.getMinX());
+			double yRatio = WiGiOverviewPanel.OVERVIEW_SIZE / pb.getHeight() * (pb.getMaxY() - pb.getMinY());
+			if( previousMovePos != null )
+			{
+				double movementX = (previousMovePos.getX() - e.getPoint().x) * xRatio;
+				double movementY = (previousMovePos.getY() - e.getPoint().y) * yRatio;
+				handler.performPanning( movementX, movementY );
+			}
+
+			previousMovePos = new Vector2D( e.getPoint().x, e.getPoint().y );
+		}
 	}
 
 	/**

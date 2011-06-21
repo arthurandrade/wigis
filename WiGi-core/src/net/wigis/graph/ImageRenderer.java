@@ -572,6 +572,16 @@ public class ImageRenderer
 				labelSize, interpolationLabels, minX, maxX, minY, maxY, overview, level, highlightNeighbors, maxLabelLength, curvedLabelAngle,
 				scaleLabels, hideConflictingLabels, drawLabelBox, g2d, nodeWidth, sortByLabelSize, boldLabels, fadeFactor );
 
+		if( !drawLabels && !overview )
+		{
+			Map<Integer,Rectangle> boundingRectangles = new HashMap<Integer,Rectangle>();
+			Map<Integer,List<DNVNode>> nodesByYPos = new HashMap<Integer,List<DNVNode>>();
+			Map<Integer,Map<Integer,Integer>> nodeAndKeyToIndex = new HashMap<Integer,Map<Integer,Integer>>();
+			getNodesByYPos( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY, maxY, minXPercent, maxXPercent,
+					minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, subgraph.getSuperGraph(), boundingRectangles,
+					nodesByYPos, nodeAndKeyToIndex );
+		}
+		
 		if( drawLabels )
 		{
 			if( hideConflictingLabels )
@@ -1178,33 +1188,15 @@ public class ImageRenderer
 		List<DNVNode> goodNodes = new ArrayList<DNVNode>();
 //		DNVNode node;
 		DNVNode node2;
-		Vector2D tempPos;
 		Rectangle boundingRectangle;
 		Rectangle boundingRectangle2;
 		float overlap = 1;
 		Map<Integer,Rectangle> boundingRectangles = new HashMap<Integer,Rectangle>();
-		float maxHeight = DEFAULT_LABEL_HEIGHT;
 		Map<Integer,List<DNVNode>> nodesByYPos = new HashMap<Integer,List<DNVNode>>();
 		Map<Integer,Map<Integer,Integer>> nodeAndKeyToIndex = new HashMap<Integer,Map<Integer,Integer>>();
-		for( int i = 0; i < nodes.size(); i++ )
-		{
-			DNVNode tempNode = nodes.get( i );
-			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode.getPosition( true ) );
-//			if( tempNode.hasAttribute( "screenPositionOffset" ) )
-//			{
-//				tempPos.add( (Vector2D)tempNode.getAttribute( "screenPositionOffset" ) );
-//			}
-			boundingRectangle = getRectangleBoundingTheLabel( tempNode, tempPos, g, nodeWidth, tempNode.getLabel( interpolationLabels ), curvedLabels,
-					labelSize, minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, nodes.size() > 1000 );
-			boundingRectangles.put( tempNode.getId(), boundingRectangle );
-//			maxHeight = Math.max( maxHeight, boundingRectangle.height );
-			Integer key = getKey( boundingRectangle.positionY, maxHeight );
-			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key );
-			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key-1 );
-			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key+1 );
-		}
-		
-		graph.setAttribute( "nodesByYPos", nodesByYPos );
+		getNodesByYPos( nodes, g, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY, maxY, minXPercent, maxXPercent,
+				minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, graph, boundingRectangles,
+				nodesByYPos, nodeAndKeyToIndex );
 		
 		for( DNVNode node : nodes )
 		{
@@ -1213,7 +1205,7 @@ public class ImageRenderer
 			{
 				overlap = 1;
 				boundingRectangle = boundingRectangles.get( node.getId() );
-				Integer key = getKey( boundingRectangle.positionY, maxHeight );
+				Integer key = getKey( boundingRectangle.positionY, DEFAULT_LABEL_HEIGHT );
 				List<DNVNode> nodes2 = nodesByYPos.get( key );
 				try
 				{
@@ -1263,6 +1255,57 @@ public class ImageRenderer
 		}
 	
 		return goodNodes;
+	}
+
+	/**
+	 * @param nodes
+	 * @param g
+	 * @param nodeWidth
+	 * @param interpolationLabels
+	 * @param curvedLabels
+	 * @param labelSize
+	 * @param minX
+	 * @param maxX
+	 * @param minY
+	 * @param maxY
+	 * @param minXPercent
+	 * @param maxXPercent
+	 * @param minYPercent
+	 * @param maxYPercent
+	 * @param width
+	 * @param height
+	 * @param ratio
+	 * @param scaleLabels
+	 * @param maxLabelLength
+	 * @param curvedLabelAngle
+	 * @param boldLabels
+	 * @param graph
+	 * @param boundingRectangles
+	 * @param nodesByYPos
+	 * @param nodeAndKeyToIndex
+	 */
+	private static void getNodesByYPos( List<DNVNode> nodes, Graphics2D g, int nodeWidth, boolean interpolationLabels, boolean curvedLabels,
+			double labelSize, double minX, double maxX, double minY, double maxY, double minXPercent, double maxXPercent, double minYPercent,
+			double maxYPercent, int width, int height, double ratio, boolean scaleLabels, int maxLabelLength, int curvedLabelAngle,
+			boolean boldLabels, DNVGraph graph, Map<Integer, Rectangle> boundingRectangles, Map<Integer, List<DNVNode>> nodesByYPos,
+			Map<Integer, Map<Integer, Integer>> nodeAndKeyToIndex )
+	{
+		Vector2D tempPos;
+		Rectangle boundingRectangle;
+		for( int i = 0; i < nodes.size(); i++ )
+		{
+			DNVNode tempNode = nodes.get( i );
+			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode.getPosition( true ) );
+			boundingRectangle = getRectangleBoundingTheLabel( tempNode, tempPos, g, nodeWidth, tempNode.getLabel( interpolationLabels ), curvedLabels,
+					labelSize, minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, nodes.size() > 1000 );
+			boundingRectangles.put( tempNode.getId(), boundingRectangle );
+			Integer key = getKey( boundingRectangle.positionY, DEFAULT_LABEL_HEIGHT );
+			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key );
+			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key-1 );
+			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key+1 );
+		}
+		
+		graph.setAttribute( "nodesByYPos", nodesByYPos );
 	}
 
 	public static Integer getKey( float y, float maxHeight )
