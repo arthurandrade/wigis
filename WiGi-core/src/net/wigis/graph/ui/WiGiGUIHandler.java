@@ -301,5 +301,4 @@ public class WiGiGUIHandler
 		pb.setMaxY( pb.getMaxY() + movementY/WiGiOverviewPanel.OVERVIEW_SIZE );
 	}
 	
-
 }

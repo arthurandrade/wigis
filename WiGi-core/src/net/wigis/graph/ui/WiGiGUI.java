@@ -40,6 +40,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.io.File;
 import java.io.IOException;
 
 import javax.media.opengl.GLCapabilities;
@@ -54,6 +55,7 @@ import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
+import net.wigis.settings.Settings;
 import net.wigis.web.GraphServlet;
 
 // TODO: Auto-generated Javadoc
@@ -280,13 +282,47 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void keyPressed( KeyEvent e )
 	{
-		if( e.getKeyCode() == KeyEvent.VK_L )
+		if( File.separator.equals( "\\" ) )
+		{
+			if( e.getKeyCode() == KeyEvent.VK_CONTROL )
+			{
+				ctrlPressed = true;
+			}
+		}
+		else
+		{
+			if( e.getKeyCode() == KeyEvent.VK_META )
+			{
+				ctrlPressed = true;
+			}			
+		}
+		if ( e.getKeyCode() == KeyEvent.VK_SHIFT )
+		{
+			shiftPressed = true;
+		}
+		else if( e.getKeyCode() == KeyEvent.VK_B )
+		{
+			pb.setDrawNeighborHighlight( !pb.isDrawNeighborHighlight() );
+		}
+		else if( e.getKeyCode() == KeyEvent.VK_O )
+		{
+			pb.runLayout();
+		}
+		else if( e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE )
+		{
+			for( DNVNode node : pb.getSelectedNodes() )
+			{
+				node.deleteNode();
+			}
+		}
+		else if( e.getKeyCode() == KeyEvent.VK_S )
+		{
+			pb.setPlaySound( !pb.isPlaySound() );
+		}
+		else if( e.getKeyCode() == KeyEvent.VK_L )
 		{
 			pb.setShowLabels( !pb.isShowLabels() );
 		}
-		
-		System.out.println( "code:" + e.getKeyCode() );
-		System.out.println( "char:" + e.getKeyChar() );
 	}
 
 	/*
@@ -297,8 +333,24 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void keyReleased( KeyEvent e )
 	{
-	// TODO Auto-generated method stub
-
+		if( File.separator.equals( "\\" ) )
+		{
+			if( e.getKeyCode() == KeyEvent.VK_CONTROL )
+			{
+				ctrlPressed = false;
+			}
+		}
+		else
+		{
+			if( e.getKeyCode() == KeyEvent.VK_META )
+			{
+				ctrlPressed = false;
+			}			
+		}
+		if ( e.getKeyCode() == KeyEvent.VK_SHIFT )
+		{
+			shiftPressed = false;
+		}
 	}
 
 	/*
@@ -383,6 +435,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	/** The ctrl pressed. */
 	boolean ctrlPressed = false;
 
+	boolean shiftPressed = false;
+	
 	private int selectionBuffer = 10;
 
 	/*
