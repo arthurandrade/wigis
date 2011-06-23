@@ -1722,6 +1722,10 @@ public class PaintBean
 		return ajaxComponents;
 	}
 
+	public void setAjaxComponents( String ajaxComponents )
+	{
+		this.ajaxComponents = ajaxComponents;
+	}
 	/**
 	 * Gets the curve min.
 	 * 
