@@ -879,8 +879,8 @@ public class GraphServlet extends HttpServlet
 			{}
 		}
 
-		if( released )
-			GraphFunctions.colorKNearestNodes( graph, level, numberOfUsersRecommendation, "Active_user", "user" );
+//		if( released )
+		GraphFunctions.colorKNearestNodes( graph, level, numberOfUsersRecommendation, "Active_user", "user" );
 	}
 
 	/**
