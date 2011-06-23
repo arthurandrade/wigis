@@ -273,7 +273,7 @@ public class GraphServlet extends HttpServlet
 									(int)Math.round( pb.getNodeSize() * node.getRadius() ), node.getLabel( pb.isInterpolationLabels() ), pb
 											.isCurvedLabels()
 											|| node.isCurvedLabel(), pb.getLabelSize(), minX, maxX, width / pb.getWidth(), pb.isScaleLabels(), pb
-											.getMaxLabelLength(), pb.getCurvedLabelAngle(), pb.isBoldLabels(), false );
+											.getMaxLabelLength(), pb.getCurvedLabelAngle(), pb.isBoldLabels(), false, false );
 							if( mouseDownX >= boundingRectangle.left() && mouseDownX <= boundingRectangle.right()
 									&& mouseDownY <= boundingRectangle.bottom() && mouseDownY >= boundingRectangle.top() )
 							{
@@ -343,7 +343,7 @@ public class GraphServlet extends HttpServlet
 											null, (int)Math.round( pb.getNodeSize() * node.getRadius() ),
 											node.getLabel( pb.isInterpolationLabels() ), pb.isCurvedLabels() || node.isCurvedLabel(), pb
 													.getLabelSize(), minX, maxX, width / pb.getWidth(), pb.isScaleLabels(), pb.getMaxLabelLength(),
-											pb.getCurvedLabelAngle(), pb.isBoldLabels(), false );
+											pb.getCurvedLabelAngle(), pb.isBoldLabels(), false, false );
 									if( mouseDownX >= boundingRectangle.left() && mouseDownX <= boundingRectangle.right()
 											&& mouseDownY <= boundingRectangle.bottom() && mouseDownY >= boundingRectangle.top() )
 									{

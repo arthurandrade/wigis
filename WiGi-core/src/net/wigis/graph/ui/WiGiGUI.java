@@ -200,13 +200,17 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	    int x = (dim.width-w)/2;
 	    int y = (dim.height-h)/2;
 	    // Move the window
-	    frame.setLocation( x, y);
+	    frame.setLocation( x, y );
 		frame.setVisible( true );
 		overviewFrame.setBounds( frame.getX() + frame.getWidth() + 10, frame.getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setVisible(true);
 
 		pb.setWidth( canvas.getWidth() );
 		pb.setHeight( canvas.getHeight() );
+		
+//		JFrame settingsFrame = new JFrame("Settings");
+//		settingsFrame.setSize( 300, 300 );
+//		settingsFrame.setVisible( true );
 				
 		return canvas;
 	}
@@ -778,35 +782,54 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		{
 //			if( pb.getGraph().getGraphSize( (int)pb.getLevel() ) < 2000 )
 //			{
-				DNVNode node = handler.picking( e.getX(), e.getY(), 1, false, false );
+				DNVNode node = handler.picking( e.getX(), e.getY(), 0, false, false );
 				if( node == null )
-				{	
+				{
 					if( hoveredNode != null && hoveredNode != node )
 					{
-						hoveredNode.setOutlineColor( hoveredOldColor );
-						hoveredNode.setForceLabel( hoveredOldMustDrawLabel );
-						hoveredNode.setLabelOutlineColor( hoveredOldLabelOutlineColor );
-						hoveredNode = null;
+						restoreHoveredNode();
 					}
 					this.repaint();
 				}
-				else if( hoveredNode == null && node != null )
+				else if( node != null && hoveredNode == null )
 				{
 					hoveredNode = node;
 					if( hoveredNode != null )
 					{
-	//					System.out.println( "Hovering over "+ hoveredNode.getLabel() );
-						hoveredOldColor = hoveredNode.getOutlineColor();
-						hoveredNode.setOutlineColor( "#FF0000" );
-						hoveredOldMustDrawLabel = hoveredNode.isForceLabel();
-						hoveredNode.setForceLabel( true );
-						hoveredOldLabelOutlineColor = hoveredNode.getLabelOutlineColor();
-						hoveredNode.setLabelOutlineColor( "#FF0000" );
+						highlightHoveredNode();
+					}
+					this.repaint();
+				}
+				else if( node != null && hoveredNode != null && node != hoveredNode )
+				{
+					restoreHoveredNode();
+					hoveredNode = node;
+					if( hoveredNode != null )
+					{
+						highlightHoveredNode();
 					}
 					this.repaint();
 				}
 //			}
 		}
+	}
+
+	private void highlightHoveredNode()
+	{
+		hoveredOldColor = hoveredNode.getOutlineColor();
+		hoveredNode.setOutlineColor( "#FF0000" );
+		hoveredOldMustDrawLabel = hoveredNode.isForceLabel();
+		hoveredNode.setForceLabel( true );
+		hoveredOldLabelOutlineColor = hoveredNode.getLabelOutlineColor();
+		hoveredNode.setLabelOutlineColor( "#FF0000" );
+	}
+
+	private void restoreHoveredNode()
+	{
+		hoveredNode.setOutlineColor( hoveredOldColor );
+		hoveredNode.setForceLabel( hoveredOldMustDrawLabel );
+		hoveredNode.setLabelOutlineColor( hoveredOldLabelOutlineColor );
+		hoveredNode = null;
 	}
 
 	/*

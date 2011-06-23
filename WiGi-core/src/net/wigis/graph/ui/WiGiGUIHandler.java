@@ -103,15 +103,19 @@ public class WiGiGUIHandler
 		int width = pb.getWidthInt();
 		int height = pb.getHeightInt();
 		
-		List<DNVNode> nodes;
-		if( graph.hasAttribute( "nodesByYPos" ) )
+		List<DNVNode> nodes = new ArrayList<DNVNode>();
+		if( graph.hasAttribute( "nodesByYPos_true" ) )
 		{
-			@SuppressWarnings("unchecked")
-			Map<Integer,List<DNVNode>> nodesByYPos = (Map<Integer,List<DNVNode>>)graph.getAttribute( "nodesByYPos" );
-			nodes = nodesByYPos.get( ImageRenderer.getKey( mouseDownY, ImageRenderer.DEFAULT_LABEL_HEIGHT ) );
-			if( nodes == null )
+			Integer maxSize = (Integer)graph.getAttribute( "maxSize" );
+			if( maxSize != null )
 			{
-				nodes = new ArrayList<DNVNode>();
+				@SuppressWarnings("unchecked")
+				Map<Integer,List<DNVNode>> nodesByYPos = (Map<Integer,List<DNVNode>>)graph.getAttribute( "nodesByYPos_true" );
+				nodes = nodesByYPos.get( ImageRenderer.getKey( mouseDownY, maxSize ) );
+				if( nodes == null )
+				{
+					nodes = new ArrayList<DNVNode>();
+				}
 			}
 		}
 		else
@@ -139,7 +143,7 @@ public class WiGiGUIHandler
 			{
 				screenPosition = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width, height, node.getPosition( true ) );
 				ImageRenderer.Rectangle boundingRectangle = ImageRenderer.getRectangleBoundingTheLabel( node, screenPosition, null, (int)Math.round(pb.getNodeSize()*node.getRadius()), node.getLabel( pb.isInterpolationLabels() ), pb.isCurvedLabels() || node.isCurvedLabel(), pb.getLabelSize(),
-						minX, maxX, width / pb.getWidth(), pb.isScaleLabels(), pb.getMaxLabelLength(), pb.getCurvedLabelAngle(), pb.isBoldLabels(), nodes.size() > 1000 );
+						minX, maxX, width / pb.getWidth(), pb.isScaleLabels(), pb.getMaxLabelLength(), pb.getCurvedLabelAngle(), pb.isBoldLabels(), nodes.size() > 1000, false );
 				if( mouseDownX >= boundingRectangle.left() &&
 					mouseDownX <= boundingRectangle.right() &&
 					mouseDownY <= boundingRectangle.bottom() && 
@@ -206,7 +210,7 @@ public class WiGiGUIHandler
 					{
 						screenPosition = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width, height, node.getPosition( true ) );
 						ImageRenderer.Rectangle boundingRectangle = ImageRenderer.getRectangleBoundingTheLabel( node, screenPosition, null, (int)Math.round(pb.getNodeSize()*node.getRadius()), node.getLabel( pb.isInterpolationLabels() ), pb.isCurvedLabels() || node.isCurvedLabel(), pb.getLabelSize(),
-								minX, maxX, width / pb.getWidth(), pb.isScaleLabels(), pb.getMaxLabelLength(), pb.getCurvedLabelAngle(), pb.isBoldLabels(), nodes.size() > 1000 );
+								minX, maxX, width / pb.getWidth(), pb.isScaleLabels(), pb.getMaxLabelLength(), pb.getCurvedLabelAngle(), pb.isBoldLabels(), nodes.size() > 1000, false );
 						if( mouseDownX >= boundingRectangle.left() &&
 							mouseDownX <= boundingRectangle.right() &&
 							mouseDownY <= boundingRectangle.bottom() && 
