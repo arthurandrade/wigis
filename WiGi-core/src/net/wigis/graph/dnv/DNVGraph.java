@@ -383,6 +383,10 @@ public class DNVGraph implements Serializable
 		{
 			// ignore
 		}
+		else if( line.indexOf( "<GRAPHPROPERTY" ) != -1 )
+		{
+			handleGraphProperty( line );
+		}
 		else if( line.indexOf( "<Level" ) != -1 )
 		{
 			handleLevel( line );
@@ -462,6 +466,15 @@ public class DNVGraph implements Serializable
 				currentNode.setPropertyExtractable( key );
 			}
 		}
+	}
+	
+	private void handleGraphProperty( String line )
+	{
+		line = line.substring( line.indexOf( "Key=\"" ) + 5 );
+		String key = line.substring( 0, line.indexOf( "\"" ) );
+		line = line.substring( line.indexOf( "Value=\"" ) + 7 );
+		String value = line.substring( 0, line.indexOf( "\"" ) );
+		setProperty( key, value );
 	}
 
 	/**
@@ -707,12 +720,16 @@ public class DNVGraph implements Serializable
 	 */
 	public void serialize( Writer writer ) throws IOException
 	{
-		Iterator<Integer> keys = nodes.keySet().iterator();
 		Integer level;
 		List<DNVEntity> nodeList;
 		DNVEntity tempEntity;
 		writer.write( "<DNVGRAPH>\n" );
+		for( String key : properties.keySet() )
+		{
+			writer.write( "\t<GRAPHPROPERTY Key=\"" + key + "\" Value=\"" + properties.get( key ) + "\" />\n" );
+		}
 		// for( int i = maxLevel.intValue(); i >= 0; i-- )
+		Iterator<Integer> keys = nodes.keySet().iterator();
 		while( keys.hasNext() )
 		{
 			// level = Integer.valueOf( i );
@@ -761,12 +778,15 @@ public class DNVGraph implements Serializable
 	public String serialize()
 	{
 		StringBuilder value = new StringBuilder( 10000 );
-		Iterator<Integer> keys = nodes.keySet().iterator();
 		Integer level;
 		List<DNVEntity> nodeList;
 		DNVEntity tempEntity;
 		value.append( "<DNVGRAPH>\n" );
-		// for( int i = maxLevel.intValue(); i >= 0; i-- )
+		for( String key : properties.keySet() )
+		{
+			value.append( "\t<GRAPHPROPERTY Key=\"" + key + "\" Value=\"" + properties.get( key ) + "\" />\n" );
+		}
+		Iterator<Integer> keys = nodes.keySet().iterator();
 		while( keys.hasNext() )
 		{
 			// level = Integer.valueOf( i );
@@ -858,6 +878,11 @@ public class DNVGraph implements Serializable
 	
 	//=====================
 
+	public void addEdge( Integer level, DNVEdge edge )
+	{
+		addNode( level, edge );
+	}
+	
 	/**
 	 * Adds the entity.
 	 * 
