@@ -25,7 +25,7 @@ package net.wigis.graph.dnv.animations;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Polygon;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -144,9 +144,12 @@ public class RecursiveEdgeAnimation extends Animation
 							{
 								AudioPlayer.player.stop( nodeHitAudio );
 							}
-							nodeHitAudio = new AudioStream( new FileInputStream( "audio/drum.wav" ) );
-							AudioPlayer.player.start( nodeHitAudio );
-							playSound = true;
+							if( new File( "audio/drum.wav" ).exists() )
+							{
+								nodeHitAudio = new AudioStream( new FileInputStream( "audio/drum.wav" ) );
+								AudioPlayer.player.start( nodeHitAudio );
+								playSound = true;
+							}
 						}
 						catch( FileNotFoundException e )
 						{

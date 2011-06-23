@@ -55,7 +55,6 @@ import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
-import net.wigis.settings.Settings;
 import net.wigis.web.GraphServlet;
 
 // TODO: Auto-generated Javadoc
@@ -208,7 +207,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 
 		pb.setWidth( canvas.getWidth() );
 		pb.setHeight( canvas.getHeight() );
-		
+				
 		return canvas;
 	}
 	
@@ -305,8 +304,14 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 			pb.setDrawNeighborHighlight( !pb.isDrawNeighborHighlight() );
 		}
 		else if( e.getKeyCode() == KeyEvent.VK_O )
-		{
-			pb.runLayout();
+		{			
+			new Thread()
+			{
+				public void run()
+				{
+					pb.runLayout();
+				}
+			}.start();
 		}
 		else if( e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE )
 		{
@@ -674,7 +679,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 		if( selectedNode != null )
 		{
-			moveNode( e.getPoint().x, e.getPoint().y );
+			moveNode( e.getPoint().x, e.getPoint().y, true );
 		}
 		else
 		{
@@ -696,7 +701,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 		if( selectedNode != null )
 		{
-			moveNode( e.getPoint().x, e.getPoint().y );
+			moveNode( e.getPoint().x, e.getPoint().y, false );
 			previousMovePos = null;
 		}
 		else
@@ -723,7 +728,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 * @param mouseUpY
 	 *            the mouse up y
 	 */
-	public void moveNode( int mouseUpX, int mouseUpY )
+	public void moveNode( int mouseUpX, int mouseUpY, boolean released )
 	{
 		DNVGraph graph = pb.getGraph();
 		int level = (int)pb.getLevel();
@@ -750,7 +755,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		globalMinX -= xBuffer;
 
 		GraphServlet.moveSelectedNode( null, pb, graph, level, getWidth(), getHeight(), pb.getMinX(), pb.getMinY(), pb.getMaxX(), pb.getMaxY(),
-				mouseUpX, mouseUpY, false, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, null );
+				mouseUpX, mouseUpY, false, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, null, released );
 
 		repaint();
 	}

@@ -45,7 +45,7 @@ public class DNVEdge extends DNVEntity implements Serializable
 	public static float DEFAULT_K = 1;
 
 	/** The DEFAUL t_ restin g_ distance. */
-	public static float DEFAULT_RESTING_DISTANCE = 0f;
+	public static float DEFAULT_RESTING_DISTANCE = 7;
 
 	/** The K. */
 	private float K = DEFAULT_K;

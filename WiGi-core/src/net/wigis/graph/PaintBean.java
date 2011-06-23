@@ -488,6 +488,11 @@ public class PaintBean
 		long startTime = System.currentTimeMillis();
 		synchronized( graph )
 		{
+			if( graph.hasStoredPosition() )
+			{
+				graph.interpolateToNewPosition( level, getSecondsPerAnimation() );
+			}
+
 			int level = (int)getLevel();
 
 			if( width == -1 )

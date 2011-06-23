@@ -146,11 +146,6 @@ public class GraphServlet extends HttpServlet
 
 			// pb.setHasBeenDisplayed( true );
 
-			if( graph.hasStoredPosition() )
-			{
-				graph.interpolateToNewPosition( level, pb.getSecondsPerAnimation() );
-			}
-
 			int width = -1;
 			width = getWidth( request, width );
 			int height = -1;
@@ -443,8 +438,20 @@ public class GraphServlet extends HttpServlet
 				if( Settings.DEBUG )
 					System.out.println( "Picking took " + pickingTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
 
+				String releasedStr = request.getParameter( "released" );
+				boolean released = false;
+				if( releasedStr != null )
+				{
+					try
+					{
+						released = Boolean.parseBoolean( releasedStr );
+					}
+					catch( Exception e )
+					{}
+				}
+				
 				moveSelectedNode( request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX,
-						globalMaxX, globalMinY, globalMaxY, selectedNode, recommendationLayout );
+						globalMaxX, globalMinY, globalMaxY, selectedNode, recommendationLayout, released );
 			}
 
 			// ------------------------------------
@@ -512,7 +519,7 @@ public class GraphServlet extends HttpServlet
 	 */
 	public static void moveNode( DNVNode selectedNode, HttpServletRequest request, PaintBean pb, DNVGraph graph, int level, int width, int height,
 			double minX, double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, RecommendationLayoutInterface recommendationLayout )
+			double globalMinY, double globalMaxY, RecommendationLayoutInterface recommendationLayout, boolean released )
 	{
 		if( selectedNode != null )
 		{
@@ -537,14 +544,6 @@ public class GraphServlet extends HttpServlet
 		}
 		else if( pb.getInteractionMethod().equals( Settings.PEERCHOOSER_INTERACTION ) )
 		{
-			String releasedStr = request.getParameter( "released" );
-			boolean released = false;
-			try
-			{
-				released = Boolean.parseBoolean( releasedStr );
-			}
-			catch( Exception e )
-			{}
 			performPeerchooserMovement( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX,
 					globalMaxX, globalMinY, globalMaxY, selectedNode, released );
 		}
@@ -587,7 +586,7 @@ public class GraphServlet extends HttpServlet
 			if( selectedNode != null )
 			{				
 				pb.setInteractionMethod( Settings.INTERPOLATION_INTERACTION );
-				moveNode( selectedNode, request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX, globalMaxX, globalMinY, globalMaxY, recommendationLayout );
+				moveNode( selectedNode, request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX, globalMaxX, globalMinY, globalMaxY, recommendationLayout, released );
 				pb.setInteractionMethod( Settings.INTERPOLATION_WITH_SPRING );
 				
 				selectedNode.setProperty( "fixed", "true" );
@@ -667,7 +666,7 @@ public class GraphServlet extends HttpServlet
 	 */
 	public static void moveSelectedNode( HttpServletRequest request, PaintBean pb, DNVGraph graph, int level, int width, int height, double minX,
 			double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, DNVNode selectedNode, RecommendationLayoutInterface recommendationLayout )
+			double globalMinY, double globalMaxY, DNVNode selectedNode, RecommendationLayoutInterface recommendationLayout, boolean released )
 	{
 		if( selectedNode == null && sameNode )
 		{
@@ -675,7 +674,7 @@ public class GraphServlet extends HttpServlet
 		}
 
 		moveNode( selectedNode, request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX,
-				globalMaxX, globalMinY, globalMaxY, recommendationLayout );
+				globalMaxX, globalMinY, globalMaxY, recommendationLayout, released );
 	}
 
 	/**

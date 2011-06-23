@@ -76,9 +76,12 @@ public class WiGiGUIHandler
 	{
 		if( pb.isPlaySound() )
 		{
-			AudioPlayer.player.stop( audioStreams.get( index ) );
-			initializeAudio();
-			AudioPlayer.player.start( audioStreams.get( index ) );
+			if( index < audioStreams.size() )
+			{
+				AudioPlayer.player.stop( audioStreams.get( index ) );
+				initializeAudio();
+				AudioPlayer.player.start( audioStreams.get( index ) );
+			}
 		}
 	}
 

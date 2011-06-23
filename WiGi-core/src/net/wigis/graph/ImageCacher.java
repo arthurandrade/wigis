@@ -25,6 +25,7 @@
 package net.wigis.graph;
 
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -83,6 +84,17 @@ public class ImageCacher extends Thread
 		URL iconUrl;
 		try
 		{
+			File imageFile = new File( url );
+			if( imageFile.exists() )
+			{
+				Image image = ImageIO.read( imageFile );
+				if( image != null )
+				{
+					ImageRenderer.setIcon( url, image );
+					return;
+				}					
+			}
+
 			String tempUrl = url;
 			if( !url.startsWith( "http" ) && constantsSet )
 			{
