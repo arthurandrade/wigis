@@ -180,7 +180,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	}
 
 	private Timer timer = new Timer( Timer.NANOSECONDS );
-	private boolean printFPS = false;
+	private boolean printFPS = true;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -257,7 +257,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 
 		GLCapabilities caps = new GLCapabilities();
 		caps.setDoubleBuffered( true );
-		caps.setHardwareAccelerated( false );
+		caps.setHardwareAccelerated( true );
 		WiGiOverviewPanel overviewPanel = new WiGiOverviewPanel( pb );
 		overviewFrame.getContentPane().add( overviewPanel );
 
