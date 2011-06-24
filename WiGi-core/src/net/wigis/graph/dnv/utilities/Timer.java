@@ -61,6 +61,11 @@ public class Timer
 	/** The number of segments. */
 	private long numberOfSegments = 0;
 
+	public Timer()
+	{
+		init( MILLISECONDS );
+	}
+	
 	/**
 	 * Instantiates a new timer.
 	 * 
@@ -68,6 +73,11 @@ public class Timer
 	 *            Tells the Timer which unit to use for the measurement.
 	 */
 	public Timer( int measurementUnit )
+	{
+		init( measurementUnit );
+	}
+
+	private void init( int measurementUnit )
 	{
 		if( measurementUnit == NANOSECONDS || measurementUnit == MILLISECONDS )
 			this.measurementUnit = measurementUnit;

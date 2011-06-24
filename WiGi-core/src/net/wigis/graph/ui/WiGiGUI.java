@@ -28,7 +28,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -42,11 +45,16 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.List;
 
+import javax.faces.model.SelectItem;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLJPanel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
+import net.wigis.graph.GraphsBean;
 import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVGraph;
@@ -56,6 +64,8 @@ import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.web.GraphServlet;
+
+import com.apple.eawt.Application;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -74,7 +84,9 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	/** The pb. */
 	private PaintBean pb;
 	
-	private JFrame mainFrame, overviewFrame;
+	private JFrame mainFrame;
+	private JFrame overviewFrame;
+	private JFrame settingsFrame;
 	
 	private WiGiGUIHandler handler;
 
@@ -84,31 +96,77 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 * @param pb
 	 *            the pb
 	 */
-	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame mainFrame, JFrame overviewFrame )
+	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame mainFrame, JFrame overviewFrame, JFrame settingsFrame )
 	{
 		super( caps );
+
 		this.pb = pb;
 		this.mainFrame = mainFrame;
 		this.overviewFrame = overviewFrame;
+		this.settingsFrame = settingsFrame;
+
 		handler = new WiGiGUIHandler( pb, overviewFrame );
 		new Thread()
 		{
+			Timer timer = new Timer();
 			public void run()
 			{
 				while( true )
 				{
+					timer.setStart();
 					repaint();
-					try
+					timer.setEnd();
+					if( timer.getLastSegment( Timer.MILLISECONDS ) < 33 )
 					{
-						Thread.sleep( 30 );
-					}
-					catch( InterruptedException e )
-					{
-						e.printStackTrace();
+						try
+						{
+							Thread.sleep( 33 - (int)timer.getLastSegment( Timer.MILLISECONDS ) );
+						}
+						catch( InterruptedException e )
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}.start();
+	}
+
+	JComboBox graphSelect;
+	public void initSettingsFrame()
+	{
+		fixSettingsFrameBounds();
+		graphSelect = new JComboBox();
+		GraphsBean gb = new GraphsBean();
+		List<SelectItem> fileList = gb.getFileList();
+		for( SelectItem item : fileList )
+		{
+			LabelAndValue lav = new LabelAndValue( item.getLabel(), (String)item.getValue() );
+			graphSelect.addItem( lav );
+			if( lav.getValue().equals( pb.getSelectedFile() ) )
+			{
+				graphSelect.setSelectedItem( lav );
+			}
+		}
+		graphSelect.addActionListener( new ActionListener(){
+
+			@Override
+			public void actionPerformed( ActionEvent arg0 )
+			{
+				LabelAndValue lav = (LabelAndValue)graphSelect.getSelectedItem();
+				pb.setSelectedFile( lav.getValue() );
+			}
+			
+		});
+		
+		settingsFrame.addKeyListener( this );
+		settingsFrame.add( graphSelect );
+		settingsFrame.setVisible( true );
+	}
+
+	private void fixSettingsFrameBounds()
+	{
+		settingsFrame.setBounds( mainFrame.getX() + mainFrame.getWidth() + 10, mainFrame.getY() + WiGiOverviewPanel.OVERVIEW_SIZE + 10, WiGiOverviewPanel.OVERVIEW_SIZE, mainFrame.getHeight() - WiGiOverviewPanel.OVERVIEW_SIZE - 10 );
 	}
 
 	private Timer timer = new Timer( Timer.NANOSECONDS );
@@ -133,7 +191,12 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		try
 		{
 			pb.paint( (Graphics2D)g, getWidth(), getHeight(), false, true );
-			overviewFrame.repaint();
+			new Thread(){
+				public void run()
+				{
+					overviewFrame.repaint();
+				}
+			}.start();
 		}
 		catch( IOException e )
 		{
@@ -151,11 +214,20 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 */
 	public static void main( String args[] ) throws IOException
 	{
-		init();
+		WiGiGUI canvas = init();
+		canvas.initSettingsFrame();
 	}
 
 	public static WiGiGUI init() {
 		GraphsPathFilter.init();
+		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( "resources/wigis.png" );
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		Image img = kit.createImage(url);		
+		Application app = Application.getApplication();
+		if( app != null )
+		{
+			app.setDockIconImage( img );
+		}
 		PaintBean pb = new PaintBean();
 //		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
 //		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
@@ -165,19 +237,27 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		pb.setScalePositions( true );
 		pb.setPlaySound( true );
 		JFrame frame = new JFrame( "WiGi - GUI" );
+		frame.setIconImage(img);
 		frame.setSize( 800, 800 );
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 //		frame.setUndecorated( true );
-		GLCapabilities caps = new GLCapabilities();
-		caps.setDoubleBuffered( true );
 		JFrame overviewFrame = new JFrame("Overview");
 		overviewFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		overviewFrame.setUndecorated( true );
 		overviewFrame.setSize( WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setResizable( false );
+
+		GLCapabilities caps = new GLCapabilities();
+		caps.setDoubleBuffered( true );
+		caps.setHardwareAccelerated( false );
 		WiGiOverviewPanel overviewPanel = new WiGiOverviewPanel( pb );
 		overviewFrame.getContentPane().add( overviewPanel );
-		WiGiGUI canvas = new WiGiGUI( caps, pb, frame, overviewFrame );
+
+		JFrame settingsFrame = new JFrame("Settings");
+		caps = new GLCapabilities();
+		caps.setDoubleBuffered( true );
+		caps.setHardwareAccelerated( true );
+		WiGiGUI canvas = new WiGiGUI( caps, pb, frame, overviewFrame, settingsFrame );
 		overviewPanel.setRenderComponent( canvas );
 		canvas.setBounds( 0, 0, pb.getWidthInt(), pb.getHeightInt() );
 //		canvas.setDoubleBuffered( true );
@@ -207,12 +287,45 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 
 		pb.setWidth( canvas.getWidth() );
 		pb.setHeight( canvas.getHeight() );
-		
-//		JFrame settingsFrame = new JFrame("Settings");
-//		settingsFrame.setSize( 300, 300 );
-//		settingsFrame.setVisible( true );
-				
+										
 		return canvas;
+	}
+	
+	public class LabelAndValue
+	{
+		private String label;
+		private String value;
+		
+		public LabelAndValue( String label, String value )
+		{
+			this.label = label;
+			this.value = value;
+		}
+		
+		public String toString()
+		{
+			return label;
+		}
+
+		public String getLabel()
+		{
+			return label;
+		}
+
+		public void setLabel( String label )
+		{
+			this.label = label;
+		}
+
+		public String getValue()
+		{
+			return value;
+		}
+
+		public void setValue( String value )
+		{
+			this.value = value;
+		}
 	}
 	
 	@Override
@@ -857,6 +970,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	{
 //		System.out.println( "Component Moved" );
 		handler.moveOverview( e.getComponent() );
+		fixSettingsFrameBounds();
 	}
 
 	/*
@@ -872,6 +986,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		pb.setHeight( this.getHeight() );
 		handler.moveOverview( e.getComponent() );
 		repaint();
+		fixSettingsFrameBounds();
 	}
 
 	/*
