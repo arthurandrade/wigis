@@ -45,6 +45,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
 
@@ -64,8 +66,6 @@ import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.web.GraphServlet;
-
-import com.apple.eawt.Application;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -223,10 +223,47 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( "resources/wigis.png" );
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Image img = kit.createImage(url);		
-		Application app = Application.getApplication();
-		if( app != null )
+
+		if( System.getProperty("os.name").equals( "Mac OS X" ) )
 		{
-			app.setDockIconImage( img );
+			try
+			{
+				Class appc = Class.forName("com.apple.eawt.Application");
+				Method m = appc.getMethod( "getApplication" );
+				Object app = m.invoke( appc );
+				Method setDockIconImage = appc.getMethod( "setDockIconImage", Image.class );
+				setDockIconImage.invoke( app, img );
+			}
+			catch( ClassNotFoundException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( SecurityException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( NoSuchMethodException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( IllegalArgumentException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( IllegalAccessException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch( InvocationTargetException e )
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		PaintBean pb = new PaintBean();
 //		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
