@@ -28,7 +28,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,9 +44,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -64,7 +60,6 @@ import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
-import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.web.GraphServlet;
 
 // TODO: Auto-generated Javadoc
@@ -96,7 +91,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	 * @param pb
 	 *            the pb
 	 */
-	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame mainFrame, JFrame overviewFrame )
+	public WiGiGUI( GLCapabilities caps, PaintBean pb, JFrame mainFrame, JFrame overviewFrame, WiGiGUIHandler handler )
 	{
 		super( caps );
 
@@ -105,7 +100,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		this.overviewFrame = overviewFrame;
 		this.initSettingsFrame();
 
-		handler = new WiGiGUIHandler( pb, overviewFrame );
+		this.handler = handler;
 		new Thread()
 		{
 			Timer timer = new Timer();
@@ -228,15 +223,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		canvas.showSettingsFrame();
 	}
 
-	private static String iconImage = "resources/wigis.gif";
-	
 	public static WiGiGUI init() {
 		GraphsPathFilter.init();
-		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( iconImage );
-		Toolkit kit = Toolkit.getDefaultToolkit();
-		Image img = kit.createImage(url);		
-
-		setDockIcon( img );
 		PaintBean pb = new PaintBean();
 //		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
 //		pb.setSelectedFile( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1large.dnv" );
@@ -246,16 +234,17 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		pb.setScalePositions( true );
 		pb.setPlaySound( true );
 		JFrame frame = new JFrame( "WiGi - GUI" );
-		frame.setIconImage( img );
 		frame.setSize( 800, 800 );
 		frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-//		frame.setUndecorated( true );
 		JFrame overviewFrame = new JFrame("Overview");
+		WiGiGUIHandler handler = new WiGiGUIHandler( pb, overviewFrame );
+		handler.setWiGiDockIcon();
+		frame.setIconImage( handler.getWigiIconImage() );
 		overviewFrame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		overviewFrame.setUndecorated( true );
 		overviewFrame.setSize( WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
 		overviewFrame.setResizable( false );
-		overviewFrame.setIconImage( img );
+		overviewFrame.setIconImage( handler.getWigiIconImage() );
 
 		GLCapabilities caps = new GLCapabilities();
 		caps.setDoubleBuffered( true );
@@ -266,7 +255,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		caps = new GLCapabilities();
 		caps.setDoubleBuffered( true );
 		caps.setHardwareAccelerated( true );
-		WiGiGUI canvas = new WiGiGUI( caps, pb, frame, overviewFrame );
+		WiGiGUI canvas = new WiGiGUI( caps, pb, frame, overviewFrame, handler );
 		overviewPanel.setRenderComponent( canvas );
 		canvas.setBounds( 0, 0, pb.getWidthInt(), pb.getHeightInt() );
 //		canvas.setDoubleBuffered( true );
@@ -274,7 +263,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		canvas.addMouseMotionListener( canvas );
 		canvas.addMouseWheelListener( canvas );
 		canvas.addKeyListener( canvas );
-		canvas.getSettingsFrame().setIconImage( img );
+		canvas.getSettingsFrame().setIconImage( handler.getWigiIconImage() );
 		
 		frame.addComponentListener( canvas );
 		frame.addKeyListener( canvas );
@@ -301,54 +290,6 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		return canvas;
 	}
 
-	/**
-	 * @param img
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void setDockIcon( Image img )
-	{
-		if( System.getProperty("os.name").equals( "Mac OS X" ) )
-		{
-			try
-			{
-				Class appc = Class.forName("com.apple.eawt.Application");
-				Method m = appc.getMethod( "getApplication" );
-				Object app = m.invoke( appc );
-				Method setDockIconImage = appc.getMethod( "setDockIconImage", Image.class );
-				setDockIconImage.invoke( app, img );
-			}
-			catch( ClassNotFoundException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch( SecurityException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch( NoSuchMethodException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch( IllegalArgumentException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch( IllegalAccessException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch( InvocationTargetException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 	
 	public class LabelAndValue
 	{
@@ -936,10 +877,6 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		repaint();
 	}
 
-	private DNVNode hoveredNode;
-	private Vector3D hoveredOldColor = null;
-	private boolean hoveredOldMustDrawLabel = false;
-	private Vector3D hoveredOldLabelOutlineColor = null;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -949,59 +886,8 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	@Override
 	public void mouseMoved( MouseEvent e )
 	{
-
-		synchronized( pb.getGraph() )
-		{
-//			if( pb.getGraph().getGraphSize( (int)pb.getLevel() ) < 2000 )
-//			{
-				DNVNode node = handler.picking( e.getX(), e.getY(), 0, false, false );
-				if( node == null )
-				{
-					if( hoveredNode != null && hoveredNode != node )
-					{
-						restoreHoveredNode();
-					}
-					this.repaint();
-				}
-				else if( node != null && hoveredNode == null )
-				{
-					hoveredNode = node;
-					if( hoveredNode != null )
-					{
-						highlightHoveredNode();
-					}
-					this.repaint();
-				}
-				else if( node != null && hoveredNode != null && node != hoveredNode )
-				{
-					restoreHoveredNode();
-					hoveredNode = node;
-					if( hoveredNode != null )
-					{
-						highlightHoveredNode();
-					}
-					this.repaint();
-				}
-//			}
-		}
-	}
-
-	private void highlightHoveredNode()
-	{
-		hoveredOldColor = hoveredNode.getOutlineColor();
-		hoveredNode.setOutlineColor( "#FF0000" );
-		hoveredOldMustDrawLabel = hoveredNode.isForceLabel();
-		hoveredNode.setForceLabel( true );
-		hoveredOldLabelOutlineColor = hoveredNode.getLabelOutlineColor();
-		hoveredNode.setLabelOutlineColor( "#FF0000" );
-	}
-
-	private void restoreHoveredNode()
-	{
-		hoveredNode.setOutlineColor( hoveredOldColor );
-		hoveredNode.setForceLabel( hoveredOldMustDrawLabel );
-		hoveredNode.setLabelOutlineColor( hoveredOldLabelOutlineColor );
-		hoveredNode = null;
+		handler.hovering( e.getX(), e.getY() );
+		this.repaint();
 	}
 
 	/*

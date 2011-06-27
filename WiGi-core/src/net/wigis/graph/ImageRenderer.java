@@ -642,44 +642,22 @@ public class ImageRenderer
 				for( int i = 0; i < nodes.size(); i++ )
 				{
 					tempNode = nodes.get( i );
-					if( !tempNode.isSelected() ) // draw selected nodes
-					// later
+					if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" )/* && tempNode.isVisible()*/ )
 					{
-						if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" )/* && tempNode.isVisible()*/ )
+						if( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() )
 						{
-							if( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() )
-							{
-								boolean selected = highlightNode( highlightNeighbors, tempNode );
-								boolean temp = tempNode.isSelected();
-								tempNode.setSelected( selected );
-								drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels,
-										outlinedLabels, labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength,
-										curvedLabelAngle, scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode )  );
-								tempNode.setSelected( temp );
-							}
+							boolean selected = highlightNode( highlightNeighbors, tempNode );
+							boolean temp = tempNode.isSelected();
+							tempNode.setSelected( selected );
+							drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels,
+									outlinedLabels, labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength,
+									curvedLabelAngle, scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode )  );
+							tempNode.setSelected( temp );
 						}
 					}
 				}
 			}
 
-			if( hideConflictingLabels && selectedNodes.size() > 0 )
-			{
-				Collections.sort( selectedNodes, sortByLabelSize );
-				selectedNodes = getNodesWithoutOverlappingLabels( selectedNodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX,
-						maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
-			}
-			int numberOfLabels = Math.min( maxNumberOfSelectedLabels, selectedNodes.size() );
-			for( int i = 0; i < numberOfLabels; i++ )
-			{
-				tempNode = selectedNodes.get( i );
-				if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" ) )
-				{
-					drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, true, curvedLabels, outlinedLabels,
-							labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle,
-							scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode ) );
-				}
-			}
 		}
 	}
 
@@ -690,7 +668,7 @@ public class ImageRenderer
 	 */
 	public static boolean highlightNode( boolean highlightNeighbors, DNVNode tempNode )
 	{
-		boolean highlighted = tempNode.isSelected()
+		boolean highlighted = tempNode.isSelected() || tempNode.isHighlighted()
 				|| ( highlightNeighbors && ( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() ) );
 		return highlighted;
 	}
@@ -879,53 +857,23 @@ public class ImageRenderer
 		for( int i = 0; i < nodes.size(); i++ )
 		{
 			tempNode = nodes.get( i );
-//			if( tempNode.isVisible() )
-//			{
-
-				if( tempNode.isSelected() || ( highlightNeighbors && tempNode.isEdgeSelected() ) ) // draw
-				// selected
-				// nodes
-				// later
-				{
-					selectedNodes.add( tempNode );
-				}
-				else
-				{
-					color = tempNode.getColor();
-					transformTimer.setStart();
-					tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode
-							.getPosition( true ) );
-					transformTimer.setEnd();
-					drawNodeTimer.setStart();
-					try
-					{
-						drawNode( g, showIcons, tempNode, tempNode.getIcon(), tempPos, color, nodeWidth, type, maxDistanceToHighlight, overview );
-					}
-					catch( IOException ioe )
-					{
-						ioe.printStackTrace();
-					}
-					drawNodeTimer.setEnd();
-				}
-//			}
-		}
-		// draw selected nodes on top of the regular nodes
-		// if( sortNodes )
-		// {
-		Collections.sort( selectedNodes, sortByLabelSize );
-		// }
-		for( int i = 0; i < selectedNodes.size(); i++ )
-		{
-			tempNode = selectedNodes.get( i );
 			color = tempNode.getColor();
 			transformTimer.setStart();
 			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode
 					.getPosition( true ) );
 			transformTimer.setEnd();
 			drawNodeTimer.setStart();
-			drawNode( g, showIcons, tempNode, tempNode.getIcon(), tempPos, color, nodeWidth, type, maxDistanceToHighlight, overview );
+			try
+			{
+				drawNode( g, showIcons, tempNode, tempNode.getIcon(), tempPos, color, nodeWidth, type, maxDistanceToHighlight, overview );
+			}
+			catch( IOException ioe )
+			{
+				ioe.printStackTrace();
+			}
 			drawNodeTimer.setEnd();
 		}
+
 		return nodes;
 	}
 
@@ -2115,7 +2063,7 @@ public class ImageRenderer
 		nodeWidth *= tempNode.getRadius();
 		g2d.setStroke( basicStroke );
 		Color outlineColor = Color.darkGray;
-		if( tempNode.isSelected() )
+		if( tempNode.isSelected() || tempNode.isHighlighted() )
 		{
 			outlineColor = Color.red;
 			g2d.setStroke( basicStroke2 );
@@ -2145,7 +2093,7 @@ public class ImageRenderer
 		if( nodeWidth < 5 && type == RECTANGLE )
 		{
 			g2d.fillRect( x, y, nodeWidth, nodeWidth );
-			if( nodeWidth > 3 || tempNode.isSelected() )
+			if( nodeWidth > 3 || tempNode.isSelected() || tempNode.isHighlighted() )
 			{
 				g2d.setColor( outlineColor );
 				g2d.drawRect( x, y, nodeWidth, nodeWidth );
@@ -2154,7 +2102,7 @@ public class ImageRenderer
 		else
 		{
 			g2d.fillOval( x, y, nodeWidth, nodeWidth );
-			if( nodeWidth > 3 || tempNode.isSelected()  )
+			if( nodeWidth > 3 || tempNode.isSelected() || tempNode.isHighlighted() )
 			{
 				g2d.setColor( outlineColor );
 				g2d.drawOval( x, y, nodeWidth, nodeWidth );
@@ -2287,7 +2235,7 @@ public class ImageRenderer
 						return;
 					}
 				}
-				if( tempNode.isSelected() || highlighted )
+				if( tempNode.isSelected() || highlighted || tempNode.isHighlighted() )
 				{
 					color = new Color( SELECTED_HIGHLIGHT_COLOR.getX(), SELECTED_HIGHLIGHT_COLOR.getY(), SELECTED_HIGHLIGHT_COLOR.getZ(), alpha );
 					outlineColor = new Color( 1, 1, 1, alpha );

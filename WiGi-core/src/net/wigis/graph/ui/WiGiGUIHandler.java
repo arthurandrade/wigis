@@ -1,9 +1,14 @@
 package net.wigis.graph.ui;
 
 import java.awt.Component;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +45,78 @@ public class WiGiGUIHandler
 		initializeAudio();
 	}
 	
+	private static String wigiIconImagePath = "resources/wigis.gif";
+	private Image wigiIconImage = null;
+
+	public void setWiGiDockIcon()
+	{
+		setDockIcon( getWigiIconImage() );
+	}
+
+	private void generateWiGiIconImage()
+	{
+		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( wigiIconImagePath );
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		wigiIconImage = kit.createImage(url);
+	}
+	
+	public Image getWigiIconImage()
+	{
+		if( wigiIconImage == null )
+		{
+			generateWiGiIconImage();
+		}
+		return wigiIconImage;
+	}
+
+	public void setWigiIconImage( Image wigiIconImage )
+	{
+		this.wigiIconImage = wigiIconImage;
+	}
+
+	/**
+	 * @param img
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static void setDockIcon( Image img )
+	{
+		if( System.getProperty("os.name").equals( "Mac OS X" ) )
+		{
+			try
+			{
+				Class appc = Class.forName("com.apple.eawt.Application");
+				Method m = appc.getMethod( "getApplication" );
+				Object app = m.invoke( appc );
+				Method setDockIconImage = appc.getMethod( "setDockIconImage", Image.class );
+				setDockIconImage.invoke( app, img );
+			}
+			catch( ClassNotFoundException e )
+			{
+				e.printStackTrace();
+			}
+			catch( SecurityException e )
+			{
+				e.printStackTrace();
+			}
+			catch( NoSuchMethodException e )
+			{
+				e.printStackTrace();
+			}
+			catch( IllegalArgumentException e )
+			{
+				e.printStackTrace();
+			}
+			catch( IllegalAccessException e )
+			{
+				e.printStackTrace();
+			}
+			catch( InvocationTargetException e )
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public void moveOverview( Component c )
 	{
 		overviewFrame.setBounds( c.getX() + c.getWidth() + 10, c.getY(), WiGiOverviewPanel.OVERVIEW_SIZE, WiGiOverviewPanel.OVERVIEW_SIZE );
@@ -308,4 +385,52 @@ public class WiGiGUIHandler
 		pb.setMaxY( pb.getMaxY() + movementY/WiGiOverviewPanel.OVERVIEW_SIZE );
 	}
 	
+	private DNVNode hoveredNode;
+	public void hovering( int x, int y )
+	{
+		synchronized( pb.getGraph() )
+		{
+//			if( pb.getGraph().getGraphSize( (int)pb.getLevel() ) < 2000 )
+//			{
+				DNVNode node = picking( x, y, 0, false, false );
+				if( node == null )
+				{
+					if( hoveredNode != null && hoveredNode != node )
+					{
+						restoreHoveredNode();
+					}
+				}
+				else if( node != null && hoveredNode == null )
+				{
+					hoveredNode = node;
+					if( hoveredNode != null )
+					{
+						highlightHoveredNode();
+					}
+				}
+				else if( node != null && hoveredNode != null && node != hoveredNode )
+				{
+					restoreHoveredNode();
+					hoveredNode = node;
+					if( hoveredNode != null )
+					{
+						highlightHoveredNode();
+					}
+				}
+//			}
+		}
+
+	}
+	
+	private void highlightHoveredNode()
+	{
+		hoveredNode.setHighlighted( true );
+	}
+
+	private void restoreHoveredNode()
+	{
+		hoveredNode.setHighlighted( false );
+		hoveredNode = null;
+	}
+
 }
