@@ -836,6 +836,22 @@ public class DNVEntity
 		}
 	}
 
+	public boolean isHighlighted()
+	{
+		if( graph != null )
+			return graph.isHighlighted( this, level );
+
+		return false;
+	}
+	
+	public void setHighlighted( boolean highlighted )
+	{
+		if( graph != null )
+		{
+			graph.setHighlighted( this, level, highlighted );
+		}
+	}
+	
 	/**
 	 * Checks if is visible.
 	 * 

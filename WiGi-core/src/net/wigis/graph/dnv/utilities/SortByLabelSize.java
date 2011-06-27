@@ -87,6 +87,15 @@ public class SortByLabelSize implements Comparator<DNVNode>
 				}
 			}
 		}
+		
+		if( node0.isHighlighted() && !node1.isHighlighted() )
+		{
+			return 1;
+		}
+		if( !node0.isHighlighted() && node1.isHighlighted() )
+		{
+			return -1;
+		}
 
 		if( highlightNeighbors )
 		{

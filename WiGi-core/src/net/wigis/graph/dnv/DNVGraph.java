@@ -85,10 +85,20 @@ public class DNVGraph implements Serializable
 	/** The selected nodes. */
 	private Map<Integer, Map<Integer, DNVNode>> selectedNodes = new HashMap<Integer, Map<Integer, DNVNode>>();
 
-	// Integer is the level and the Map contains all selected nodes at the given
+	// Integer is the level and the Map contains all selected edges at the given
 	// level, where the Integer is the node id
 	/** The selected edges. */
 	private Map<Integer, Map<Integer, DNVEdge>> selectedEdges = new HashMap<Integer, Map<Integer, DNVEdge>>();
+
+	// Integer is the level and the Map contains all highlighted nodes at the given
+	// level, where the Integer is the node id
+	/** The selected nodes. */
+	private Map<Integer, Map<Integer, DNVNode>> highlightedNodes = new HashMap<Integer, Map<Integer, DNVNode>>();
+
+	// Integer is the level and the Map contains all highlighted edges at the given
+	// level, where the Integer is the node id
+	/** The selected edges. */
+	private Map<Integer, Map<Integer, DNVEdge>> highlightedEdges = new HashMap<Integer, Map<Integer, DNVEdge>>();
 
 	// Integer is the level and the Map contains all selected nodes at the given
 	// level, where the Integer is the node id
@@ -910,6 +920,7 @@ public class DNVGraph implements Serializable
 		{
 			boolean selected = entity.isSelected();
 			boolean visible = entity.isVisible();
+			boolean highlighted = entity.isHighlighted();
 			entity.setGraph( this );
 			entity.setLevel( level );
 			if( idGenerator.getCurrentId() <= entity.getId() )
@@ -1016,6 +1027,7 @@ public class DNVGraph implements Serializable
 			
 			entity.setSelected( selected );
 			entity.setVisible( visible );
+			entity.setHighlighted( highlighted );
 		}
 	}
 
@@ -1051,6 +1063,9 @@ public class DNVGraph implements Serializable
 				}
 				
 				nodeList = getSelectedNodes( level );
+				nodeList.remove( entity.getId() );
+				
+				nodeList = getHighlightedNodes( level );
 				nodeList.remove( entity.getId() );
 				
 				nodeList = getVisibleNodes( level );
@@ -2014,6 +2029,48 @@ public class DNVGraph implements Serializable
 			paintBean.forceSubgraphRefresh();
 		}
 	}
+	
+	public void setHighlighted( DNVEntity entity, Integer level, boolean highlighted )
+	{
+		if( entity instanceof DNVNode )
+		{
+			setHighlightedNode( (DNVNode)entity, level, highlighted );
+		}
+		else if( entity instanceof DNVEdge )
+		{
+			setHighlightedEdge( (DNVEdge)entity, level, highlighted );
+		}
+	}
+	
+	private void setHighlightedEdge( DNVEdge edge, Integer level, boolean highlighted )
+	{
+		Map<Integer, DNVEdge> edgeMap = getHighlightedEdges( level );
+		if( highlighted )
+		{
+			edgeMap.put( edge.getId(), edge );
+		}
+		else
+		{
+			edgeMap.remove( edge.getId() );
+		}
+	}
+
+	private void setHighlightedNode( DNVNode node, Integer level, boolean highlighted )
+	{
+		Map<Integer, DNVNode> nodesMap = getHighlightedNodes( level );
+		if( highlighted )
+		{
+			nodesMap.put( node.getId(), node );
+		}
+		else
+		{
+			nodesMap.remove( node.getId() );
+		}
+		if( paintBean != null )
+		{
+			paintBean.forceSubgraphRefresh();
+		}		
+	}
 
 	/**
 	 * Gets the selected nodes.
@@ -2033,7 +2090,30 @@ public class DNVGraph implements Serializable
 
 		return nodesMap;
 	}
+	
+	public Map<Integer, DNVNode> getHighlightedNodes( Integer level )
+	{
+		Map<Integer, DNVNode> nodesMap = highlightedNodes.get( level );
+		if( nodesMap == null )
+		{
+			nodesMap = new HashMap<Integer, DNVNode>();
+			highlightedNodes.put( level, nodesMap );
+		}
 
+		return nodesMap;
+	}
+
+	public Map<Integer, DNVEdge> getHighlightedEdges( Integer level )
+	{
+		Map<Integer, DNVEdge> edgeMap = highlightedEdges.get( level );
+		if( edgeMap == null )
+		{
+			edgeMap = new HashMap<Integer, DNVEdge>();
+			highlightedEdges.put( level, edgeMap );
+		}
+
+		return edgeMap;
+	}
 	/**
 	 * Sets the visible.
 	 * 
@@ -2360,6 +2440,44 @@ public class DNVGraph implements Serializable
 		{
 			return false;
 		}
+	}
+		
+	public boolean isHighlighted( DNVEntity entity, int level )
+	{
+		if( entity instanceof DNVNode )
+		{
+			return isHighlighted( (DNVNode)entity, level );
+		}
+		else if( entity instanceof DNVEdge )
+		{
+			return isHighlighted( (DNVEdge)entity, level );
+		}
+		
+		return false;
+	}
+	
+	public boolean isHighlighted( DNVEdge edge, int level )
+	{
+		try
+		{
+			return highlightedEdges.get( level ).containsKey( edge.getId() );
+		}
+		catch( NullPointerException npe )
+		{
+			return false;
+		}		
+	}
+
+	public boolean isHighlighted( DNVNode node, int level )
+	{
+		try
+		{
+			return highlightedNodes.get( level ).containsKey( node.getId() );
+		}
+		catch( NullPointerException npe )
+		{
+			return false;
+		}		
 	}
 
 	/**
