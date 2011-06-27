@@ -180,7 +180,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 	}
 
 	private Timer timer = new Timer( Timer.NANOSECONDS );
-	private boolean printFPS = true;
+	private boolean printFPS = false;
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -228,9 +228,11 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		canvas.showSettingsFrame();
 	}
 
+	private static String iconImage = "resources/wigis.gif";
+	
 	public static WiGiGUI init() {
 		GraphsPathFilter.init();
-		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( "resources/wigis.png" );
+		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( iconImage );
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Image img = kit.createImage(url);		
 
