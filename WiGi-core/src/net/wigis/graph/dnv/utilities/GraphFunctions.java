@@ -921,7 +921,7 @@ public final class GraphFunctions
 	 *            the type
 	 * @return the k nearest node ids
 	 */
-	public static Integer[] getKNearestNodeIds( int k, DNVNode node, DNVGraph graph, int level, boolean restingDistance, String type )
+	public static List<Integer> getKNearestNodeIds( int k, DNVNode node, DNVGraph graph, int level, boolean restingDistance, String type )
 	{
 		List<Integer> theIds = new ArrayList<Integer>();
 
@@ -943,9 +943,7 @@ public final class GraphFunctions
 			}
 		}
 
-		Integer[] ids = new Integer[theIds.size()];
-
-		return theIds.toArray( ids );
+		return theIds;
 	}
 
 	/**

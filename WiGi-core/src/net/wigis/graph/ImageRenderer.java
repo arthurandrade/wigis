@@ -954,7 +954,7 @@ public class ImageRenderer
 				{
 					if( tempEdge.getFrom() != null && tempEdge.getTo() != null )
 					{
-						if( tempEdge.isSelected() || ( highlightNeighbors && ( tempEdge.getFrom().isSelected() || tempEdge.getTo().isSelected() ) ) )
+						if( tempEdge.isSelected() || tempEdge.isHighlighted() || ( highlightNeighbors && ( tempEdge.getFrom().isSelected() || tempEdge.getTo().isSelected() ) ) )
 						{
 							selectedEdges.add( tempEdge );
 						}
