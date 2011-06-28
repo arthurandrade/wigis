@@ -26,10 +26,13 @@ package net.wigis.web;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -879,8 +882,42 @@ public class GraphServlet extends HttpServlet
 			{}
 		}
 
-//		if( released )
 		GraphFunctions.colorKNearestNodes( graph, level, numberOfUsersRecommendation, "Active_user", "user" );
+		
+		if( released )
+		{
+			try
+			{
+				Class<?> peerchooserBean = Class.forName( "net.wigis.peerchooser.PeerchooserBean" );
+				Method setTryRecommend = peerchooserBean.getMethod( "tryRecommend" );
+				Object beanInstance = ContextLookup.lookup( "peerchooserBean", FacesContext.getCurrentInstance() );
+				setTryRecommend.invoke( beanInstance );
+			}
+			catch( ClassNotFoundException e )
+			{
+				e.printStackTrace();
+			}
+			catch( SecurityException e )
+			{
+				e.printStackTrace();
+			}
+			catch( NoSuchMethodException e )
+			{
+				e.printStackTrace();
+			}
+			catch( IllegalArgumentException e )
+			{
+				e.printStackTrace();
+			}
+			catch( IllegalAccessException e )
+			{
+				e.printStackTrace();
+			}
+			catch( InvocationTargetException e )
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
