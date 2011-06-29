@@ -22,13 +22,15 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.implementations;
 
 import java.util.List;
 
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.layout.helpers.Grid;
+import net.wigis.graph.dnv.layout.interfaces.NodeCentralizedLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Vector2D;
 

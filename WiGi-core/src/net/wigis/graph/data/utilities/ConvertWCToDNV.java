@@ -36,7 +36,7 @@ import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVEntity;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.layout.FruchtermanReingold;
+import net.wigis.graph.dnv.layout.implementations.FruchtermanReingold;
 import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.settings.Settings;
 import au.com.bytecode.opencsv.CSVReader;

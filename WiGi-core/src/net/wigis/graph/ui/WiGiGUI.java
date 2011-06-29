@@ -57,6 +57,7 @@ import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
@@ -576,7 +577,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		if( selectedNode != null )
 		{
 			handler.playSound( 0 );
-			GraphServlet.selectNode( pb, pb.getGraph(), Integer.MAX_VALUE, (int)pb.getLevel(), selectedNode );
+			InterpolationMethod.selectNode( pb, pb.getGraph(), Integer.MAX_VALUE, (int)pb.getLevel(), selectedNode );
 		}
 /*
 		DNVGraph graph = pb.getGraph();

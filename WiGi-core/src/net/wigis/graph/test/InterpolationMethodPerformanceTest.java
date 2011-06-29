@@ -30,8 +30,8 @@ import java.io.IOException;
 
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
-import net.wigis.graph.dnv.utilities.InterpolationMethod;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 

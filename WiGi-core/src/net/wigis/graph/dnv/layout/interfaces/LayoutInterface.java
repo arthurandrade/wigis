@@ -1,4 +1,4 @@
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.interfaces;
 
 
 public interface LayoutInterface

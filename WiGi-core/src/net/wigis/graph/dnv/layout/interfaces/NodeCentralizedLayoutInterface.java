@@ -1,4 +1,4 @@
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.interfaces;
 
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;

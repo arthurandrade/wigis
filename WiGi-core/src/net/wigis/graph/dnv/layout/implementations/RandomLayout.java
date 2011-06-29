@@ -22,51 +22,36 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.implementations;
 
-import java.util.Comparator;
-
+import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.layout.interfaces.AreaRestrictedLayoutInterface;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class ItemScoreSort.
+ * The Class RandomLayout.
  * 
  * @author Brynjar Gretarsson
  */
-public class ItemScoreSort implements Comparator<DNVNode>
+public class RandomLayout implements AreaRestrictedLayoutInterface
 {
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Run layout.
 	 * 
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 * @param graph
+	 *            the graph
+	 * @param level
+	 *            the level
+	 * @param multiplier
+	 *            the multiplier
 	 */
-	@Override
-	public int compare( DNVNode n1, DNVNode n2 )
+	public void runLayout( DNVGraph graph, int level, float multiplier )
 	{
-		String valueStr1 = n1.getProperty( "itemScore" );
-		String valueStr2 = n2.getProperty( "itemScore" );
-		float value1 = 0;
-		float value2 = 0;
-
-		if( valueStr1 != null )
+		for( DNVNode n : graph.getNodes( level ) )
 		{
-			value1 = Float.parseFloat( valueStr1 );
+			n.setPosition( (float)Math.random() * multiplier, (float)Math.random() * multiplier );
 		}
-
-		if( valueStr2 != null )
-		{
-			value2 = Float.parseFloat( valueStr2 );
-		}
-
-		if( value1 > value2 )
-			return -1;
-
-		if( value2 > value1 )
-			return 1;
-
-		return 0;
 	}
-
 }

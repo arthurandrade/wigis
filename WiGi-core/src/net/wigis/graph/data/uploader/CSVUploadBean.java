@@ -44,7 +44,7 @@ import net.wigis.graph.PaintBean;
 import net.wigis.graph.data.citeseer.Logger;
 import net.wigis.graph.data.utilities.Unzip;
 import net.wigis.graph.dnv.DNVGraph;
-import net.wigis.graph.dnv.layout.FruchtermanReingold;
+import net.wigis.graph.dnv.layout.implementations.FruchtermanReingold;
 import net.wigis.settings.Settings;
 import net.wigis.web.ContextLookup;
 

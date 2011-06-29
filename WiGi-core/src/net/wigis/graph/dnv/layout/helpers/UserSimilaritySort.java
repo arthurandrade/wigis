@@ -22,35 +22,51 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.helpers;
 
-import net.wigis.graph.dnv.DNVGraph;
+import java.util.Comparator;
+
 import net.wigis.graph.dnv.DNVNode;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RandomLayout.
+ * The Class UserSimilaritySort.
  * 
  * @author Brynjar Gretarsson
  */
-public class RandomLayout implements AreaRestrictedLayoutInterface
+public class UserSimilaritySort implements Comparator<DNVNode>
 {
 
-	/**
-	 * Run layout.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param graph
-	 *            the graph
-	 * @param level
-	 *            the level
-	 * @param multiplier
-	 *            the multiplier
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	public void runLayout( DNVGraph graph, int level, float multiplier )
+	@Override
+	public int compare( DNVNode n1, DNVNode n2 )
 	{
-		for( DNVNode n : graph.getNodes( level ) )
+		String valueStr1 = n1.getProperty( "userSimilarity" );
+		String valueStr2 = n2.getProperty( "userSimilarity" );
+		float value1 = 0;
+		float value2 = 0;
+
+		if( valueStr1 != null )
 		{
-			n.setPosition( (float)Math.random() * multiplier, (float)Math.random() * multiplier );
+			value1 = Float.parseFloat( valueStr1 );
 		}
+
+		if( valueStr2 != null )
+		{
+			value2 = Float.parseFloat( valueStr2 );
+		}
+
+		if( value1 > value2 )
+			return -1;
+
+		if( value2 > value1 )
+			return 1;
+
+		return 0;
 	}
+
 }

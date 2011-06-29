@@ -32,8 +32,8 @@ import mdsj.MDSJ;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.layout.FruchtermanReingold;
-import net.wigis.graph.dnv.layout.RandomLayout;
+import net.wigis.graph.dnv.layout.implementations.FruchtermanReingold;
+import net.wigis.graph.dnv.layout.implementations.RandomLayout;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.settings.Settings;
 

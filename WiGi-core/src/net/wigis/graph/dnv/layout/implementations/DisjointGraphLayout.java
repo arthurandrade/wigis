@@ -22,7 +22,7 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.implementations;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +33,7 @@ import java.util.Map;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.clustering.ConnectedClustering;
+import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.NumberOfSubnodesSort;
 import net.wigis.graph.dnv.utilities.Vector2D;

@@ -22,7 +22,7 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.helpers;
 
 import java.util.ArrayList;
 import java.util.Collection;

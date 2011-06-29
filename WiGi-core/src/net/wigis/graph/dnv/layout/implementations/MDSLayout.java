@@ -22,7 +22,7 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.implementations;
 
 import java.util.List;
 
@@ -30,6 +30,7 @@ import mdsj.MDSJ;
 import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.layout.interfaces.MDSLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.settings.Settings;
 

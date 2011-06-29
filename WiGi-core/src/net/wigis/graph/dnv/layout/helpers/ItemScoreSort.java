@@ -22,7 +22,7 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.layout;
+package net.wigis.graph.dnv.layout.helpers;
 
 import java.util.Comparator;
 
@@ -30,11 +30,11 @@ import net.wigis.graph.dnv.DNVNode;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class UserSimilaritySort.
+ * The Class ItemScoreSort.
  * 
  * @author Brynjar Gretarsson
  */
-public class UserSimilaritySort implements Comparator<DNVNode>
+public class ItemScoreSort implements Comparator<DNVNode>
 {
 
 	/*
@@ -45,8 +45,8 @@ public class UserSimilaritySort implements Comparator<DNVNode>
 	@Override
 	public int compare( DNVNode n1, DNVNode n2 )
 	{
-		String valueStr1 = n1.getProperty( "userSimilarity" );
-		String valueStr2 = n2.getProperty( "userSimilarity" );
+		String valueStr1 = n1.getProperty( "itemScore" );
+		String valueStr2 = n2.getProperty( "itemScore" );
 		float value1 = 0;
 		float value2 = 0;
 

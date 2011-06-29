@@ -26,13 +26,9 @@ package net.wigis.web;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,11 +40,12 @@ import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.layout.FruchtermanReingold;
-import net.wigis.graph.dnv.layout.HopDistanceLayout;
-import net.wigis.graph.dnv.layout.RecommendationLayoutInterface;
+import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
+import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
+import net.wigis.graph.dnv.interaction.interfaces.RecommendationInteractionInterface;
+import net.wigis.graph.dnv.interaction.interfaces.SimpleInteractionInterface;
+import net.wigis.graph.dnv.layout.interfaces.RecommendationLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
-import net.wigis.graph.dnv.utilities.InterpolationMethod;
 import net.wigis.graph.dnv.utilities.SortByLabelSize;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
@@ -204,6 +201,7 @@ public class GraphServlet extends HttpServlet
 			}
 
 			Timer pickingTimer = new Timer( Timer.MILLISECONDS );
+			
 			// ------------------------------------
 			// interaction with static image
 			// ------------------------------------
@@ -536,92 +534,14 @@ public class GraphServlet extends HttpServlet
 			}
 		}
 
-		if( pb.getInteractionMethod().equals( Settings.INTERPOLATION_INTERACTION ) )
+		InteractionInterface interactionMethod = pb.getInteractionMethod();
+		if( interactionMethod instanceof SimpleInteractionInterface )
 		{
-//			if( !sameNode && selectedNode != null )
-//			{
-//				runDocumentTopicsCircularLayout( request, pb, graph, level );
-//			}
-			performInterpolation( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX, globalMaxX,
-					globalMinY, globalMaxY, selectedNode );
+			((SimpleInteractionInterface)interactionMethod).performInteraction( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, released );
 		}
-		else if( pb.getInteractionMethod().equals( Settings.PEERCHOOSER_INTERACTION ) )
+		else if( interactionMethod instanceof RecommendationInteractionInterface )
 		{
-			performPeerchooserMovement( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX,
-					globalMaxX, globalMinY, globalMaxY, selectedNode, released );
-		}
-		else if( pb.getInteractionMethod().equals( Settings.FACEBOOK_RECOMMENDATION_INTERACTION ) )
-		{
-			if( selectedNode != null )
-			{
-				String hopDistanceStr = selectedNode.getProperty( "hopDistance" );
-				if( hopDistanceStr != null )
-				{
-					float hopDistance = Float.parseFloat( hopDistanceStr );
-					String centralNodeIdStr = graph.getProperty( "centralNodeId" );
-					if( centralNodeIdStr != null )
-					{
-						DNVNode centralNode = (DNVNode)graph.getNodeById( Integer.parseInt( centralNodeIdStr ) );
-						recommendationLayout.moveNode( graph, selectedNode, centralNode, ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY,
-								minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY, width, height ), hopDistance, pb
-								.isRecommendationCircle(), request, sameNode );
-					}
-				}
-			}
-		}
-		else if( pb.getInteractionMethod().equals( Settings.TOPIC_INTERACTION ) )
-		{
-			if( selectedNode != null && !sameNode )
-			{
-				new HopDistanceLayout().runLayout( graph, selectedNode, level, false );
-			}
-		}
-		else if( pb.getInteractionMethod().equals( Settings.SPRING_INTERACTION ) )
-		{
-			if( selectedNode != null )
-			{
-				performSpringInteraction( selectedNode, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, globalMinX,
-						globalMaxX, globalMinY, globalMaxY );
-			}
-		}
-		else if( pb.getInteractionMethod().equals( Settings.INTERPOLATION_WITH_SPRING ) )
-		{
-			if( selectedNode != null )
-			{				
-				pb.setInteractionMethod( Settings.INTERPOLATION_INTERACTION );
-				moveNode( selectedNode, request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX, globalMaxX, globalMinY, globalMaxY, recommendationLayout, released );
-				pb.setInteractionMethod( Settings.INTERPOLATION_WITH_SPRING );
-				
-				selectedNode.setProperty( "fixed", "true" );
-				
-				for( int i = 5; i > 0; i-- )
-				{
-					FruchtermanReingold.runIteration( 80, 80, graph, level, 0.1f * i, false, false, false );
-				}
-	
-				selectedNode.removeProperty( "fixed" );
-			}
-		}
-	}
-
-	public static void performSpringInteraction( DNVNode selectedNode, DNVGraph graph, int level, int width, int height, double minX, double minY,
-			double maxX, double maxY, int mouseUpX, int mouseUpY, double globalMinX, double globalMaxX, double globalMinY, double globalMaxY )
-	{
-		if( selectedNode != null )
-		{
-			Vector2D mouseUpWorld = ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY,
-					globalMaxY, width, height );
-			Vector2D movement = ImageRenderer.getMovement( selectedNode, mouseUpWorld );
-			moveNode( selectedNode, movement );
-			
-			selectedNode.setProperty( "fixed", "true" );
-			
-			for( int i = 5; i > 0; i-- )
-			{
-				FruchtermanReingold.runIteration( (int)(globalMaxX - globalMinX), (int)(globalMaxY - globalMinY), graph, level, 0.1f * i, false, false, false );
-			}
-	
-			selectedNode.removeProperty( "fixed" );
+			((RecommendationInteractionInterface)interactionMethod).performInteraction( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, released, recommendationLayout, request );			
 		}
 	}
 
@@ -710,34 +630,6 @@ public class GraphServlet extends HttpServlet
 		return nodeWidth;
 	}
 
-//	/**
-//	 * Run document topics circular layout.
-//	 * 
-//	 * @param request
-//	 *            the request
-//	 * @param pb
-//	 *            the pb
-//	 * @param graph
-//	 *            the graph
-//	 * @param level
-//	 *            the level
-//	 */
-//	public static void runDocumentTopicsCircularLayout( HttpServletRequest request, PaintBean pb, DNVGraph graph, int level )
-//	{
-//		TopicVisualizationBean tvb = (TopicVisualizationBean)ContextLookup.lookup( "topicVisualizationBean", request );
-//		if( tvb != null )
-//		{
-//			if( pb.getLayoutMethod().equals( Settings.DOCUMENT_TOPIC_CIRCULAR_LAYOUT ) && pb.isDocumentTopicsCircularLayoutOnlyDeformSelectedTopics() )
-//			{
-//				// Double circularWidth = MDSTopicsLayout.getWidth(
-//				// tvb.getDissimilarityMatrix() );
-//				DocumentTopicsCircularLayout.runLayout( graph, level, (float)pb.getCircularLayoutBuffer(), 0.1f, pb
-//						.getDocumentTopicsCircularLayoutDocIdPrefix(), null, pb.getDocumentTopicsCircularLayoutWidthMultiplier(), tvb
-//						.isForceTopicsToCircle(), tvb.isCreateDocumentEdges() || tvb.isTimelineVisualization(), true, tvb.getDissimilarityMatrix() );
-//			}
-//		}
-//	}
-
 	/**
 	 * Gets the point line distance.
 	 * 
@@ -771,317 +663,6 @@ public class GraphServlet extends HttpServlet
 		double distance = GraphFunctions.getDistance( x, y, pointX, pointY );
 
 		return distance;
-	}
-
-	/**
-	 * Perform peerchooser movement.
-	 * 
-	 * @param pb
-	 *            the pb
-	 * @param graph
-	 *            the graph
-	 * @param width
-	 *            the width
-	 * @param height
-	 *            the height
-	 * @param minX
-	 *            the min x
-	 * @param minY
-	 *            the min y
-	 * @param maxX
-	 *            the max x
-	 * @param maxY
-	 *            the max y
-	 * @param mouseUpX
-	 *            the mouse up x
-	 * @param mouseUpY
-	 *            the mouse up y
-	 * @param sameNode
-	 *            the same node
-	 * @param level
-	 *            the level
-	 * @param globalMinX
-	 *            the global min x
-	 * @param globalMaxX
-	 *            the global max x
-	 * @param globalMinY
-	 *            the global min y
-	 * @param globalMaxY
-	 *            the global max y
-	 * @param selectedNode
-	 *            the selected node
-	 * @param released
-	 *            the released
-	 */
-	public static void performPeerchooserMovement( PaintBean pb, DNVGraph graph, int width, int height, double minX, double minY, double maxX,
-			double maxY, int mouseUpX, int mouseUpY, boolean sameNode, int level, double globalMinX, double globalMaxX, double globalMinY,
-			double globalMaxY, DNVNode selectedNode, boolean released )
-	{
-		// transform mouseUp from screen to world (new x = 0)
-		Vector2D mouseUpWorld = ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY,
-				globalMaxY, width, height );
-
-		Vector2D movement = new Vector2D( 0, 0 );
-		if( selectedNode == null && sameNode )
-		{
-			selectedNode = pb.getSelectedNode();
-		}
-
-		if( selectedNode != null )
-		{
-			if( !selectedNode.getType().equals( "Active_user" ) )
-			{
-				movement = ImageRenderer.getMovement( selectedNode, mouseUpWorld );
-
-				if( selectedNode.getType().equals( "genre" ) )
-				{
-					DNVNode activeUser = GraphFunctions.getNodeByType( "Active_user", graph, level );
-
-					if( activeUser != null )
-					{
-						double oldDistance = GraphFunctions.getDistance( activeUser, selectedNode, true );
-						Vector2D newPosition = new Vector2D( selectedNode.getPosition( true ) );
-						newPosition.add( movement );
-						double newDistance = GraphFunctions.getDistance( activeUser.getPosition( true ), newPosition );
-						double ratio = newDistance / oldDistance;
-
-						List<DNVNode> neighbors = selectedNode.getNeighbors();
-						DNVNode neighbor;
-						Vector2D tempMovement = new Vector2D();
-
-						for( int i = 0; i < neighbors.size(); i++ )
-						{
-							neighbor = neighbors.get( i );
-							oldDistance = GraphFunctions.getDistance( activeUser, neighbor, true );
-							newDistance = oldDistance * ratio;
-							newPosition.set( neighbor.getPosition( true ) );
-							newPosition.normalize();
-							newPosition.dotProduct( (float)newDistance );
-							newPosition.add( activeUser.getPosition( true ) );
-
-							tempMovement.set( newPosition );
-							tempMovement.subtract( neighbor.getPosition( true ) );
-							neighbor.move( tempMovement, false, false );
-						}
-					}
-				}
-
-				selectedNode.move( movement, false, false );
-			}
-		}
-
-		String number = graph.getProperty( "numberOfUsersRecommendation" );
-		int numberOfUsersRecommendation = 20;
-		if( number != null )
-		{
-			try
-			{
-				numberOfUsersRecommendation = Integer.parseInt( number );
-			}
-			catch( NumberFormatException nfe )
-			{}
-		}
-
-		GraphFunctions.colorKNearestNodes( graph, level, numberOfUsersRecommendation, "Active_user", "user" );
-		
-		if( released )
-		{
-			try
-			{
-				Class<?> peerchooserBean = Class.forName( "net.wigis.peerchooser.PeerchooserBean" );
-				Method setTryRecommend = peerchooserBean.getMethod( "tryRecommend" );
-				Object beanInstance = ContextLookup.lookup( "peerchooserBean", FacesContext.getCurrentInstance() );
-				setTryRecommend.invoke( beanInstance );
-			}
-			catch( ClassNotFoundException e )
-			{
-				e.printStackTrace();
-			}
-			catch( SecurityException e )
-			{
-				e.printStackTrace();
-			}
-			catch( NoSuchMethodException e )
-			{
-				e.printStackTrace();
-			}
-			catch( IllegalArgumentException e )
-			{
-				e.printStackTrace();
-			}
-			catch( IllegalAccessException e )
-			{
-				e.printStackTrace();
-			}
-			catch( InvocationTargetException e )
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * Perform interpolation.
-	 * 
-	 * @param pb
-	 *            the pb
-	 * @param graph
-	 *            the graph
-	 * @param width
-	 *            the width
-	 * @param height
-	 *            the height
-	 * @param minX
-	 *            the min x
-	 * @param minY
-	 *            the min y
-	 * @param maxX
-	 *            the max x
-	 * @param maxY
-	 *            the max y
-	 * @param mouseUpX
-	 *            the mouse up x
-	 * @param mouseUpY
-	 *            the mouse up y
-	 * @param sameNode
-	 *            the same node
-	 * @param level
-	 *            the level
-	 * @param globalMinX
-	 *            the global min x
-	 * @param globalMaxX
-	 *            the global max x
-	 * @param globalMinY
-	 *            the global min y
-	 * @param globalMaxY
-	 *            the global max y
-	 * @param selectedNode
-	 *            the selected node
-	 */
-	public static void performInterpolation( PaintBean pb, DNVGraph graph, int width, int height, double minX, double minY, double maxX, double maxY,
-			int mouseUpX, int mouseUpY, boolean sameNode, int level, double globalMinX, double globalMaxX, double globalMinY, double globalMaxY,
-			DNVNode selectedNode )
-	{
-		Timer interpolationTimer = new Timer( Timer.MILLISECONDS );
-		interpolationTimer.setStart();
-		Map<Integer, DNVNode> selectedNodes = graph.getSelectedNodes( level );
-
-		// transform mouseUp from screen to world (new x = 0)
-		Vector2D mouseUpWorld = ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY,
-				globalMaxY, width, height );
-
-		Vector2D zeroPixels = ImageRenderer.transformScreenToWorld( 0, 0, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
-				width, height );
-
-		Vector2D fivePixels = ImageRenderer.transformScreenToWorld( 5, 5, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
-				width, height );
-
-		fivePixels.subtract( zeroPixels );
-
-		Vector2D movement = new Vector2D( 0, 0 );
-		if( selectedNode == null && sameNode )
-		{
-			selectedNode = pb.getSelectedNode();
-		}
-
-		if( selectedNode != null )
-		{
-			movement = ImageRenderer.getMovement( selectedNode, mouseUpWorld );
-
-			// Get rid of old interpolation data
-			if( !sameNode || pb.getNumberAffected() != pb.getLastUsedNumberAffected() )
-			{
-				InterpolationMethod.resetInterpolationData( graph, level );
-			}
-		}
-
-		synchronized( graph )
-		{
-			for( DNVNode node : selectedNodes.values() )
-			{
-				if( node != null )
-				{
-					// - - - - - - - - - - -
-					// drag node - use peterson's interpolation method
-					// - - - - - - - - - - -
-					if( !sameNode || selectedNodes.size() > 1 )
-					{
-						selectNode( pb, graph, Integer.MAX_VALUE, level, node );
-					}
-
-					moveNode( node, movement );
-				}
-			}
-
-			pb.setLastUsedNumberAffected( pb.getNumberAffected() );
-		}
-
-		InterpolationMethod.applyFunction( pb.getSelectedNode(), pb, graph, movement, level, Math.abs( fivePixels.getX() ) );
-		pb.forceSubgraphRefresh();
-		pb.findSubGraph();
-		interpolationTimer.setEnd();
-		if( Settings.DEBUG )
-		{
-			System.out.println( "Interpolation took " + interpolationTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
-		}
-	}
-
-	/**
-	 * Move node.
-	 * 
-	 * @param node
-	 *            the node
-	 * @param movement
-	 *            the movement
-	 */
-	public static void moveNode( DNVNode node, Vector2D movement )
-	{
-		// Perform the movement
-		node.moveRelatedNodes( movement, true, true );
-		node.move( movement, true, true );
-	}
-
-	/**
-	 * Select node.
-	 * 
-	 * @param pb
-	 *            the pb
-	 * @param graph
-	 *            the graph
-	 * @param maxDepth
-	 *            the max depth
-	 * @param level
-	 *            the level
-	 * @param node
-	 *            the node
-	 */
-	public static void selectNode( PaintBean pb, DNVGraph graph, float maxDepth, int level, DNVNode node )
-	{
-		if( !pb.isInterpolationMethodUseWholeGraph() )
-		{
-			maxDepth = (int)pb.getNumberAffected() + 1;
-			if( pb.isInterpolationMethodUseActualEdgeDistance() )
-			{
-				maxDepth *= DNVEdge.DEFAULT_RESTING_DISTANCE;
-			}
-		}
-
-		// Perform the BFS
-		float maxD = InterpolationMethod.performBFS( node, maxDepth, pb.isInterpolationMethodUseActualEdgeDistance() );
-
-		// Need to use the value returned by the BFS if we are using whole graph
-		// (otherwise we use the value given by the user)
-		if( pb.isInterpolationMethodUseWholeGraph() )
-		{
-			maxDepth = maxD;
-			if( pb.isInterpolationMethodUseActualEdgeDistance() )
-			{
-				maxDepth *= DNVEdge.DEFAULT_RESTING_DISTANCE;
-			}
-		}
-
-		InterpolationMethod.setWeights( graph, level, maxDepth, (float)pb.getCurveMin(), (float)pb.getCurveMax(), pb
-				.isInterpolationMethodUseActualEdgeDistance(), node );
 	}
 
 	/**

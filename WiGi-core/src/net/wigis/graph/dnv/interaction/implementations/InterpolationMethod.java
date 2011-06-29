@@ -22,16 +22,22 @@
  * 
  *****************************************************************************************************/
 
-package net.wigis.graph.dnv.utilities;
+package net.wigis.graph.dnv.interaction.implementations;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import net.wigis.graph.ImageRenderer;
 import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.interaction.helpers.InteractionFunctions;
+import net.wigis.graph.dnv.interaction.interfaces.SimpleInteractionInterface;
+import net.wigis.graph.dnv.utilities.Timer;
+import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
@@ -40,7 +46,7 @@ import net.wigis.settings.Settings;
  * 
  * @author Brynjar Gretarsson
  */
-public final class InterpolationMethod
+public final class InterpolationMethod implements SimpleInteractionInterface
 {
 
 	/**
@@ -600,5 +606,126 @@ public final class InterpolationMethod
 			sCurveHighEnd += 0.01;
 
 		System.out.println( "SCurve High End: " + sCurveHighEnd );
+	}
+
+	@Override
+	public Vector2D performInteraction( PaintBean pb, DNVGraph graph, int width, int height, double minX, double minY, double maxX, double maxY, int mouseUpX, int mouseUpY,
+			boolean sameNode, int level, double globalMinX, double globalMaxX, double globalMinY, double globalMaxY, DNVNode selectedNode, boolean released )
+	{
+		Timer interpolationTimer = new Timer( Timer.MILLISECONDS );
+		interpolationTimer.setStart();
+		Map<Integer, DNVNode> selectedNodes = graph.getSelectedNodes( level );
+
+		// transform mouseUp from screen to world (new x = 0)
+		Vector2D mouseUpWorld = ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY,
+				globalMaxY, width, height );
+
+		Vector2D zeroPixels = ImageRenderer.transformScreenToWorld( 0, 0, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
+				width, height );
+
+		Vector2D fivePixels = ImageRenderer.transformScreenToWorld( 5, 5, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
+				width, height );
+
+		fivePixels.subtract( zeroPixels );
+
+		Vector2D movement = new Vector2D( 0, 0 );
+		if( selectedNode == null && sameNode )
+		{
+			selectedNode = pb.getSelectedNode();
+		}
+
+		if( selectedNode != null )
+		{
+			movement = ImageRenderer.getMovement( selectedNode, mouseUpWorld );
+
+			// Get rid of old interpolation data
+			if( !sameNode || pb.getNumberAffected() != pb.getLastUsedNumberAffected() )
+			{
+				InterpolationMethod.resetInterpolationData( graph, level );
+			}
+		}
+
+		synchronized( graph )
+		{
+			for( DNVNode node : selectedNodes.values() )
+			{
+				if( node != null )
+				{
+					// - - - - - - - - - - -
+					// drag node - use peterson's interpolation method
+					// - - - - - - - - - - -
+					if( !sameNode || selectedNodes.size() > 1 )
+					{
+						selectNode( pb, graph, Integer.MAX_VALUE, level, node );
+					}
+
+					InteractionFunctions.moveNode( node, movement );
+				}
+			}
+
+			pb.setLastUsedNumberAffected( pb.getNumberAffected() );
+		}
+
+		InterpolationMethod.applyFunction( pb.getSelectedNode(), pb, graph, movement, level, Math.abs( fivePixels.getX() ) );
+		pb.forceSubgraphRefresh();
+		pb.findSubGraph();
+		interpolationTimer.setEnd();
+		if( Settings.DEBUG )
+		{
+			System.out.println( "Interpolation took " + interpolationTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
+		}		
+		
+		return movement;
+	}
+	
+	/**
+	 * Select node.
+	 * 
+	 * @param pb
+	 *            the pb
+	 * @param graph
+	 *            the graph
+	 * @param maxDepth
+	 *            the max depth
+	 * @param level
+	 *            the level
+	 * @param node
+	 *            the node
+	 */
+	public static void selectNode( PaintBean pb, DNVGraph graph, float maxDepth, int level, DNVNode node )
+	{
+		if( !pb.isInterpolationMethodUseWholeGraph() )
+		{
+			maxDepth = (int)pb.getNumberAffected() + 1;
+			if( pb.isInterpolationMethodUseActualEdgeDistance() )
+			{
+				maxDepth *= DNVEdge.DEFAULT_RESTING_DISTANCE;
+			}
+		}
+
+		// Perform the BFS
+		float maxD = InterpolationMethod.performBFS( node, maxDepth, pb.isInterpolationMethodUseActualEdgeDistance() );
+
+		// Need to use the value returned by the BFS if we are using whole graph
+		// (otherwise we use the value given by the user)
+		if( pb.isInterpolationMethodUseWholeGraph() )
+		{
+			maxDepth = maxD;
+			if( pb.isInterpolationMethodUseActualEdgeDistance() )
+			{
+				maxDepth *= DNVEdge.DEFAULT_RESTING_DISTANCE;
+			}
+		}
+
+		InterpolationMethod.setWeights( graph, level, maxDepth, (float)pb.getCurveMin(), (float)pb.getCurveMax(), pb
+				.isInterpolationMethodUseActualEdgeDistance(), node );
+	}
+
+	public static final String LABEL = "Interpolation Method";
+
+	@Override
+	public String getLabel()
+	{
+		return LABEL;
 	}
 }

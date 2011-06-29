@@ -31,7 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.wigis.graph.dnv.layout.Springs;
+import net.wigis.graph.dnv.layout.implementations.Springs;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -60,17 +60,19 @@ import net.wigis.graph.dnv.clustering.KMostConnected;
 import net.wigis.graph.dnv.clustering.SolarSystemClustering;
 import net.wigis.graph.dnv.clustering.StructuralEquivalenceClustering;
 import net.wigis.graph.dnv.geometry.Text;
-import net.wigis.graph.dnv.layout.CenterPositionFixedLayoutInterface;
-import net.wigis.graph.dnv.layout.CircularLayout;
-import net.wigis.graph.dnv.layout.LayoutInterface;
-import net.wigis.graph.dnv.layout.MDSLayoutInterface;
-import net.wigis.graph.dnv.layout.RadiusRestrictedLayout;
-import net.wigis.graph.dnv.layout.RandomLayout;
-import net.wigis.graph.dnv.layout.RecommendationLayoutInterface;
-import net.wigis.graph.dnv.layout.SimpleLayoutInterface;
-import net.wigis.graph.dnv.layout.SortingLayoutInterface;
-import net.wigis.graph.dnv.layout.SpaceRestrictedLayoutInterface;
-import net.wigis.graph.dnv.layout.TimeLimitedLayoutInterface;
+import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
+import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
+import net.wigis.graph.dnv.layout.implementations.CircularLayout;
+import net.wigis.graph.dnv.layout.implementations.RandomLayout;
+import net.wigis.graph.dnv.layout.interfaces.CenterPositionFixedLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.LayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.MDSLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.RadiusRestrictedLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.RecommendationLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.SortingLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.SpaceRestrictedLayoutInterface;
+import net.wigis.graph.dnv.layout.interfaces.TimeLimitedLayoutInterface;
 import net.wigis.graph.dnv.utilities.DescendingSort;
 import net.wigis.graph.dnv.utilities.GenerateHistogramOfConnectivity;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
@@ -323,9 +325,7 @@ public class PaintBean
 
 	private Map<String,LayoutInterface> layoutMethods = new HashMap<String,LayoutInterface>();
 	
-	/** The layout method. */
-//	private String layoutMethod = Settings.LAYOUT_ALGORITHMS[0];
-	
+	/** The layout method. */	
 	private LayoutInterface layoutMethod = Settings.LAYOUT_ALGORITHMS[0];
 
 	/** The circular layout sort list. */
@@ -342,9 +342,10 @@ public class PaintBean
 
 	/** The interaction method list. */
 	private List<SelectItem> interactionMethodList = new ArrayList<SelectItem>();
+	private Map<String,InteractionInterface> interactionMethods = new HashMap<String,InteractionInterface>();
 
 	/** The interaction method. */
-	private String interactionMethod = Settings.INTERACTION_ALGORITHMS[0];
+	private InteractionInterface interactionMethod = Settings.INTERACTION_ALGORITHMS[0];
 
 	/** The interpolation method use actual edge distance. */
 	private boolean interpolationMethodUseActualEdgeDistance = false;
@@ -536,7 +537,7 @@ public class PaintBean
 					Timer drawTimer = new Timer( Timer.MILLISECONDS );
 					drawTimer.setStart();
 					int maxDistanceToHighlight = (int)numberAffected;
-					if( !interactionMethod.equals( Settings.INTERPOLATION_INTERACTION ) || selectedNode == null )
+					if( !(interactionMethod instanceof InterpolationMethod) || selectedNode == null )
 					{
 						// Don't highlight nodes if no nodes is selected or not
 						// using interpolation method
@@ -2135,9 +2136,9 @@ public class PaintBean
 		{
 			((SimpleLayoutInterface)layoutMethod).runLayout( graph, level );
 		}
-		else if( layoutMethod instanceof RadiusRestrictedLayout )
+		else if( layoutMethod instanceof RadiusRestrictedLayoutInterface )
 		{
-			((RadiusRestrictedLayout)layoutMethod).runLayout( graph, level, 400 );
+			((RadiusRestrictedLayoutInterface)layoutMethod).runLayout( graph, level, 400 );
 		}
 
 		if( graph.hasStoredPosition() )
@@ -2454,14 +2455,16 @@ public class PaintBean
 	 * @param algorithms
 	 *            the algorithms
 	 */
-	public void buildInteractionMethodList( String[] algorithms )
+	public void buildInteractionMethodList( InteractionInterface[] algorithms )
 	{
 		interactionMethodList.clear();
+		interactionMethods.clear();
 		SelectItem interactionItem;
-		for( int i = 0; i < algorithms.length; i++ )
+		for( InteractionInterface interaction : algorithms )
 		{
-			interactionItem = new SelectItem( algorithms[i], algorithms[i] );
+			interactionItem = new SelectItem( interaction.getLabel(), interaction.getLabel() );
 			interactionMethodList.add( interactionItem );
+			interactionMethods.put( interaction.getLabel(), interaction );
 		}
 	}
 
@@ -4114,13 +4117,13 @@ public class PaintBean
 		Vector2D worldPos = new Vector2D( selectedNode.getPosition() );
 		worldPos.setX( worldPos.getX() + 2 * (float)( globalMaxX - globalMinX ) );
 		setSelectedNode( selectedNode, true );
-		GraphServlet.selectNode( this, graph, (float)numberAffected, level, selectedNode );
+		InterpolationMethod.selectNode( this, graph, (float)numberAffected, level, selectedNode );
 		Vector2D screenPos = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width, height,
 				worldPos );
 		// System.out.println( "Moving node '" + selectedNode.getLabel() +
 		// "' to " + screenPos );
-		GraphServlet.performInterpolation( this, graph, width, height, minX, minY, maxX, maxY, (int)screenPos.getX(), (int)screenPos.getY(), false,
-				level, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode );
+		new InterpolationMethod().performInteraction( this, graph, width, height, minX, minY, maxX, maxY, (int)screenPos.getX(), (int)screenPos.getY(), false,
+				level, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, false );
 		// GraphServlet.moveNode( graph, level, selectedNode, worldPos );
 	}
 
@@ -4282,12 +4285,22 @@ public class PaintBean
 		printTime( "unselectAllNodes", startTime );
 	}
 
+	public String getInteractionMethodLabel()
+	{
+		return interactionMethod.getLabel();
+	}
+	
+	public void setInteractionMethodLabel( String label )
+	{
+		setInteractionMethod( interactionMethods.get( label ) );
+	}
+	
 	/**
 	 * Gets the interaction method.
 	 * 
 	 * @return the interaction method
 	 */
-	public String getInteractionMethod()
+	public InteractionInterface getInteractionMethod()
 	{
 		return interactionMethod;
 	}
@@ -4298,7 +4311,7 @@ public class PaintBean
 	 * @param interactionMethod
 	 *            the new interaction method
 	 */
-	public void setInteractionMethod( String interactionMethod )
+	public void setInteractionMethod( InteractionInterface interactionMethod )
 	{
 		this.interactionMethod = interactionMethod;
 	}
@@ -4310,7 +4323,7 @@ public class PaintBean
 	 */
 	public boolean isShowToggleInterpolationActualEdgeDistance()
 	{
-		return interactionMethod.equals( Settings.INTERPOLATION_INTERACTION );
+		return interactionMethod instanceof InterpolationMethod;
 	}
 
 	/**
@@ -4320,7 +4333,7 @@ public class PaintBean
 	 */
 	public boolean isShowToggleInterpolationWholeGraph()
 	{
-		return interactionMethod.equals( Settings.INTERPOLATION_INTERACTION );
+		return interactionMethod instanceof InterpolationMethod;
 	}
 
 	/**
@@ -4330,7 +4343,7 @@ public class PaintBean
 	 */
 	public boolean isShowInterpolationDistanceSelector()
 	{
-		return interactionMethod.equals( Settings.INTERPOLATION_INTERACTION ) && !interpolationMethodUseWholeGraph;
+		return (interactionMethod instanceof InterpolationMethod) && !interpolationMethodUseWholeGraph;
 	}
 
 	/**

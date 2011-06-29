@@ -24,12 +24,16 @@
 
 package net.wigis.settings;
 
-import net.wigis.graph.dnv.layout.CircularLayout;
-import net.wigis.graph.dnv.layout.DisjointGraphLayout;
-import net.wigis.graph.dnv.layout.FruchtermanReingold;
-import net.wigis.graph.dnv.layout.LayoutInterface;
-import net.wigis.graph.dnv.layout.MDSLayout;
-import net.wigis.graph.dnv.layout.Springs;
+import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
+import net.wigis.graph.dnv.interaction.implementations.InterpolationWithSpring;
+import net.wigis.graph.dnv.interaction.implementations.SpringInteraction;
+import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
+import net.wigis.graph.dnv.layout.implementations.CircularLayout;
+import net.wigis.graph.dnv.layout.implementations.DisjointGraphLayout;
+import net.wigis.graph.dnv.layout.implementations.FruchtermanReingold;
+import net.wigis.graph.dnv.layout.implementations.MDSLayout;
+import net.wigis.graph.dnv.layout.implementations.Springs;
+import net.wigis.graph.dnv.layout.interfaces.LayoutInterface;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -185,24 +189,24 @@ public class Settings
 	public static String[] CLUSTERING_ALGORITHMS = { K_MOST_CONNECTED_CLUSTERING, STRUCTURAL_EQUIVALENCE_CLUSTERING };
 
 	// Interaction algorithms
-	/** The Constant INTERPOLATION_INTERACTION. */
-	public static final String INTERPOLATION_INTERACTION = "Interpolation Method";
-	
-	public static final String SIMPLE_INTERACTION = "Simple Interaction";
-
-	/** The Constant PEERCHOOSER_INTERACTION. */
-	public static final String PEERCHOOSER_INTERACTION = "Peerchooser Interaction";
-
-	/** The Constant FACEBOOK_RECOMMENDATION_INTERACTION. */
-	public static final String FACEBOOK_RECOMMENDATION_INTERACTION = "Facebook Recommendation Interaction";
-
-	/** The Constant TOPIC_INTERACTION. */
-	public static final String TOPIC_INTERACTION = "Document Topic Interaction";
-	
-	public static final String SPRING_INTERACTION = "Spring Interaction";
-
-	public static final String INTERPOLATION_WITH_SPRING = "Interpolation with Spring Interaction";
+//	/** The Constant INTERPOLATION_INTERACTION. */
+//	public static final String INTERPOLATION_INTERACTION = "Interpolation Method";
+//	
+//	public static final String SIMPLE_INTERACTION = "Simple Interaction";
+//
+//	/** The Constant PEERCHOOSER_INTERACTION. */
+//	public static final String PEERCHOOSER_INTERACTION = "Peerchooser Interaction";
+//
+//	/** The Constant FACEBOOK_RECOMMENDATION_INTERACTION. */
+//	public static final String FACEBOOK_RECOMMENDATION_INTERACTION = "Facebook Recommendation Interaction";
+//
+//	/** The Constant TOPIC_INTERACTION. */
+//	public static final String TOPIC_INTERACTION = "Document Topic Interaction";
+//	
+//	public static final String SPRING_INTERACTION = "Spring Interaction";
+//
+//	public static final String INTERPOLATION_WITH_SPRING = "Interpolation with Spring Interaction";
 	
 	/** The INTERACTIO n_ algorithms. */
-	public static String[] INTERACTION_ALGORITHMS = { INTERPOLATION_INTERACTION, SPRING_INTERACTION, INTERPOLATION_WITH_SPRING };
+	public static InteractionInterface[] INTERACTION_ALGORITHMS = { new InterpolationMethod(), new SpringInteraction(), new InterpolationWithSpring() };
 }
