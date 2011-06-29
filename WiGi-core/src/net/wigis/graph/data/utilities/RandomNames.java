@@ -76,9 +76,9 @@ public class RandomNames
 			name = getRandom( femaleNames ) + " " + getRandom( lastNames );			
 		}
 		
-		if( !takenNames.containsKey( name ) )
+		if( !isNameTaken( name ) )
 		{
-			takenNames.put( name, true );
+			addTakenName( name );
 		}
 		else
 		{
@@ -86,6 +86,29 @@ public class RandomNames
 		}
 		
 		return name;
+	}
+
+	public static void addTakenName( String name )
+	{
+		takenNames.put( name, true );
+	}
+	
+	public static String getRandomFirstName( boolean male )
+	{
+		try
+		{
+			initialize();
+		}
+		catch( IOException ioe ){}
+		
+		if( male )
+		{
+			return getRandom( maleNames );
+		}
+		else
+		{
+			return getRandom( femaleNames );
+		}
 	}
 	
 	/**
@@ -132,5 +155,20 @@ public class RandomNames
 		{
 			System.out.println( getRandomName() );
 		}
+	}
+
+	public static String getRandomFirstName()
+	{
+		if( Math.random() < 0.5 )
+		{
+			return getRandomFirstName( true );
+		}
+		
+		return getRandomFirstName( false );
+	}
+
+	public static boolean isNameTaken( String name )
+	{
+		return takenNames.containsKey( name );
 	}
 }
