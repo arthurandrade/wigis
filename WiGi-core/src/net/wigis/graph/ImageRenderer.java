@@ -615,45 +615,44 @@ public class ImageRenderer
 //				}
 			}
 		}
-		else if( showSearchSelectedLabels && !overview
-				&& ( subgraph.getSuperGraph().getSelectedNodes( level ).size() > 0 || subgraph.getSuperGraph().getSelectedEdges( level ).size() > 0 ) )
+		else if( showSearchSelectedLabels 
+				&& !overview
+				&& 	( subgraph.getSuperGraph().getSelectedNodes( level ).size() > 0 
+					|| subgraph.getSuperGraph().getSelectedEdges( level ).size() > 0 ) )
 		{
 			// int maxNumberLabelsShown = 200;
 			// int numberLabelsShown = 0;
-			if( highlightNeighbors )
+			Map<Integer, DNVNode> neighborSelectedNodes = new HashMap<Integer, DNVNode>();
+			for( DNVNode selectedNode : selectedNodes )
 			{
-				Map<Integer, DNVNode> neighborSelectedNodes = new HashMap<Integer, DNVNode>();
-				for( DNVNode selectedNode : selectedNodes )
+				neighborSelectedNodes.put( selectedNode.getId(), selectedNode );
+				for( DNVNode neighbor : selectedNode.getNeighborMap( true ).values() )
 				{
-					neighborSelectedNodes.put( selectedNode.getId(), selectedNode );
-					for( DNVNode neighbor : selectedNode.getNeighborMap( true ).values() )
-					{
-						neighborSelectedNodes.put( neighbor.getId(), neighbor );
-					}
+					neighborSelectedNodes.put( neighbor.getId(), neighbor );
 				}
-				nodes = new ArrayList<DNVNode>( neighborSelectedNodes.values() );
+			}
+			nodes = new ArrayList<DNVNode>( neighborSelectedNodes.values() );
 
-				if( hideConflictingLabels )
+			if( hideConflictingLabels )
+			{
+				nodes = getNodesWithoutOverlappingLabels( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY,
+						maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
+						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
+			}
+			for( int i = 0; i < nodes.size(); i++ )
+			{
+				tempNode = nodes.get( i );
+				if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" )/* && tempNode.isVisible()*/ )
 				{
-					nodes = getNodesWithoutOverlappingLabels( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY,
-							maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-							curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
-				}
-				for( int i = 0; i < nodes.size(); i++ )
-				{
-					tempNode = nodes.get( i );
-					if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" )/* && tempNode.isVisible()*/ )
+					if( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() || tempNode.isSelected() )
 					{
-						if( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() )
-						{
-							boolean selected = highlightNode( highlightNeighbors, tempNode );
-							boolean temp = tempNode.isSelected();
-							tempNode.setSelected( selected );
-							drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels,
-									outlinedLabels, labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength,
-									curvedLabelAngle, scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode )  );
-							tempNode.setSelected( temp );
-						}
+						boolean selected = highlightNode( highlightNeighbors, tempNode );
+						boolean temp = tempNode.isSelected();
+						tempNode.setSelected( selected );
+						drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels,
+								outlinedLabels, labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength,
+								curvedLabelAngle, scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode )  );
+						tempNode.setSelected( temp );
 					}
 				}
 			}
@@ -1486,7 +1485,7 @@ public class ImageRenderer
 			int curvedLabelAngle, boolean boldLabels, boolean roughEstimate, boolean includeNodeBounds )
 	{
 		labelSize = getLabelSize( tempNode, labelSize, minXPercent, maxXPercent, ratio, scaleLabels );
-		Rectangle r = (Rectangle)tempNode.getAttribute( DNVEntity.LABEL_RECTANGLE+includeNodeBounds );
+		Rectangle r = (Rectangle)tempNode.getAttribute( DNVEntity.LABEL_RECTANGLE+includeNodeBounds+labelSize );
 		if( r != null )
 		{
 			r.setPosition( tempPos );
@@ -1588,7 +1587,7 @@ public class ImageRenderer
 			r.setPosition( tempPos );
 		}
 
-		tempNode.setAttribute( DNVEntity.LABEL_RECTANGLE+includeNodeBounds, r );
+		tempNode.setAttribute( DNVEntity.LABEL_RECTANGLE+includeNodeBounds+labelSize, r );
 		
 		return r;
 	}

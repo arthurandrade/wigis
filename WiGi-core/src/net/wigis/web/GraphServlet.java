@@ -40,7 +40,6 @@ import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
 import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
 import net.wigis.graph.dnv.interaction.interfaces.RecommendationInteractionInterface;
 import net.wigis.graph.dnv.interaction.interfaces.SimpleInteractionInterface;
@@ -116,9 +115,6 @@ public class GraphServlet extends HttpServlet
 	{
 		drawGraph( request, response );
 	}
-
-	/** The recommendation layout. */
-	private RecommendationLayoutInterface recommendationLayout;
 
 	/**
 	 * Draw graph.
@@ -452,7 +448,7 @@ public class GraphServlet extends HttpServlet
 				}
 				
 				moveSelectedNode( request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX,
-						globalMaxX, globalMinY, globalMaxY, selectedNode, recommendationLayout, released );
+						globalMaxX, globalMinY, globalMaxY, selectedNode, released );
 			}
 
 			// ------------------------------------
@@ -520,7 +516,7 @@ public class GraphServlet extends HttpServlet
 	 */
 	public static void moveNode( DNVNode selectedNode, HttpServletRequest request, PaintBean pb, DNVGraph graph, int level, int width, int height,
 			double minX, double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, RecommendationLayoutInterface recommendationLayout, boolean released )
+			double globalMinY, double globalMaxY, boolean released )
 	{
 		if( selectedNode != null )
 		{
@@ -541,7 +537,7 @@ public class GraphServlet extends HttpServlet
 		}
 		else if( interactionMethod instanceof RecommendationInteractionInterface )
 		{
-			((RecommendationInteractionInterface)interactionMethod).performInteraction( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, released, recommendationLayout, request );			
+			((RecommendationInteractionInterface)interactionMethod).performInteraction( pb, graph, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, level, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, released, request );			
 		}
 	}
 
@@ -589,7 +585,7 @@ public class GraphServlet extends HttpServlet
 	 */
 	public static void moveSelectedNode( HttpServletRequest request, PaintBean pb, DNVGraph graph, int level, int width, int height, double minX,
 			double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, DNVNode selectedNode, RecommendationLayoutInterface recommendationLayout, boolean released )
+			double globalMinY, double globalMaxY, DNVNode selectedNode, boolean released )
 	{
 		if( selectedNode == null && sameNode )
 		{
@@ -597,7 +593,7 @@ public class GraphServlet extends HttpServlet
 		}
 
 		moveNode( selectedNode, request, pb, graph, level, width, height, minX, minY, maxX, maxY, mouseUpX, mouseUpY, sameNode, globalMinX,
-				globalMaxX, globalMinY, globalMaxY, recommendationLayout, released );
+				globalMaxX, globalMinY, globalMaxY, released );
 	}
 
 	/**

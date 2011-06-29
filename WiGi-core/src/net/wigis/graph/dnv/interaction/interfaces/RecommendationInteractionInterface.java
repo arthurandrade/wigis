@@ -10,6 +10,6 @@ import net.wigis.graph.dnv.layout.interfaces.RecommendationLayoutInterface;
 public interface RecommendationInteractionInterface extends InteractionInterface
 {
 	public void performInteraction( PaintBean pb, DNVGraph graph, int width, int height, double minX, double minY, double maxX, double maxY, int mouseUpX, int mouseUpY, boolean sameNode, int level, double globalMinX, double globalMaxX,
-			double globalMinY, double globalMaxY, DNVNode selectedNode, boolean released, RecommendationLayoutInterface recommendationLayout, HttpServletRequest request );
+			double globalMinY, double globalMaxY, DNVNode selectedNode, boolean released, HttpServletRequest request );
 
 }

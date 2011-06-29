@@ -873,7 +873,7 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		globalMinX -= xBuffer;
 
 		GraphServlet.moveSelectedNode( null, pb, graph, level, getWidth(), getHeight(), pb.getMinX(), pb.getMinY(), pb.getMaxX(), pb.getMaxY(),
-				mouseUpX, mouseUpY, false, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, null, released );
+				mouseUpX, mouseUpY, false, globalMinX, globalMaxX, globalMinY, globalMaxY, selectedNode, released );
 
 		repaint();
 	}
