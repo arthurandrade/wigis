@@ -43,7 +43,6 @@ import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
 import net.wigis.graph.dnv.interaction.interfaces.RecommendationInteractionInterface;
 import net.wigis.graph.dnv.interaction.interfaces.SimpleInteractionInterface;
-import net.wigis.graph.dnv.layout.interfaces.RecommendationLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.SortByLabelSize;
 import net.wigis.graph.dnv.utilities.Timer;

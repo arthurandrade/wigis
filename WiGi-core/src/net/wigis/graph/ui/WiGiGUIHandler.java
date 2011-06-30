@@ -338,7 +338,11 @@ public class WiGiGUIHandler
 		return null;
 	}
 	
-	public void handleDoubleClick()
+	
+	public static final int NO_ACTION = 0;
+	public static final int EDGE_ANIMATION = 1;
+	public static final int ZOOM_RESET = 2;
+	public int handleDoubleClick()
 	{
 		DNVNode node = pb.getSelectedNode();
 		if( node != null )
@@ -347,24 +351,9 @@ public class WiGiGUIHandler
 			{
 				// Show recursive animation along all edges
 //						System.out.println( "Double tap - adding animations" );
-				Map<Integer,DNVEntity> handledEntities = new HashMap<Integer,DNVEntity>();
-				Map<Integer,Boolean> handledDistances = new HashMap<Integer,Boolean>();
-				for( DNVEdge edge : node.getFromEdges() )
-				{
-					if( edge.isVisible() )
-					{
-						Animation a = new RecursiveEdgeAnimation( 10, node, edge, handledEntities, handledDistances, 1 );
-						node.getGraph().addAnimation( a );
-					}
-				}
-				for( DNVEdge edge : node.getToEdges() )
-				{
-					if( edge.isVisible() )
-					{
-						Animation a = new RecursiveEdgeAnimation( 10, node, edge, handledEntities, handledDistances, 1 );
-						node.getGraph().addAnimation( a );
-					}
-				}
+				createEdgeAnimation( node );
+				
+				return EDGE_ANIMATION;
 			}
 		}	
 		else
@@ -374,6 +363,32 @@ public class WiGiGUIHandler
 			pb.setMinY( 0 );
 			pb.setMaxX( 1 );
 			pb.setMaxY( 1 );
+			
+			return ZOOM_RESET;
+		}
+		
+		return NO_ACTION;
+	}
+
+	public static void createEdgeAnimation( DNVNode node )
+	{
+		Map<Integer,DNVEntity> handledEntities = new HashMap<Integer,DNVEntity>();
+		Map<Integer,Boolean> handledDistances = new HashMap<Integer,Boolean>();
+		for( DNVEdge edge : node.getFromEdges() )
+		{
+			if( edge.isVisible() )
+			{
+				Animation a = new RecursiveEdgeAnimation( 10, node, edge, handledEntities, handledDistances, 1 );
+				node.getGraph().addAnimation( a );
+			}
+		}
+		for( DNVEdge edge : node.getToEdges() )
+		{
+			if( edge.isVisible() )
+			{
+				Animation a = new RecursiveEdgeAnimation( 10, node, edge, handledEntities, handledDistances, 1 );
+				node.getGraph().addAnimation( a );
+			}
 		}
 	}
 	
@@ -385,41 +400,63 @@ public class WiGiGUIHandler
 		pb.setMaxY( pb.getMaxY() + movementY/WiGiOverviewPanel.OVERVIEW_SIZE );
 	}
 	
-	private DNVNode hoveredNode;
-	public void hovering( int x, int y )
+	private DNVNode hoveredNode = null;
+	private DNVNode lastHoveredNode = null;
+	public DNVNode getLastHoveredNode()
+	{
+		return lastHoveredNode;
+	}
+	
+	public DNVNode getHoveredNode()
+	{
+		return hoveredNode;
+	}
+
+	public int hovering( int x, int y )
 	{
 		synchronized( pb.getGraph() )
 		{
-//			if( pb.getGraph().getGraphSize( (int)pb.getLevel() ) < 2000 )
-//			{
-				DNVNode node = picking( x, y, 0, false, false );
-				if( node == null )
-				{
-					if( hoveredNode != null && hoveredNode != node )
-					{
-						restoreHoveredNode();
-					}
-				}
-				else if( node != null && hoveredNode == null )
-				{
-					hoveredNode = node;
-					if( hoveredNode != null )
-					{
-						highlightHoveredNode();
-					}
-				}
-				else if( node != null && hoveredNode != null && node != hoveredNode )
-				{
-					restoreHoveredNode();
-					hoveredNode = node;
-					if( hoveredNode != null )
-					{
-						highlightHoveredNode();
-					}
-				}
-//			}
+			DNVNode node = picking( x, y, 0, false, false );
+			return setHoveredNode( node );
 		}
 
+	}
+
+	public static final int NO_NODE_HOVERED = 0;
+	public static final int HOVERED_NODE_RESTORED = 1;
+	public static final int HOVERED_NODE_SET = 2;
+	public static final int HOVERED_NODE_CHANGED = 3;
+	public int setHoveredNode( DNVNode node )
+	{
+		if( node == null )
+		{
+			if( hoveredNode != null && hoveredNode != node )
+			{
+				restoreHoveredNode();
+				return HOVERED_NODE_RESTORED;
+			}
+		}
+		else if( node != null && hoveredNode == null )
+		{
+			hoveredNode = node;
+			if( hoveredNode != null )
+			{
+				highlightHoveredNode();
+				return HOVERED_NODE_SET;
+			}
+		}
+		else if( node != null && hoveredNode != null && node != hoveredNode )
+		{
+			restoreHoveredNode();
+			hoveredNode = node;
+			if( hoveredNode != null )
+			{
+				highlightHoveredNode();
+				return HOVERED_NODE_CHANGED;
+			}
+		}
+		
+		return NO_NODE_HOVERED;
 	}
 	
 	private void highlightHoveredNode()
@@ -430,6 +467,7 @@ public class WiGiGUIHandler
 	private void restoreHoveredNode()
 	{
 		hoveredNode.setHighlighted( false );
+		lastHoveredNode = hoveredNode;
 		hoveredNode = null;
 	}
 

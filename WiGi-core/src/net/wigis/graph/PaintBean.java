@@ -82,7 +82,6 @@ import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.settings.Settings;
 import net.wigis.web.ContextLookup;
-import net.wigis.web.GraphServlet;
 import net.wigis.web.Request;
 
 // TODO: Auto-generated Javadoc

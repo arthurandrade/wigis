@@ -31,6 +31,7 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	public static final int OVERVIEW_SIZE = 250;
 	
 	private Component renderComponent = null;
+	private WiGiOverviewCallback callback = null;
 	
 	public WiGiOverviewPanel( PaintBean pb )
 	{
@@ -88,6 +89,13 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	private int mouseDownX = 0;
 	private int mouseDownY = 0;
 	
+	private void callback()
+	{
+		if( callback != null )
+		{
+			callback.zoomChanged();
+		}
+	}
 	
 	@Override
 	public void mouseClicked( MouseEvent arg0 )
@@ -102,6 +110,8 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 			{
 				renderComponent.repaint();
 			}
+			
+			callback();
 		}
 	}
 	
@@ -236,6 +246,8 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 		{
 			renderComponent.repaint();
 		}
+		
+		callback();
 	}
 	
 	private static final Cursor SE_RESIZE_CURSOR = new Cursor( Cursor.SE_RESIZE_CURSOR ); 
@@ -302,5 +314,10 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	public Component getRenderComponent()
 	{
 		return renderComponent;
+	}
+	
+	public void setCallback( WiGiOverviewCallback callback )
+	{
+		this.callback = callback;
 	}
 }
