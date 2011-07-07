@@ -39,7 +39,6 @@ import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Statistics;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
-import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -344,9 +343,11 @@ public class Springs implements TimeLimitedLayoutInterface
 				allNodes = graph.getNodes( level );
 			}
 			else
+			{
 				// if( repellingMethod == REPEL_SIBLINGS_ONLY )
 				allNodes = dnvNode.getSiblings();
-
+			}
+			
 			tempForce = accumulateRepellingForce( graph, dnvNode, level, tempForce, source, allNodes );
 			// }
 

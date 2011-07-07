@@ -67,7 +67,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	private static final long serialVersionUID = -702075942060618434L;
 
 	/** The Constant MAX_FORCE. */
-	private static final float MAX_FORCE = 5;
+	public static float MAX_FORCE = 5;
 
 	/** The MI n_ force. */
 	public static float MIN_FORCE = 0.005f;

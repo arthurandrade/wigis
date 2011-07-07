@@ -401,6 +401,7 @@ public class WiGiGUIHandler
 	}
 	
 	private DNVNode hoveredNode = null;
+	private boolean hoveredNodeWasHighlighted = false;
 	private DNVNode lastHoveredNode = null;
 	public DNVNode getLastHoveredNode()
 	{
@@ -461,12 +462,13 @@ public class WiGiGUIHandler
 	
 	private void highlightHoveredNode()
 	{
+		hoveredNodeWasHighlighted = hoveredNode.isHighlighted();
 		hoveredNode.setHighlighted( true );
 	}
 
 	private void restoreHoveredNode()
 	{
-		hoveredNode.setHighlighted( false );
+		hoveredNode.setHighlighted( hoveredNodeWasHighlighted );
 		lastHoveredNode = hoveredNode;
 		hoveredNode = null;
 	}
