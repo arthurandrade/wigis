@@ -551,7 +551,7 @@ public class PaintBean
 							edgeThickness, edgeColor, drawLabels, curvedLabels, outlinedLabels, labelSize, interpolationLabels,
 							showSearchSelectedLabels, showIcons, globalMinX, globalMaxX, globalMinY, globalMaxY, overview, level, scaleNodesOnZoom,
 							sortNodes, highlightNeighbors, highlightEdges, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels,
-							drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight, noAlpha, timeText );
+							drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight, timeText );
 					drawTimer.setEnd();
 					if( Settings.DEBUG && !overview )
 					{

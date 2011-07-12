@@ -77,9 +77,9 @@ public class __ArrayList
 		return a;
 	}
 	
-	public static ArrayList List_To_ArrayList(List l)
+	public static ArrayList<Object> List_To_ArrayList(List<Object> l)
 	{
-		return (ArrayList)l;
+		return (ArrayList<Object>)l;
 	}
 	
 	public static ArrayList<String> removeDuplicates (ArrayList<String> a)

@@ -49,7 +49,7 @@ public class ContextLookup
 	 *            the c
 	 * @return the object
 	 */
-	@SuppressWarnings( { "unchecked" })
+	@SuppressWarnings( {"rawtypes" })
 	public static Object lookup( String expression, Class c )
 	{
 		try

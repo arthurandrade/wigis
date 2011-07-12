@@ -96,7 +96,7 @@ public class __Print
 	// ------------------------------
 	// print ArrayList
 	// ------------------------------
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public static void print(ArrayList a)
 	{
 		line();

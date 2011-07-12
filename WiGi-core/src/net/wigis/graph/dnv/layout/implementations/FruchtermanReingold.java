@@ -34,7 +34,6 @@ import net.wigis.graph.dnv.layout.helpers.Grid;
 import net.wigis.graph.dnv.layout.interfaces.SpaceRestrictedLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Vector2D;
-import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
 /**

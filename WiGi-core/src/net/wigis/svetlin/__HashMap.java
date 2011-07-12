@@ -54,7 +54,7 @@ public class __HashMap
 	// -------------------------------
 	// sort by value
 	// -------------------------------
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static HashMap sortByValue(HashMap map, boolean ascending)
 	{
 		List list = new LinkedList(map.entrySet());
@@ -91,11 +91,13 @@ public class __HashMap
 		return result;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void print (HashMap hm)
 	{
 		print (hm, hm.size());
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void print (HashMap hm, int maxRowsToPrint)
 	{
 		p("[---------------HashMap------------------- (" + maxRowsToPrint + " of " + hm.size() + ")");

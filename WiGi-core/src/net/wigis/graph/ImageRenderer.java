@@ -192,7 +192,7 @@ public class ImageRenderer
 			boolean showIcons, double minX, double maxX, double minY, double maxY, boolean overview, int level, boolean scaleNodesOnZoom,
 			boolean sortNodes, boolean highlightNeighbors, boolean highlightEdges, int maxLabelLength, int curvedLabelAngle, boolean scaleLabels,
 			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels,
-			int maxDistanceToHighlight, boolean drawWatermark, boolean drawNeighborArea, boolean noAlpha, Text timeText ) throws IOException
+			int maxDistanceToHighlight, boolean drawWatermark, boolean drawNeighborArea, Text timeText ) throws IOException
 	{
 		g2d.setColor( Color.white );
 		g2d.fillRect( 0, 0, width, height );
@@ -229,7 +229,7 @@ public class ImageRenderer
 							outlineColor.setX( (float)Math.max( 0, outlineColor.getX()-0.3 ) );
 							outlineColor.setY( (float)Math.max( 0, outlineColor.getY()-0.3 ) );
 							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ()-0.3 ) );
-							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, i, noAlpha, node, drawnHeadings );
+							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings );
 						}
 					}
 					if( !anyNodes )
@@ -296,7 +296,7 @@ public class ImageRenderer
 				nodesTimer.setStart();
 				nodes = drawNodes( subgraph, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, showIcons, minX, maxX, minY, maxY,
 						highlightNeighbors, type, nodeWidth, selectedNodes, transformTimer, drawNodeTimer, sortByLabelSize, hideConflictingLabels
-								&& drawLabels, maxDistanceToHighlight, overview );
+								&& drawLabels, maxDistanceToHighlight );
 				nodesTimer.setEnd();
 				
 				
@@ -393,7 +393,7 @@ public class ImageRenderer
 	 * @param maxY
 	 */
 	private static int drawEllipseAround( int hops, Map<Integer,DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width, int height, double minXPercent,
-			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor, Vector3D outlineColor, PaintBean pb, boolean overview, int selectedNodeNumber, boolean noAlpha, DNVNode selectedNode, Map<String,Integer> drawnHeadings )
+			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor, Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String,Integer> drawnHeadings )
 	{
 		if( nodes != null )
 		{
@@ -601,7 +601,7 @@ public class ImageRenderer
 			{
 				nodes = getNodesWithoutOverlappingLabels( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY,
 						maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
+						curvedLabelAngle, boldLabels, fadeFactor, subgraph.getSuperGraph() );
 			}
 			for( int i = 0; i < nodes.size(); i++ )
 			{
@@ -637,7 +637,7 @@ public class ImageRenderer
 			{
 				nodes = getNodesWithoutOverlappingLabels( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY,
 						maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
+						curvedLabelAngle, boldLabels, fadeFactor, subgraph.getSuperGraph() );
 			}
 			for( int i = 0; i < nodes.size(); i++ )
 			{
@@ -770,7 +770,7 @@ public class ImageRenderer
 			{
 				mustDrawNodes = getNodesWithoutOverlappingLabels( mustDrawNodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX,
 						maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength,
-						curvedLabelAngle, boldLabels, fadeFactor, highlightNeighbors, subgraph.getSuperGraph() );
+						curvedLabelAngle, boldLabels, fadeFactor, subgraph.getSuperGraph() );
 			}
 			for( DNVNode node : mustDrawNodes )
 			{
@@ -837,7 +837,7 @@ public class ImageRenderer
 	private static List<DNVNode> drawNodes( SubGraph subgraph, Graphics2D g, int width, int height, double minXPercent, double minYPercent,
 			double maxXPercent, double maxYPercent, boolean showIcons, double minX, double maxX, double minY, double maxY,
 			boolean highlightNeighbors, int type, int nodeWidth, List<DNVNode> selectedNodes, Timer transformTimer, Timer drawNodeTimer,
-			SortByLabelSize sortByLabelSize, boolean sortNodes, int maxDistanceToHighlight, boolean overview ) throws MalformedURLException, IOException
+			SortByLabelSize sortByLabelSize, boolean sortNodes, int maxDistanceToHighlight ) throws MalformedURLException, IOException
 	{
 		DNVNode tempNode;
 		Vector2D tempPos;
@@ -864,7 +864,7 @@ public class ImageRenderer
 			drawNodeTimer.setStart();
 			try
 			{
-				drawNode( g, showIcons, tempNode, tempNode.getIcon(), tempPos, color, nodeWidth, type, maxDistanceToHighlight, overview );
+				drawNode( g, showIcons, tempNode, tempNode.getIcon(), tempPos, color, nodeWidth, type, maxDistanceToHighlight );
 			}
 			catch( IOException ioe )
 			{
@@ -1142,7 +1142,7 @@ public class ImageRenderer
 	private static List<DNVNode> getNodesWithoutOverlappingLabels( List<DNVNode> nodes, Graphics2D g, int nodeWidth, boolean interpolationLabels,
 			boolean curvedLabels, double labelSize, double minX, double maxX, double minY, double maxY, double minXPercent, double maxXPercent,
 			double minYPercent, double maxYPercent, int width, int height, double ratio, boolean scaleLabels, int maxLabelLength,
-			int curvedLabelAngle, boolean boldLabels, float fadeFactor, boolean highlightNeighbors, DNVGraph graph )
+			int curvedLabelAngle, boolean boldLabels, float fadeFactor, DNVGraph graph )
 	{
 		List<DNVNode> goodNodes = new ArrayList<DNVNode>();
 //		DNVNode node;
@@ -2053,7 +2053,7 @@ public class ImageRenderer
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public static void drawNode( Graphics2D g2d, boolean showIcons, DNVNode tempNode, String iconName, Vector2D tempPos, Vector3D color, int nodeWidth,
-			int type, int maxDistanceToHighlight, boolean overview ) throws MalformedURLException, IOException
+			int type, int maxDistanceToHighlight ) throws MalformedURLException, IOException
 	{
 		Image icon;
 

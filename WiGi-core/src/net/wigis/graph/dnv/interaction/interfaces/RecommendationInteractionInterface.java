@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.layout.interfaces.RecommendationLayoutInterface;
 
 public interface RecommendationInteractionInterface extends InteractionInterface
 {

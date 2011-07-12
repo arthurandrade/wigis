@@ -15,7 +15,7 @@ import java.util.HashMap;
  * &quot; &#229; &#1048; &#x6C34;
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class __HtmlDecoder
 {
 	

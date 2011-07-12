@@ -703,7 +703,7 @@ public class GraphGenerator
 		}
 	}
 
-	private static void generateUserStudyGraphs() throws IOException
+	public static void generateUserStudyGraphs() throws IOException
 	{
 		GraphProperties graphProperties[] = {
 			// Graphs for first interaction method

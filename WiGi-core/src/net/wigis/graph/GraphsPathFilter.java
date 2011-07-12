@@ -35,7 +35,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import net.wigis.settings.Settings;
-import net.wigis.svetlin.__Print;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -36,7 +36,6 @@ import net.wigis.graph.dnv.utilities.NumberOfNeighborSort;
 import net.wigis.graph.dnv.utilities.Randomize;
 import net.wigis.graph.dnv.utilities.SortByLongProperty;
 import net.wigis.graph.dnv.utilities.Vector2D;
-import net.wigis.settings.Settings;
 
 // TODO: Auto-generated Javadoc
 /**
