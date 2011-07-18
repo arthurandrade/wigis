@@ -430,6 +430,9 @@ public class ImageRenderer
 					{
 						maxRadius = node.getRadius();
 					}
+
+//					node.setHighlighted( true );
+					// node.setColor( fillColor );
 				}
 			}
 				
@@ -459,11 +462,16 @@ public class ImageRenderer
 			}
 			
 			
+
 			g2d.setColor( new Color( fillColor.getX(), fillColor.getY(), fillColor.getZ(), 0.7f ) );
-			g2d.fillRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ), (int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10, 10 );
+			g2d.fillRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ),
+					(int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10,
+					10 );
 			g2d.setStroke( new BasicStroke( 3 ) );
 			g2d.setColor( new Color( outlineColor.getX(), outlineColor.getY(), outlineColor.getZ(), 0.7f ) );
-			g2d.drawRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ), (int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10, 10 );
+			g2d.drawRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ),
+					(int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10,
+					10 );
 			
 			Vector2D position = new Vector2D();
 			Vector2D selectedNodeScreenPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, selectedNode.getPosition() );
