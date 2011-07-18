@@ -210,11 +210,12 @@ public class ImageRenderer
 			if( drawNeighborArea )
 			{
 				int maxDistance = 10;
+				Map<String,Boolean> headerAlignment = new HashMap<String,Boolean>();
+				Map<String,Integer> drawnHeadings = new HashMap<String,Integer>();
 				for( int distance = maxDistance; distance > 0; distance-- )
 				{
 					int i = 0;
 					boolean anyNodes = false;
-					Map<String,Integer> drawnHeadings = new HashMap<String,Integer>();
 					for( DNVNode node : selectedNodes )
 					{
 						Map<Integer,DNVNode> nodes = node.getNodesAtDistance( distance );
@@ -231,7 +232,7 @@ public class ImageRenderer
 							outlineColor.setY( (float)Math.max( 0, outlineColor.getY()-0.3 ) );
 							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ()-0.3 ) );
 							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY,
-									maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings, drawNumberOfNodesInBox );
+									maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings, drawNumberOfNodesInBox, headerAlignment );
 						}
 					}
 					if( !anyNodes )
@@ -396,7 +397,7 @@ public class ImageRenderer
 	 */
 	private static int drawEllipseAround( int hops, Map<Integer,DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width, int height, double minXPercent,
 			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor,
-			Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox )
+			Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox, Map<String,Boolean> headerAlignment )
 	{
 		if( nodes != null )
 		{
@@ -470,8 +471,9 @@ public class ImageRenderer
 			float yDiff = Math.abs( selectedNodeScreenPos.getY() - (minPosScreen.getY() + (maxPosScreen.getY() - minPosScreen.getY()) / 2.0f) );
 			
 			String key;
-			if( xDiff >= yDiff )
+			if( headerAlignment.containsKey( "X-align" + selectedNode.getId() ) || ( !headerAlignment.containsKey( "Y-align" + selectedNode.getId() ) && xDiff >= yDiff ) )
 			{
+				headerAlignment.put( "X-align" + selectedNode.getId(), true );
 				position = new Vector2D( minPosScreen.getX() + (maxPosScreen.getX() - minPosScreen.getX()) / 2.0f, 14 );
 				key = "X" + hops;
 				if( !drawnHeadings.containsKey( key ) )
@@ -487,6 +489,7 @@ public class ImageRenderer
 			}
 			else
 			{
+				headerAlignment.put( "Y-align" + selectedNode.getId(), true );
 				position = new Vector2D( 35, minPosScreen.getY() + (maxPosScreen.getY() - minPosScreen.getY()) / 2.0f );
 				key = "Y" + hops;
 				if( !drawnHeadings.containsKey( key ) )
