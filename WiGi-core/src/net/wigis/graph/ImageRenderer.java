@@ -192,7 +192,8 @@ public class ImageRenderer
 			boolean showIcons, double minX, double maxX, double minY, double maxY, boolean overview, int level, boolean scaleNodesOnZoom,
 			boolean sortNodes, boolean highlightNeighbors, boolean highlightEdges, int maxLabelLength, int curvedLabelAngle, boolean scaleLabels,
 			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels,
-			int maxDistanceToHighlight, boolean drawWatermark, boolean drawNeighborArea, Text timeText ) throws IOException
+ int maxDistanceToHighlight,
+			boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox, Text timeText ) throws IOException
 	{
 		g2d.setColor( Color.white );
 		g2d.fillRect( 0, 0, width, height );
@@ -229,7 +230,8 @@ public class ImageRenderer
 							outlineColor.setX( (float)Math.max( 0, outlineColor.getX()-0.3 ) );
 							outlineColor.setY( (float)Math.max( 0, outlineColor.getY()-0.3 ) );
 							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ()-0.3 ) );
-							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings );
+							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY,
+									maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings, drawNumberOfNodesInBox );
 						}
 					}
 					if( !anyNodes )
@@ -393,7 +395,8 @@ public class ImageRenderer
 	 * @param maxY
 	 */
 	private static int drawEllipseAround( int hops, Map<Integer,DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width, int height, double minXPercent,
-			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor, Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String,Integer> drawnHeadings )
+			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor,
+			Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox )
 	{
 		if( nodes != null )
 		{
@@ -498,8 +501,11 @@ public class ImageRenderer
 				}
 			}
 			position.setY( position.getY() + (drawnHeadings.get( key ) * 20) );
-			Text t = new Text( nodes.size() + " nodes", position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
-			t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
+			if( drawNumberOfNodesInBox )
+			{
+				Text t = new Text( nodes.size() + " nodes", position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
+				t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
+			}
 			
 			return 1;
 		}
@@ -667,7 +673,7 @@ public class ImageRenderer
 	 */
 	public static boolean highlightNode( boolean highlightNeighbors, DNVNode tempNode )
 	{
-		boolean highlighted = tempNode.isSelected() || tempNode.isHighlighted()
+		boolean highlighted = tempNode.isSelected() || ( tempNode.isHighlighted() && tempNode.getHighlightColor() == null )
 				|| ( highlightNeighbors && ( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() ) );
 		return highlighted;
 	}
@@ -960,7 +966,8 @@ public class ImageRenderer
 						else
 						{
 							drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, standardColor,
-									tempEdge, drawLabels, outlinedLabels, (int)labelSize, overview, nodeWidth, false, edgeThickness, boldLabels );
+ tempEdge, drawLabels,
+									outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
 						}
 					}
 				}
@@ -970,7 +977,8 @@ public class ImageRenderer
 				for( DNVEdge tempEdge : selectedEdges )
 				{
 					drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, selectedEdgeColor, tempEdge,
-							true, outlinedLabels, (int)labelSize, overview, nodeWidth, true, edgeThickness, boldLabels );
+ true, outlinedLabels,
+							(int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
 				}
 			}
 		}
@@ -1320,7 +1328,7 @@ public class ImageRenderer
 		float r = Math.min( 1, color.getX() + 0.2f );
 		float g = Math.min( 1, color.getY() + 0.2f );
 		float b = Math.min( 1, color.getZ() + 0.2f );
-		if( ( node.isSelected() || highlighted ) && alpha == 1 )
+		if( ( node.isSelected() || highlighted || node.isHighlighted() ) && alpha == 1 )
 		{
 			int shadowOffset = 7;
 
@@ -1332,10 +1340,15 @@ public class ImageRenderer
 		g2d.setColor( new Color( r, g, b, alpha ) );
 		g2d.fillRoundRect( left - ( height / 2 ), top, width + height, height, height, height );
 		int strokeWidth = 2;
-		if( node.isSelected() /*|| highlighted*/  )
+		if( node.isSelected() || ( node.isHighlighted() && node.getHighlightColor() == null ) )
 		{
 			// Draw red outline of selected nodes
 			color = new Vector3D( SELECTED_HIGHLIGHT_COLOR );
+			strokeWidth = 3;
+		}
+		else if( node.isHighlighted() && node.getHighlightColor() != null )
+		{
+			color = new Vector3D( node.getHighlightColor() );
 			strokeWidth = 3;
 		}
 		r = Math.max( 0, color.getX() - 0.2f );
@@ -1715,14 +1728,14 @@ public class ImageRenderer
 	 * @param boldLabels
 	 *            the bold labels
 	 */
-	private static void drawEdge( Graphics2D g2d, int width, int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent,
-			double minX, double maxX, double minY, double maxY, Color color, DNVEdge tempEdge, boolean drawLabels,
-			boolean outlinedLabels, int fontSize, boolean overview, int nodeWidth, boolean edgeSelected, int edgeThickness, boolean boldLabels )
+	private static void drawEdge( Graphics2D g2d, int width, int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX,
+			double minY, double maxY, Color color, DNVEdge tempEdge, boolean drawLabels, boolean outlinedLabels, int fontSize, boolean overview, int nodeWidth, int edgeThickness,
+			boolean boldLabels )
 	{
-		if( edgeSelected || edgeThickness != tempEdge.getThickness() )
+		if( tempEdge.isSelected() || tempEdge.isHighlighted() || edgeThickness != tempEdge.getThickness() )
 		{
 			float thickness = tempEdge.getThickness();
-			if( edgeSelected && !overview )
+			if( tempEdge.isSelected() || tempEdge.isHighlighted() && !overview )
 			{
 				thickness *= 2;
 			}
@@ -1753,9 +1766,13 @@ public class ImageRenderer
 //		}
 
 		Vector3D edgeColor = tempEdge.getColor();
-		if( edgeSelected || edgeColor == null || edgeColor.equals( DNVEntity.NO_COLOR ) )
+		if( tempEdge.isSelected() || ( tempEdge.isHighlighted() && tempEdge.getHighlightColor() == null ) || edgeColor == null || edgeColor.equals( DNVEntity.NO_COLOR ) )
 		{
 			g2d.setColor( color );
+		}
+		else if( tempEdge.isHighlighted() && tempEdge.getHighlightColor() != null )
+		{
+			g2d.setColor( new Color( tempEdge.getHighlightColor().getX(), tempEdge.getHighlightColor().getY(), tempEdge.getHighlightColor().getZ() ) );
 		}
 		else
 		{
@@ -2062,9 +2079,14 @@ public class ImageRenderer
 		nodeWidth *= tempNode.getRadius();
 		g2d.setStroke( basicStroke );
 		Color outlineColor = Color.darkGray;
-		if( tempNode.isSelected() || tempNode.isHighlighted() )
+		if( tempNode.isSelected() || ( tempNode.isHighlighted() && tempNode.getHighlightColor() == null ) )
 		{
 			outlineColor = Color.red;
+			g2d.setStroke( basicStroke2 );
+		}
+		else if( tempNode.isHighlighted() && tempNode.getHighlightColor() != null )
+		{
+			outlineColor = new Color( tempNode.getHighlightColor().getX(), tempNode.getHighlightColor().getY(), tempNode.getHighlightColor().getZ() );
 			g2d.setStroke( basicStroke2 );
 		}
 		else if( tempNode.getOutlineColor() != null )
@@ -2234,9 +2256,14 @@ public class ImageRenderer
 						return;
 					}
 				}
-				if( tempNode.isSelected() || highlighted || tempNode.isHighlighted() )
+				if( tempNode.isSelected() || highlighted || ( tempNode.isHighlighted() && tempNode.getHighlightColor() == null ) )
 				{
 					color = new Color( SELECTED_HIGHLIGHT_COLOR.getX(), SELECTED_HIGHLIGHT_COLOR.getY(), SELECTED_HIGHLIGHT_COLOR.getZ(), alpha );
+					outlineColor = new Color( 1, 1, 1, alpha );
+				}
+				else if( tempNode.isHighlighted() && tempNode.getHighlightColor() != null )
+				{
+					color = new Color( tempNode.getHighlightColor().getX(), tempNode.getHighlightColor().getY(), tempNode.getHighlightColor().getZ(), alpha );
 					outlineColor = new Color( 1, 1, 1, alpha );
 				}
 				else

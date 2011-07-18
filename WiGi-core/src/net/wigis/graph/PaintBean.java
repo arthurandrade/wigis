@@ -212,6 +212,8 @@ public class PaintBean
 	/** Determines if should draw a box around the neighbors of selected nodes */
 	private boolean drawNeighborHighlight = false;
 
+	private boolean drawNumberOfNodesInBox = true;
+
 	/** The fade factor. */
 	private float fadeFactor = 5.0f;
 
@@ -551,7 +553,8 @@ public class PaintBean
 							edgeThickness, edgeColor, drawLabels, curvedLabels, outlinedLabels, labelSize, interpolationLabels,
 							showSearchSelectedLabels, showIcons, globalMinX, globalMaxX, globalMinY, globalMaxY, overview, level, scaleNodesOnZoom,
 							sortNodes, highlightNeighbors, highlightEdges, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels,
-							drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight, timeText );
+ drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight,
+							drawNumberOfNodesInBox, timeText );
 					drawTimer.setEnd();
 					if( Settings.DEBUG && !overview )
 					{
@@ -5743,6 +5746,16 @@ public class PaintBean
 	public void setNoAlpha( boolean noAlpha )
 	{
 		this.noAlpha = noAlpha;
+	}
+
+	public boolean isDrawNumberOfNodesInBox()
+	{
+		return drawNumberOfNodesInBox;
+	}
+
+	public void setDrawNumberOfNodesInBox( boolean drawNumberOfNodesInBox )
+	{
+		this.drawNumberOfNodesInBox = drawNumberOfNodesInBox;
 	}
 	
 }

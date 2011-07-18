@@ -24,10 +24,13 @@
 package net.wigis.graph.data.utilities;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,8 +152,50 @@ public class RandomNames
 		}
 	}
 	
+	private static void sortLinesInFile( String filename )
+	{
+		File file = new File( filename );
+		List<String> lines = new ArrayList<String>();
+		FileReader fr;
+		try
+		{
+			fr = new FileReader( file );
+			BufferedReader br = new BufferedReader( fr );
+			String line = br.readLine();
+			while( line != null )
+			{
+				lines.add( line );
+				line = br.readLine();
+			}
+
+			br.close();
+			fr.close();
+
+			FileWriter fw = new FileWriter( file );
+			BufferedWriter bw = new BufferedWriter( fw );
+			Collections.sort( lines );
+			for( String tempLine : lines )
+			{
+				bw.write( tempLine + "\n" );
+			}
+
+			bw.close();
+			fw.close();
+		}
+		catch( IOException e )
+		{
+			e.printStackTrace();
+		}
+	}
+
 	public static void main( String args[] ) throws IOException
 	{
+		initialize();
+
+		sortLinesInFile( Settings.GRAPHS_PATH + "UserStudy/nameGenerator/FirstNamesMale.txt" );
+		sortLinesInFile( Settings.GRAPHS_PATH + "UserStudy/nameGenerator/FirstNamesFemale.txt" );
+		sortLinesInFile( Settings.GRAPHS_PATH + "UserStudy/nameGenerator/LastNames.txt" );
+
 		for( int i = 0; i < 1000; i++ )
 		{
 			System.out.println( getRandomName() );
@@ -166,9 +211,19 @@ public class RandomNames
 		
 		return getRandomFirstName( false );
 	}
+	
+	public static void resetTakenNames()
+	{
+		takenNames.clear();
+	}
 
 	public static boolean isNameTaken( String name )
 	{
 		return takenNames.containsKey( name );
+	}
+	
+	public static int getNumberOfFirstnames()
+	{
+		return maleNames.size() + femaleNames.size();
 	}
 }

@@ -64,6 +64,8 @@ public class DNVEntity
 	/** The label outline color. */
 	protected Vector3D labelOutlineColor = null;
 
+	protected Vector3D highlightColor = null;
+
 	/** The label size. */
 	protected Integer labelSize = null;
 
@@ -886,5 +888,15 @@ public class DNVEntity
 	public boolean hasSetColor()
 	{
 		return hasSetColor;
+	}
+
+	public Vector3D getHighlightColor()
+	{
+		return highlightColor;
+	}
+
+	public void setHighlightColor( Vector3D highlightColor )
+	{
+		this.highlightColor = highlightColor;
 	}
 }
