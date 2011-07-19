@@ -214,6 +214,12 @@ public class PaintBean
 
 	private boolean drawNumberOfNodesInBox = true;
 
+	private boolean drawAllNeighborsHighlight = false;
+
+	private boolean drawNeighborHighlightAsBoxes = true;
+
+	private boolean alignBoxInfoRelativeToBox = true;
+
 	/** The fade factor. */
 	private float fadeFactor = 5.0f;
 
@@ -554,7 +560,7 @@ public class PaintBean
 							showSearchSelectedLabels, showIcons, globalMinX, globalMaxX, globalMinY, globalMaxY, overview, level, scaleNodesOnZoom,
 							sortNodes, highlightNeighbors, highlightEdges, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels,
  drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight,
-							drawNumberOfNodesInBox, timeText );
+							drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight, alignBoxInfoRelativeToBox, timeText );
 					drawTimer.setEnd();
 					if( Settings.DEBUG && !overview )
 					{
@@ -5756,6 +5762,36 @@ public class PaintBean
 	public void setDrawNumberOfNodesInBox( boolean drawNumberOfNodesInBox )
 	{
 		this.drawNumberOfNodesInBox = drawNumberOfNodesInBox;
+	}
+
+	public boolean isDrawAllNeighborsHighlight()
+	{
+		return drawAllNeighborsHighlight;
+	}
+
+	public void setDrawAllNeighborsHighlight( boolean drawAllNeighborsHighlight )
+	{
+		this.drawAllNeighborsHighlight = drawAllNeighborsHighlight;
+	}
+
+	public boolean isDrawNeighborHighlightAsBoxes()
+	{
+		return drawNeighborHighlightAsBoxes;
+	}
+
+	public void setDrawNeighborHighlightAsBoxes( boolean drawNeighborHighlightAsBoxes )
+	{
+		this.drawNeighborHighlightAsBoxes = drawNeighborHighlightAsBoxes;
+	}
+
+	public boolean isAlignBoxInfoRelativeToBox()
+	{
+		return alignBoxInfoRelativeToBox;
+	}
+
+	public void setAlignBoxInfoRelativeToBox( boolean alignBoxInfoRelativeToBox )
+	{
+		this.alignBoxInfoRelativeToBox = alignBoxInfoRelativeToBox;
 	}
 	
 }

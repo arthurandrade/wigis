@@ -191,9 +191,10 @@ public class ImageRenderer
 			boolean curvedLabels, boolean outlinedLabels, double labelSize, boolean interpolationLabels, boolean showSearchSelectedLabels,
 			boolean showIcons, double minX, double maxX, double minY, double maxY, boolean overview, int level, boolean scaleNodesOnZoom,
 			boolean sortNodes, boolean highlightNeighbors, boolean highlightEdges, int maxLabelLength, int curvedLabelAngle, boolean scaleLabels,
-			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels,
- int maxDistanceToHighlight,
-			boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox, Text timeText ) throws IOException
+			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels, int maxDistanceToHighlight,
+			boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox, boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight,
+			boolean alignBoxInfoRelativeToBox, Text timeText )
+			throws IOException
 	{
 		g2d.setColor( Color.white );
 		g2d.fillRect( 0, 0, width, height );
@@ -232,7 +233,8 @@ public class ImageRenderer
 							outlineColor.setY( (float)Math.max( 0, outlineColor.getY()-0.3 ) );
 							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ()-0.3 ) );
 							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY,
-									maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings, drawNumberOfNodesInBox, headerAlignment );
+									maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings, drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes,
+									drawAllNeighborsHighlight, alignBoxInfoRelativeToBox, headerAlignment );
 						}
 					}
 					if( !anyNodes )
@@ -364,6 +366,19 @@ public class ImageRenderer
 					System.out.println( "drawNode took " + drawNodeTimer.getTotalTime( Timer.SECONDS ) + " seconds." );
 				}
 			}
+
+			// Fix colors of nodes based on distance
+			if( !drawNeighborHighlightAsBoxes )
+			{
+				for( DNVNode node : subgraph.getNodesList() )
+				{
+					if( node.hasProperty( "originalColor" ) )
+					{
+						node.setColor( node.getProperty( "originalColor" ) );
+						node.removeProperty( "originalColor" );
+					}
+				}
+			}
 		}
 	}
 
@@ -397,7 +412,8 @@ public class ImageRenderer
 	 */
 	private static int drawEllipseAround( int hops, Map<Integer,DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width, int height, double minXPercent,
 			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor,
-			Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox, Map<String,Boolean> headerAlignment )
+			Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox,
+			boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight, boolean alignBoxInfoRelativeToBox, Map<String, Boolean> headerAlignment )
 	{
 		if( nodes != null )
 		{
@@ -431,8 +447,6 @@ public class ImageRenderer
 						maxRadius = node.getRadius();
 					}
 
-//					node.setHighlighted( true );
-					// node.setColor( fillColor );
 				}
 			}
 				
@@ -456,22 +470,44 @@ public class ImageRenderer
 					if( x >= minPosScreen.getX() && x <= maxPosScreen.getX() && y >= minPosScreen.getY() && y <= maxPosScreen.getY() )
 					{
 						// this node overlaps with the box, so don't draw it
-						return 0;
+						if( !drawAllNeighborsHighlight )
+						{
+							return 0;
+						}
 					}
 				}
 			}
 			
 			
-
-			g2d.setColor( new Color( fillColor.getX(), fillColor.getY(), fillColor.getZ(), 0.7f ) );
-			g2d.fillRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ),
-					(int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10,
-					10 );
-			g2d.setStroke( new BasicStroke( 3 ) );
-			g2d.setColor( new Color( outlineColor.getX(), outlineColor.getY(), outlineColor.getZ(), 0.7f ) );
-			g2d.drawRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ),
-					(int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10,
-					10 );
+			if( drawNeighborHighlightAsBoxes )
+			{
+				g2d.setColor( new Color( fillColor.getX(), fillColor.getY(), fillColor.getZ(), 0.7f ) );
+				g2d.fillRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ), (int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ),
+						(int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10, 10 );
+				g2d.setStroke( new BasicStroke( 3 ) );
+				g2d.setColor( new Color( outlineColor.getX(), outlineColor.getY(), outlineColor.getZ(), 0.7f ) );
+				g2d.drawRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ), (int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ),
+						(int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10, 10 );
+			}
+			else
+			{
+				for( DNVNode node : nodes.values() )
+				{
+					Vector3D color;
+					if( !node.hasProperty( "originalColor" ) )
+					{
+						node.setProperty( "originalColor", node.getColor().toString() );
+						color = fillColor;
+					}
+					else
+					{
+						color = new Vector3D( node.getColor() );
+						color.add( fillColor );
+						color.dotProduct( 0.5f );
+					}
+					node.setColor( color );
+				}
+			}
 			
 			Vector2D position = new Vector2D();
 			Vector2D selectedNodeScreenPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, selectedNode.getPosition() );
@@ -479,39 +515,58 @@ public class ImageRenderer
 			float yDiff = Math.abs( selectedNodeScreenPos.getY() - (minPosScreen.getY() + (maxPosScreen.getY() - minPosScreen.getY()) / 2.0f) );
 			
 			String key;
-			if( headerAlignment.containsKey( "X-align" + selectedNode.getId() ) || ( !headerAlignment.containsKey( "Y-align" + selectedNode.getId() ) && xDiff >= yDiff ) )
+			if( alignBoxInfoRelativeToBox )
 			{
-				headerAlignment.put( "X-align" + selectedNode.getId(), true );
-				position = new Vector2D( minPosScreen.getX() + (maxPosScreen.getX() - minPosScreen.getX()) / 2.0f, 14 );
-				key = "X" + hops;
-				if( !drawnHeadings.containsKey( key ) )
+				if( headerAlignment.containsKey( "X-align" + selectedNode.getId() ) || ( !headerAlignment.containsKey( "Y-align" + selectedNode.getId() ) && xDiff >= yDiff ) )
 				{
-					Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
-					t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
-					drawnHeadings.put( key, 1 );
+					headerAlignment.put( "X-align" + selectedNode.getId(), true );
+					position = new Vector2D( minPosScreen.getX() + ( maxPosScreen.getX() - minPosScreen.getX() ) / 2.0f, 14 );
+					key = "X" + hops;
+					if( !drawnHeadings.containsKey( key ) )
+					{
+						Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
+						t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
+						drawnHeadings.put( key, 1 );
+					}
+					else
+					{
+						drawnHeadings.put( key, drawnHeadings.get( key ) + 1 );
+					}
 				}
 				else
 				{
-					drawnHeadings.put( key, drawnHeadings.get( key ) + 1 );
+					headerAlignment.put( "Y-align" + selectedNode.getId(), true );
+					position = new Vector2D( 35, minPosScreen.getY() + ( maxPosScreen.getY() - minPosScreen.getY() ) / 2.0f );
+					key = "Y" + hops;
+					if( !drawnHeadings.containsKey( key ) )
+					{
+						Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
+						t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
+						drawnHeadings.put( key, 1 );
+					}
+					else
+					{
+						drawnHeadings.put( key, drawnHeadings.get( key ) + 1 );
+					}
 				}
 			}
 			else
 			{
-				headerAlignment.put( "Y-align" + selectedNode.getId(), true );
-				position = new Vector2D( 35, minPosScreen.getY() + (maxPosScreen.getY() - minPosScreen.getY()) / 2.0f );
-				key = "Y" + hops;
+				position = new Vector2D( 70 * hops, 14 );
+				key = "Align" + hops;
 				if( !drawnHeadings.containsKey( key ) )
 				{
 					Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
 					t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
 					drawnHeadings.put( key, 1 );
-				}				
+				}
 				else
 				{
 					drawnHeadings.put( key, drawnHeadings.get( key ) + 1 );
 				}
 			}
-			position.setY( position.getY() + (drawnHeadings.get( key ) * 20) );
+
+			position.setY( position.getY() + ( drawnHeadings.get( key ) * 20 ) );
 			if( drawNumberOfNodesInBox )
 			{
 				Text t = new Text( nodes.size() + " nodes", position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
