@@ -5529,6 +5529,14 @@ public class PaintBean
 	// Nothing
 	}
 
+	public boolean doesOverlap( DNVNode node1, DNVNode node2 )
+	{
+		int nodeWidth = ImageRenderer.getNodeWidth( nodeSize, minX, maxX, 1 );
+		Vector2D difference = getScreenPosDifference( node1, node2 );
+		float overlap = getOverlapAmount( node1, node2, nodeWidth, difference );
+
+		return overlap > 0;
+	}
 	/**
 	 * Gets the overlap.
 	 * 
@@ -5542,6 +5550,50 @@ public class PaintBean
 	{
 		// refreshGlobalBoundaries( level );
 		int nodeWidth = ImageRenderer.getNodeWidth( nodeSize, minX, maxX, 1 );
+		Vector2D difference = getScreenPosDifference( node1, node2 );
+		float overlap = getOverlapAmount( node1, node2, nodeWidth, difference );
+		if( overlap > 0 )
+		{
+			// System.out.println( node1.getLabel() + " - " + node2.getLabel()
+			// );
+			// System.out.println( "overlap : " + overlap );
+			difference.normalize();
+			difference.dotProduct( overlap );
+			// System.out.println( "Diff:" + difference );
+			// Vector2D overlapV = ImageRenderer.transformScreenToWorld(
+			// difference.getX(), difference.getY(), minX, maxX, minY, maxY,
+			// globalMinX,
+			// globalMaxX, globalMinY, globalMaxY, width, height );
+			//
+			// System.out.println( "OverlapV:" + overlapV );
+
+			return difference;
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param node1
+	 * @param node2
+	 * @param nodeWidth
+	 * @param difference
+	 * @return
+	 */
+	public float getOverlapAmount( DNVNode node1, DNVNode node2, int nodeWidth, Vector2D difference )
+	{
+		float maxOverlap = nodeWidth * ( node1.getRadius() + node2.getRadius() ) / 2.0f;
+		float overlap = maxOverlap - difference.length();
+		return overlap;
+	}
+
+	/**
+	 * @param node1
+	 * @param node2
+	 * @return
+	 */
+	public Vector2D getScreenPosDifference( DNVNode node1, DNVNode node2 )
+	{
 		Vector2D node1ScreenPos;
 		Vector2D node2ScreenPos;
 		if( node1.hasAttribute( "screenPosition" ) )
@@ -5564,27 +5616,7 @@ public class PaintBean
 		}
 
 		Vector2D difference = new Vector2D( node1ScreenPos ).subtract( node2ScreenPos );
-		float maxOverlap = nodeWidth * ( node1.getRadius() + node2.getRadius() ) / 2.0f;
-		float overlap = maxOverlap - difference.length();
-		if( overlap > 0 )
-		{
-			// System.out.println( node1.getLabel() + " - " + node2.getLabel()
-			// );
-			// System.out.println( "overlap : " + overlap );
-			difference.normalize();
-			difference.dotProduct( overlap );
-			// System.out.println( "Diff:" + difference );
-			// Vector2D overlapV = ImageRenderer.transformScreenToWorld(
-			// difference.getX(), difference.getY(), minX, maxX, minY, maxY,
-			// globalMinX,
-			// globalMaxX, globalMinY, globalMaxY, width, height );
-			//
-			// System.out.println( "OverlapV:" + overlapV );
-
-			return difference;
-		}
-
-		return null;
+		return difference;
 	}
 
 	// Computes overlap between two nodes in image space and returns the amount
@@ -5818,6 +5850,18 @@ public class PaintBean
 	public void setAlignBoxInfoRelativeToBox( boolean alignBoxInfoRelativeToBox )
 	{
 		this.alignBoxInfoRelativeToBox = alignBoxInfoRelativeToBox;
+	}
+
+	private boolean avoidNodeOverlap = true;
+
+	public boolean isAvoidNodeOverlap()
+	{
+		return avoidNodeOverlap;
+	}
+
+	public void setAvoidNodeOverlap( boolean avoidNodeOverlap )
+	{
+		this.avoidNodeOverlap = avoidNodeOverlap;
 	}
 	
 }

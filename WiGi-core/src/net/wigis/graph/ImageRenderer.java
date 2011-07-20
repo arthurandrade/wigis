@@ -1317,7 +1317,7 @@ public class ImageRenderer
 	 * @param nodesByYPos
 	 * @param nodeAndKeyToIndex
 	 */
-	private static void getNodesByYPos( List<DNVNode> nodes, Graphics2D g, int nodeWidth, boolean interpolationLabels, boolean curvedLabels,
+	public static void getNodesByYPos( List<DNVNode> nodes, Graphics2D g, int nodeWidth, boolean interpolationLabels, boolean curvedLabels,
 			double labelSize, double minX, double maxX, double minY, double maxY, double minXPercent, double maxXPercent, double minYPercent,
 			double maxYPercent, int width, int height, double ratio, boolean scaleLabels, int maxLabelLength, int curvedLabelAngle,
 			boolean boldLabels, DNVGraph graph, Map<Integer, Rectangle> boundingRectangles, Map<Integer, List<DNVNode>> nodesByYPos,
