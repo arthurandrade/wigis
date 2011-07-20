@@ -5549,29 +5549,25 @@ public class PaintBean
 		Vector2D node2ScreenPos = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width,
 				height, node2.getPosition() );
 
-		Vector2D difference = new Vector2D( node1ScreenPos );
-		difference.subtract( node2ScreenPos );
-		float maxOverlap = nodeWidth * ( node1.getRadius() + node2.getRadius() );
+		Vector2D difference = new Vector2D( node1ScreenPos ).subtract( node2ScreenPos );
+		float maxOverlap = nodeWidth * ( node1.getRadius() + node2.getRadius() ) / 2.0f;
 		float overlap = maxOverlap - difference.length();
-		// System.out.println( "overlap : " + overlap );
-
 		if( overlap > 0 )
 		{
-			float ratio = overlap / maxOverlap;
-			Vector3D color = new Vector3D( ratio, ratio, ratio );
-			node1.setOutlineColor( color );
-			node2.setOutlineColor( color );
-		}
-		else
-		{
-			node1.setOutlineColor( "#000000" );
-			node2.setOutlineColor( "#000000" );
+			// System.out.println( node1.getLabel() + " - " + node2.getLabel()
+			// );
+			// System.out.println( "overlap : " + overlap );
+			difference.normalize();
+			difference.dotProduct( overlap );
+			Vector2D overlapV = ImageRenderer.transformScreenToWorld( difference.getX(), difference.getY(), minX, maxX, minY, maxY, globalMinX,
+					globalMaxX, globalMinY, globalMaxY, width, height );
+
+			// System.out.println( "OverlapV:" + overlapV );
+
+			return overlapV.length();
 		}
 
-		Vector2D overlapV = ImageRenderer.transformScreenToWorld( overlap, 0, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
-				width, height );
-
-		return overlapV.getX();
+		return 0;
 	}
 
 	/**

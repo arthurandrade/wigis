@@ -2811,6 +2811,11 @@ public class ImageRenderer
 		return url;
 	}
 
+	public static Vector2D transformPosition( PaintBean pb, Vector2D oldPosition )
+	{
+		return transformPosition( pb.getGlobalMinX(), pb.getGlobalMaxX(), pb.getGlobalMinY(), pb.getGlobalMaxY(), pb.getMinX(), pb.getMaxX(),
+				pb.getMinY(), pb.getMaxY(), pb.getWidth(), pb.getHeight(), oldPosition );
+	}
 	/**
 	 * Transform position.
 	 * 
