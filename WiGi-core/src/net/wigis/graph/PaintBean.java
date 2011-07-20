@@ -5529,8 +5529,6 @@ public class PaintBean
 	// Nothing
 	}
 
-	// Computes overlap between two nodes in image space and returns the amount
-	// of overlap in world space
 	/**
 	 * Gets the overlap.
 	 * 
@@ -5540,14 +5538,30 @@ public class PaintBean
 	 *            the node2
 	 * @return the overlap
 	 */
-	public float getOverlap( DNVNode node1, DNVNode node2 )
+	public Vector2D getOverlapVector( DNVNode node1, DNVNode node2 )
 	{
 		// refreshGlobalBoundaries( level );
 		int nodeWidth = ImageRenderer.getNodeWidth( nodeSize, minX, maxX, 1 );
-		Vector2D node1ScreenPos = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width,
-				height, node1.getPosition() );
-		Vector2D node2ScreenPos = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width,
-				height, node2.getPosition() );
+		Vector2D node1ScreenPos;
+		Vector2D node2ScreenPos;
+		if( node1.hasAttribute( "screenPosition" ) )
+		{
+			node1ScreenPos = (Vector2D)node1.getAttribute( "screenPosition" );
+		}
+		else
+		{
+			node1ScreenPos = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width, height, node1.getPosition() );
+			node1.setAttribute( "screenPosition", node1ScreenPos );
+		}
+		if( node2.hasAttribute( "screenPosition" ) )
+		{
+			node2ScreenPos = (Vector2D)node2.getAttribute( "screenPosition" );
+		}
+		else
+		{
+			node2ScreenPos = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minX, maxX, minY, maxY, width, height, node2.getPosition() );
+			node2.setAttribute( "screenPosition", node2ScreenPos );
+		}
 
 		Vector2D difference = new Vector2D( node1ScreenPos ).subtract( node2ScreenPos );
 		float maxOverlap = nodeWidth * ( node1.getRadius() + node2.getRadius() ) / 2.0f;
@@ -5559,12 +5573,28 @@ public class PaintBean
 			// System.out.println( "overlap : " + overlap );
 			difference.normalize();
 			difference.dotProduct( overlap );
-			Vector2D overlapV = ImageRenderer.transformScreenToWorld( difference.getX(), difference.getY(), minX, maxX, minY, maxY, globalMinX,
-					globalMaxX, globalMinY, globalMaxY, width, height );
-
+			// System.out.println( "Diff:" + difference );
+			// Vector2D overlapV = ImageRenderer.transformScreenToWorld(
+			// difference.getX(), difference.getY(), minX, maxX, minY, maxY,
+			// globalMinX,
+			// globalMaxX, globalMinY, globalMaxY, width, height );
+			//
 			// System.out.println( "OverlapV:" + overlapV );
 
-			return overlapV.length();
+			return difference;
+		}
+
+		return null;
+	}
+
+	// Computes overlap between two nodes in image space and returns the amount
+	// of overlap in image space
+	public float getOverlap( DNVNode node1, DNVNode node2 )
+	{
+		Vector2D v = getOverlapVector( node1, node2 );
+		if( v != null )
+		{
+			return v.length();
 		}
 
 		return 0;

@@ -2898,6 +2898,12 @@ public class ImageRenderer
 		return new Vector2D( newX, newY );
 	}
 
+	public static Vector2D transformScreenToWorld( Vector2D screenPos, PaintBean pb )
+	{
+		return transformScreenToWorld( screenPos.getX(), screenPos.getY(), pb.getMinX(), pb.getMaxX(), pb.getMinY(), pb.getMaxY(), pb.getGlobalMinX(), pb.getGlobalMaxX(),
+				pb.getGlobalMinY(), pb.getGlobalMaxY(), pb.getWidth(), pb.getHeight() );
+	}
+
 	/**
 	 * Gets the movement.
 	 * 
