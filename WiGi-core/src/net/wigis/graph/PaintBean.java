@@ -220,6 +220,8 @@ public class PaintBean
 
 	private boolean alignBoxInfoRelativeToBox = true;
 
+	private boolean drawAxis = false;
+
 	/** The fade factor. */
 	private float fadeFactor = 5.0f;
 
@@ -560,7 +562,8 @@ public class PaintBean
 							showSearchSelectedLabels, showIcons, globalMinX, globalMaxX, globalMinY, globalMaxY, overview, level, scaleNodesOnZoom,
 							sortNodes, highlightNeighbors, highlightEdges, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels,
  drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight,
-							drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight, alignBoxInfoRelativeToBox, timeText );
+ drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight,
+							alignBoxInfoRelativeToBox, timeText, drawAxis );
 					drawTimer.setEnd();
 					if( Settings.DEBUG && !overview )
 					{
@@ -5862,6 +5865,23 @@ public class PaintBean
 	public void setAvoidNodeOverlap( boolean avoidNodeOverlap )
 	{
 		this.avoidNodeOverlap = avoidNodeOverlap;
+	}
+
+	/**
+	 * @return the drawAxis
+	 */
+	public boolean isDrawAxis()
+	{
+		return drawAxis;
+	}
+
+	/**
+	 * @param drawAxis
+	 *            the drawAxis to set
+	 */
+	public void setDrawAxis( boolean drawAxis )
+	{
+		this.drawAxis = drawAxis;
 	}
 	
 }

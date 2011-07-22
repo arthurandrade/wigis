@@ -1,24 +1,27 @@
 /******************************************************************************************************
- * Copyright (c) 2010, University of California, Santa Barbara
- * All rights reserved.
+ * Copyright (c) 2010, University of California, Santa Barbara All rights
+ * reserved.
  * 
- * Redistribution and use in source and binary forms, with or without modification, are 
- * permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  * 
- *    * Redistributions of source code must retain the above copyright notice, this list of
- *      conditions and the following disclaimer.
- *    * Redistributions in binary form must reproduce the above copyright notice, this list of
- *      conditions and the following disclaimer in the documentation and/or other materials 
- *      provided with the distribution.
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer. * Redistributions in binary
+ * form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution.
  * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
- * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * 
  *****************************************************************************************************/
 
@@ -92,14 +95,19 @@ public class ImageRenderer
 	private static Text watermark = new Text( "www.WiGis.net", new Vector2D( 0, 0 ), new Vector3D( 0.7f, 0.7f, 0.9f ),
 			new Vector3D( 0.9f, 0.9f, 1f ), 18, true, true, false, false, false, false, true );
 
-//	private static final Vector3D DARK_GREEN = new Vector3D( 0.0f, 0.7f, 0.0f );
+	// private static final Vector3D DARK_GREEN = new Vector3D( 0.0f, 0.7f, 0.0f
+	// );
 	private static final Vector3D LIGHT_GREEN = new Vector3D( 0.5f, 1.0f, 0.5f );
-//	private static final Vector3D DARK_YELLOW = new Vector3D( 0.7f, 0.7f, 0.0f );
-//	private static final Vector3D LIGHT_YELLOW = new Vector3D( 1f, 1f, 0.5f );
-//	private static final Vector3D DARK_RED = new Vector3D( 0.7f, 0.0f, 0.0f );
+	// private static final Vector3D DARK_YELLOW = new Vector3D( 0.7f, 0.7f,
+	// 0.0f );
+	// private static final Vector3D LIGHT_YELLOW = new Vector3D( 1f, 1f, 0.5f
+	// );
+	// private static final Vector3D DARK_RED = new Vector3D( 0.7f, 0.0f, 0.0f
+	// );
 	private static final Vector3D LIGHT_RED = new Vector3D( 1.0f, 0.5f, 0.5f );
-	
+
 	private static final Vector3D SELECTED_HIGHLIGHT_COLOR = new Vector3D( 0.9f, 0.0f, 0.0f );
+
 	/**
 	 * Draw graph.
 	 * 
@@ -191,10 +199,10 @@ public class ImageRenderer
 			boolean curvedLabels, boolean outlinedLabels, double labelSize, boolean interpolationLabels, boolean showSearchSelectedLabels,
 			boolean showIcons, double minX, double maxX, double minY, double maxY, boolean overview, int level, boolean scaleNodesOnZoom,
 			boolean sortNodes, boolean highlightNeighbors, boolean highlightEdges, int maxLabelLength, int curvedLabelAngle, boolean scaleLabels,
-			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels, int maxDistanceToHighlight,
-			boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox, boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight,
-			boolean alignBoxInfoRelativeToBox, Text timeText )
-			throws IOException
+			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels,
+			int maxDistanceToHighlight, boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox,
+			boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight, boolean alignBoxInfoRelativeToBox, Text timeText,
+			boolean drawAxis ) throws IOException
 	{
 		g2d.setColor( Color.white );
 		g2d.fillRect( 0, 0, width, height );
@@ -204,6 +212,7 @@ public class ImageRenderer
 
 		synchronized( subgraph )
 		{
+
 			int nodeWidth;
 			nodeWidth = getNodeWidth( nodeSize, minXPercent, maxXPercent, ratio, scaleNodesOnZoom );
 			List<DNVNode> selectedNodes = new ArrayList<DNVNode>( subgraph.getSuperGraph().getSelectedNodes( level ).values() );
@@ -211,30 +220,31 @@ public class ImageRenderer
 			if( drawNeighborArea )
 			{
 				int maxDistance = 10;
-				Map<String,Boolean> headerAlignment = new HashMap<String,Boolean>();
-				Map<String,Integer> drawnHeadings = new HashMap<String,Integer>();
+				Map<String, Boolean> headerAlignment = new HashMap<String, Boolean>();
+				Map<String, Integer> drawnHeadings = new HashMap<String, Integer>();
 				for( int distance = maxDistance; distance > 0; distance-- )
 				{
 					int i = 0;
 					boolean anyNodes = false;
 					for( DNVNode node : selectedNodes )
 					{
-						Map<Integer,DNVNode> nodes = node.getNodesAtDistance( distance );
+						Map<Integer, DNVNode> nodes = node.getNodesAtDistance( distance );
 						if( nodes != null && nodes.size() > 0 )
 						{
-							anyNodes = true; 
+							anyNodes = true;
 							Vector3D color = new Vector3D( LIGHT_GREEN );
 							Vector3D difference = new Vector3D( LIGHT_RED );
 							difference.subtract( color );
-							difference.dotProduct( (float)(distance-1)/(float)maxDistance );
+							difference.dotProduct( (float)( distance - 1 ) / (float)maxDistance );
 							color.add( difference );
-							Vector3D outlineColor = new Vector3D(color);
-							outlineColor.setX( (float)Math.max( 0, outlineColor.getX()-0.3 ) );
-							outlineColor.setY( (float)Math.max( 0, outlineColor.getY()-0.3 ) );
-							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ()-0.3 ) );
-							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY,
-									maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings, drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes,
-									drawAllNeighborsHighlight, alignBoxInfoRelativeToBox, headerAlignment );
+							Vector3D outlineColor = new Vector3D( color );
+							outlineColor.setX( (float)Math.max( 0, outlineColor.getX() - 0.3 ) );
+							outlineColor.setY( (float)Math.max( 0, outlineColor.getY() - 0.3 ) );
+							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ() - 0.3 ) );
+							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent,
+									maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings,
+									drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight, alignBoxInfoRelativeToBox,
+									headerAlignment );
 						}
 					}
 					if( !anyNodes )
@@ -243,24 +253,89 @@ public class ImageRenderer
 					}
 				}
 			}
-			
+
+			if( drawAxis && !overview )
+			{
+				float globalMinX = GraphFunctions.getMinXPosition( subgraph.getSuperGraph(), level, true );
+				float globalMaxX = GraphFunctions.getMaxXPosition( subgraph.getSuperGraph(), level, true );
+				float globalMinY = GraphFunctions.getMinYPosition( subgraph.getSuperGraph(), level, true );
+				float globalMaxY = GraphFunctions.getMaxYPosition( subgraph.getSuperGraph(), level, true );
+
+				Vector2D bottomLeft = new Vector2D( globalMinX, globalMaxY );
+				Vector2D bottomRight = new Vector2D( globalMaxX, globalMaxY );
+				Vector2D topLeft = new Vector2D( globalMinX, globalMinY );
+
+				Vector2D bottomLeftScreen = ImageRenderer.transformPosition( pb, bottomLeft );
+				Vector2D bottomRightScreen = ImageRenderer.transformPosition( pb, bottomRight );
+				Vector2D topLeftScreen = ImageRenderer.transformPosition( pb, topLeft );
+
+				g2d.setColor( Color.black );
+				g2d.setStroke( new BasicStroke( 1 ) );
+				Vector3D color = new Vector3D( 0, 0, 0 );
+				Vector3D outlineColor = new Vector3D( 1, 1, 1 );
+
+				// X-axis
+				g2d.drawLine( (int)bottomLeftScreen.getX(), (int)bottomLeftScreen.getY(), (int)bottomRightScreen.getX() + 20,
+						(int)bottomRightScreen.getY() );
+				Vector2D tempPos = new Vector2D( bottomLeft );
+				Vector2D tempPosScreen = new Vector2D( bottomLeftScreen );
+				int numberOfTicks = 5;
+				float axisTickLength = ( bottomRight.getX() - bottomLeft.getX() ) / numberOfTicks;
+				float axisTickLengthScreen = ( bottomRightScreen.getX() - bottomLeftScreen.getX() ) / numberOfTicks;
+				for( int i = 0; i <= numberOfTicks; i++ )
+				{
+					g2d.drawLine( (int)tempPosScreen.getX(), (int)tempPosScreen.getY(), (int)tempPosScreen.getX(), (int)tempPosScreen.getY() + 10 );
+					Text text = new Text( "" + ( Math.round( tempPos.getX() * 1000.0f ) / 1000.0f ), new Vector2D( tempPosScreen.getX(),
+							tempPosScreen.getY() + 15 ), outlineColor, color, 10, false, true, false, false, false, false, true );
+					text.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, globalMinX, globalMaxX, globalMinY, globalMaxY,
+							nodeWidth, height, overview );
+					tempPos.add( axisTickLength, 0 );
+					tempPosScreen.add( axisTickLengthScreen, 0 );
+				}
+
+				// Y-axis
+				g2d.drawLine( (int)bottomLeftScreen.getX(), (int)bottomLeftScreen.getY(), (int)topLeftScreen.getX(), (int)topLeftScreen.getY() );
+				tempPos.set( bottomLeft );
+				tempPosScreen.set( bottomLeftScreen );
+				axisTickLength = ( topLeft.getY() - bottomLeft.getY() ) / numberOfTicks;
+				axisTickLengthScreen = ( topLeftScreen.getY() - bottomLeftScreen.getY() ) / numberOfTicks;
+				for( int i = 0; i <= numberOfTicks; i++ )
+				{
+					g2d.drawLine( (int)tempPosScreen.getX(), (int)tempPosScreen.getY(), (int)tempPosScreen.getX() - 10, (int)tempPosScreen.getY() );
+					Text text = new Text( "" + ( Math.round( tempPos.getY() * 1000.0f ) / 1000.0f ), new Vector2D( tempPosScreen.getX() - 25,
+							tempPosScreen.getY() ), outlineColor, color, 10, false, true, false, false, false, false, true );
+					text.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, globalMinX, globalMaxX, globalMinY, globalMaxY,
+							nodeWidth, height, overview );
+					tempPos.add( 0, axisTickLength );
+					tempPosScreen.add( 0, axisTickLengthScreen );
+				}
+				// System.out.println( bottomLeftScreen + " - " +
+				// bottomRightScreen );
+				// System.out.println( bottomLeftScreen + " - " + topLeftScreen
+				// );
+
+
+
+			}
+
 			// ------------------------------
 			// watermark
 			// ------------------------------
 			if( drawWatermark )
 			{
-//				watermark.setPosition( (float)( ( maxX + minX ) / 2.0f + ( ( maxX - minX ) / 3.0f ) ),
-//						(float)( ( maxY + minY ) / 2.0f + ( ( maxY - minY ) / 2.1f ) ) );
-				watermark.setPosition( width - 80 , height - 18 );
-//				watermark.setLabelSize( 18 );
+				// watermark.setPosition( (float)( ( maxX + minX ) / 2.0f + ( (
+				// maxX - minX ) / 3.0f ) ),
+				// (float)( ( maxY + minY ) / 2.0f + ( ( maxY - minY ) / 2.1f )
+				// ) );
+				watermark.setPosition( width - 80, height - 18 );
+				// watermark.setLabelSize( 18 );
 				watermark.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, width, height, overview );
 			}
-			
+
 			if( timeText != null )
 			{
 				timeText.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, width, height, overview );
 			}
-
 
 			// ------------------------------
 			// geometric objects
@@ -273,16 +348,15 @@ public class ImageRenderer
 					object.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, width, height, overview );
 				}
 			}
-			
 
 			// ------------------------------
 			// edges
 			// ------------------------------
 			Timer edgesTimer = new Timer( Timer.MILLISECONDS );
 			edgesTimer.setStart();
-			drawEdges( subgraph, g2d, nodeSize, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio,
-					edgeThickness, drawLabels, outlinedLabels, labelSize, minX, maxX, minY, maxY, overview, scaleNodesOnZoom, highlightNeighbors
-							|| highlightEdges, standardColor, g2d, boldLabels, nodeWidth );
+			drawEdges( subgraph, g2d, nodeSize, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, edgeThickness, drawLabels,
+					outlinedLabels, labelSize, minX, maxX, minY, maxY, overview, scaleNodesOnZoom, highlightNeighbors || highlightEdges,
+					standardColor, g2d, boldLabels, nodeWidth );
 			edgesTimer.setEnd();
 
 			// ------------------------------
@@ -297,14 +371,13 @@ public class ImageRenderer
 			Timer drawNodeTimer = new Timer( Timer.MILLISECONDS );
 			SortByLabelSize sortByLabelSize = new SortByLabelSize( highlightNeighbors );
 			if( subgraph != null && subgraph.getNodes() != null && subgraph.getNodes().values() != null )
-			{				
+			{
 				nodesTimer.setStart();
-				nodes = drawNodes( subgraph, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, showIcons, minX, maxX, minY, maxY,
-						highlightNeighbors, type, nodeWidth, selectedNodes, transformTimer, drawNodeTimer, sortByLabelSize, hideConflictingLabels
-								&& drawLabels, maxDistanceToHighlight );
+				nodes = drawNodes( subgraph, g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, showIcons, minX, maxX, minY,
+						maxY, highlightNeighbors, type, nodeWidth, selectedNodes, transformTimer, drawNodeTimer, sortByLabelSize,
+						hideConflictingLabels && drawLabels, maxDistanceToHighlight );
 				nodesTimer.setEnd();
-				
-				
+
 				// ------------------------------
 				// Store Bounding Boxes
 				// ------------------------------
@@ -318,15 +391,14 @@ public class ImageRenderer
 						maxSize = (float)Math.max( maxSize, tempLabelSize * 1.6 );
 					}
 					subgraph.getSuperGraph().setAttribute( "maxSize", (int)Math.round( maxSize ) );
-					Map<Integer,Rectangle> boundingRectangles = new HashMap<Integer,Rectangle>();
-					Map<Integer,List<DNVNode>> nodesByYPos = new HashMap<Integer,List<DNVNode>>();
-					Map<Integer,Map<Integer,Integer>> nodeAndKeyToIndex = new HashMap<Integer,Map<Integer,Integer>>();
-					getNodesByYPos( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY, maxY, minXPercent, maxXPercent,
-							minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, subgraph.getSuperGraph(), boundingRectangles,
-							nodesByYPos, nodeAndKeyToIndex, true, (int)Math.round( maxSize ) );
+					Map<Integer, Rectangle> boundingRectangles = new HashMap<Integer, Rectangle>();
+					Map<Integer, List<DNVNode>> nodesByYPos = new HashMap<Integer, List<DNVNode>>();
+					Map<Integer, Map<Integer, Integer>> nodeAndKeyToIndex = new HashMap<Integer, Map<Integer, Integer>>();
+					getNodesByYPos( nodes, g2d, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY, maxY, minXPercent,
+							maxXPercent, minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels,
+							subgraph.getSuperGraph(), boundingRectangles, nodesByYPos, nodeAndKeyToIndex, true, (int)Math.round( maxSize ) );
 				}
 
-				
 				// ------------------------------
 				// Animations
 				// ------------------------------
@@ -410,15 +482,16 @@ public class ImageRenderer
 	 * @param minY
 	 * @param maxY
 	 */
-	private static int drawEllipseAround( int hops, Map<Integer,DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width, int height, double minXPercent,
-			double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY, double maxY, float nodeWidth, Vector3D fillColor,
-			Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode, Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox,
-			boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight, boolean alignBoxInfoRelativeToBox, Map<String, Boolean> headerAlignment )
+	private static int drawEllipseAround( int hops, Map<Integer, DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width,
+			int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY,
+			double maxY, float nodeWidth, Vector3D fillColor, Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode,
+			Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox, boolean drawNeighborHighlightAsBoxes,
+			boolean drawAllNeighborsHighlight, boolean alignBoxInfoRelativeToBox, Map<String, Boolean> headerAlignment )
 	{
 		if( nodes != null )
 		{
-			Vector2D maxPos = new Vector2D(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY );
-			Vector2D minPos = new Vector2D(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY );
+			Vector2D maxPos = new Vector2D( Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY );
+			Vector2D minPos = new Vector2D( Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY );
 			float maxRadius = Float.NEGATIVE_INFINITY;
 			synchronized( nodes )
 			{
@@ -432,7 +505,7 @@ public class ImageRenderer
 					{
 						maxPos.setY( node.getPosition( true ).getY() );
 					}
-		
+
 					if( node.getPosition( true ).getX() < minPos.getX() )
 					{
 						minPos.setX( node.getPosition( true ).getX() );
@@ -441,7 +514,7 @@ public class ImageRenderer
 					{
 						minPos.setY( node.getPosition( true ).getY() );
 					}
-					
+
 					if( node.getRadius() > maxRadius )
 					{
 						maxRadius = node.getRadius();
@@ -449,22 +522,24 @@ public class ImageRenderer
 
 				}
 			}
-				
-			Vector2D maxPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, maxPos );
-			Vector2D minPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, minPos );
+
+			Vector2D maxPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height,
+					maxPos );
+			Vector2D minPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height,
+					minPos );
 			maxPosScreen.setX( maxPosScreen.getX() + maxRadius * nodeWidth );
 			maxPosScreen.setY( maxPosScreen.getY() + maxRadius * nodeWidth );
-			
+
 			minPosScreen.setX( minPosScreen.getX() - maxRadius * nodeWidth );
 			minPosScreen.setY( minPosScreen.getY() - maxRadius * nodeWidth );
-	
 
 			for( DNVNode node : allNodes.values() )
 			{
 				if( nodes.get( node.getId() ) == null )
 				{
 					// This is not one of the nodes inside the box
-					Vector2D screenPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, node.getPosition() );
+					Vector2D screenPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width,
+							height, node.getPosition() );
 					float x = screenPos.getX();
 					float y = screenPos.getY();
 					if( x >= minPosScreen.getX() && x <= maxPosScreen.getX() && y >= minPosScreen.getY() && y <= maxPosScreen.getY() )
@@ -477,17 +552,18 @@ public class ImageRenderer
 					}
 				}
 			}
-			
-			
+
 			if( drawNeighborHighlightAsBoxes )
 			{
 				g2d.setColor( new Color( fillColor.getX(), fillColor.getY(), fillColor.getZ(), 0.7f ) );
-				g2d.fillRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ), (int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ),
-						(int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10, 10 );
+				g2d.fillRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ),
+						(int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ),
+						10, 10 );
 				g2d.setStroke( new BasicStroke( 3 ) );
 				g2d.setColor( new Color( outlineColor.getX(), outlineColor.getY(), outlineColor.getZ(), 0.7f ) );
-				g2d.drawRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ), (int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ),
-						(int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ), 10, 10 );
+				g2d.drawRoundRect( (int)Math.round( minPosScreen.getX() ), (int)Math.round( minPosScreen.getY() ),
+						(int)Math.round( maxPosScreen.getX() - minPosScreen.getX() ), (int)Math.round( maxPosScreen.getY() - minPosScreen.getY() ),
+						10, 10 );
 			}
 			else
 			{
@@ -508,23 +584,26 @@ public class ImageRenderer
 					node.setColor( color );
 				}
 			}
-			
+
 			Vector2D position = new Vector2D();
-			Vector2D selectedNodeScreenPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, selectedNode.getPosition() );
-			float xDiff = Math.abs( selectedNodeScreenPos.getX() - (minPosScreen.getX() + (maxPosScreen.getX() - minPosScreen.getX()) / 2.0f) );
-			float yDiff = Math.abs( selectedNodeScreenPos.getY() - (minPosScreen.getY() + (maxPosScreen.getY() - minPosScreen.getY()) / 2.0f) );
-			
+			Vector2D selectedNodeScreenPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width,
+					height, selectedNode.getPosition() );
+			float xDiff = Math.abs( selectedNodeScreenPos.getX() - ( minPosScreen.getX() + ( maxPosScreen.getX() - minPosScreen.getX() ) / 2.0f ) );
+			float yDiff = Math.abs( selectedNodeScreenPos.getY() - ( minPosScreen.getY() + ( maxPosScreen.getY() - minPosScreen.getY() ) / 2.0f ) );
+
 			String key;
 			if( alignBoxInfoRelativeToBox )
 			{
-				if( headerAlignment.containsKey( "X-align" + selectedNode.getId() ) || ( !headerAlignment.containsKey( "Y-align" + selectedNode.getId() ) && xDiff >= yDiff ) )
+				if( headerAlignment.containsKey( "X-align" + selectedNode.getId() )
+						|| ( !headerAlignment.containsKey( "Y-align" + selectedNode.getId() ) && xDiff >= yDiff ) )
 				{
 					headerAlignment.put( "X-align" + selectedNode.getId(), true );
 					position = new Vector2D( minPosScreen.getX() + ( maxPosScreen.getX() - minPosScreen.getX() ) / 2.0f, 14 );
 					key = "X" + hops;
 					if( !drawnHeadings.containsKey( key ) )
 					{
-						Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
+						Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false,
+								true );
 						t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
 						drawnHeadings.put( key, 1 );
 					}
@@ -540,7 +619,8 @@ public class ImageRenderer
 					key = "Y" + hops;
 					if( !drawnHeadings.containsKey( key ) )
 					{
-						Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
+						Text t = new Text( "Dist " + hops, position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false,
+								true );
 						t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
 						drawnHeadings.put( key, 1 );
 					}
@@ -569,13 +649,14 @@ public class ImageRenderer
 			position.setY( position.getY() + ( drawnHeadings.get( key ) * 20 ) );
 			if( drawNumberOfNodesInBox )
 			{
-				Text t = new Text( nodes.size() + " nodes", position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false, true );
+				Text t = new Text( nodes.size() + " nodes", position, new Vector3D( 1, 1, 1 ), fillColor, 12, true, true, true, false, false, false,
+						true );
 				t.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, height, overview );
 			}
-			
+
 			return 1;
 		}
-		
+
 		return 0;
 	}
 
@@ -666,7 +747,7 @@ public class ImageRenderer
 		drawMustDrawLabels( subgraph, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, curvedLabels, outlinedLabels,
 				labelSize, interpolationLabels, minX, maxX, minY, maxY, overview, level, highlightNeighbors, maxLabelLength, curvedLabelAngle,
 				scaleLabels, hideConflictingLabels, drawLabelBox, g2d, nodeWidth, sortByLabelSize, boldLabels, fadeFactor );
-		
+
 		if( drawLabels )
 		{
 			if( hideConflictingLabels )
@@ -678,19 +759,17 @@ public class ImageRenderer
 			for( int i = 0; i < nodes.size(); i++ )
 			{
 				tempNode = nodes.get( i );
-//				if( tempNode.isVisible() )
-//				{
-					boolean highlighted = highlightNode( highlightNeighbors, tempNode );
-					drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, drawLabels, curvedLabels, outlinedLabels,
-							labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle,
-							scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlighted );
-//				}
+				// if( tempNode.isVisible() )
+				// {
+				boolean highlighted = highlightNode( highlightNeighbors, tempNode );
+				drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, drawLabels, curvedLabels, outlinedLabels,
+						labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle, scaleLabels,
+						drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlighted );
+				// }
 			}
 		}
-		else if( showSearchSelectedLabels 
-				&& !overview
-				&& 	( subgraph.getSuperGraph().getSelectedNodes( level ).size() > 0 
-					|| subgraph.getSuperGraph().getSelectedEdges( level ).size() > 0 ) )
+		else if( showSearchSelectedLabels && !overview
+				&& ( subgraph.getSuperGraph().getSelectedNodes( level ).size() > 0 || subgraph.getSuperGraph().getSelectedEdges( level ).size() > 0 ) )
 		{
 			// int maxNumberLabelsShown = 200;
 			// int numberLabelsShown = 0;
@@ -714,16 +793,23 @@ public class ImageRenderer
 			for( int i = 0; i < nodes.size(); i++ )
 			{
 				tempNode = nodes.get( i );
-				if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" )/* && tempNode.isVisible()*/ )
+				if( tempNode.getLabel() != null && !tempNode.getLabel().trim().equals( "" )/*
+																							 * &&
+																							 * tempNode
+																							 * .
+																							 * isVisible
+																							 * (
+																							 * )
+																							 */)
 				{
 					if( tempNode.isNeighborSelected() || tempNode.isEdgeSelected() || tempNode.isSelected() )
 					{
 						boolean selected = highlightNode( highlightNeighbors, tempNode );
 						boolean temp = tempNode.isSelected();
 						tempNode.setSelected( selected );
-						drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels,
-								outlinedLabels, labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength,
-								curvedLabelAngle, scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode )  );
+						drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels, outlinedLabels,
+								labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle,
+								scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode ) );
 						tempNode.setSelected( temp );
 					}
 				}
@@ -930,8 +1016,8 @@ public class ImageRenderer
 			tempNode = nodes.get( i );
 			color = tempNode.getColor();
 			transformTimer.setStart();
-			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode
-					.getPosition( true ) );
+			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height,
+					tempNode.getPosition( true ) );
 			transformTimer.setEnd();
 			drawNodeTimer.setStart();
 			try
@@ -1025,26 +1111,26 @@ public class ImageRenderer
 				{
 					if( tempEdge.getFrom() != null && tempEdge.getTo() != null )
 					{
-						if( tempEdge.isSelected() || tempEdge.isHighlighted() || ( highlightNeighbors && ( tempEdge.getFrom().isSelected() || tempEdge.getTo().isSelected() ) ) )
+						if( tempEdge.isSelected() || tempEdge.isHighlighted()
+								|| ( highlightNeighbors && ( tempEdge.getFrom().isSelected() || tempEdge.getTo().isSelected() ) ) )
 						{
 							selectedEdges.add( tempEdge );
 						}
 						else
 						{
 							drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, standardColor,
- tempEdge, drawLabels,
-									outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
+									tempEdge, drawLabels, outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
 						}
 					}
 				}
 
 				// Draw the selected edges last
-				Color selectedEdgeColor = new Color( SELECTED_HIGHLIGHT_COLOR.getX(), SELECTED_HIGHLIGHT_COLOR.getY(), SELECTED_HIGHLIGHT_COLOR.getZ() );
+				Color selectedEdgeColor = new Color( SELECTED_HIGHLIGHT_COLOR.getX(), SELECTED_HIGHLIGHT_COLOR.getY(),
+						SELECTED_HIGHLIGHT_COLOR.getZ() );
 				for( DNVEdge tempEdge : selectedEdges )
 				{
-					drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, selectedEdgeColor, tempEdge,
- true, outlinedLabels,
-							(int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
+					drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, selectedEdgeColor,
+							tempEdge, true, outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
 				}
 			}
 		}
@@ -1156,14 +1242,15 @@ public class ImageRenderer
 			throws MalformedURLException, IOException
 	{
 		Vector2D tempPos;
-		tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode
-				.getPosition( true ) );
+		tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height,
+				tempNode.getPosition( true ) );
 		drawLabel( g2d, tempNode, tempPos, nodeWidth, tempNode.getLabel( interpolationLabels ), drawLabels, curvedLabels, outlinedLabels, labelSize,
-				minXPercent, maxXPercent, ratio, scaleLabels, highlightNeighbors, maxLabelLength, curvedLabelAngle, drawLabelBox, boldLabels, highlighted );
+				minXPercent, maxXPercent, ratio, scaleLabels, highlightNeighbors, maxLabelLength, curvedLabelAngle, drawLabelBox, boldLabels,
+				highlighted );
 	}
 
-	
 	public static final int DEFAULT_LABEL_HEIGHT = 10;
+
 	/**
 	 * Gets the nodes without overlapping labels.
 	 * 
@@ -1219,22 +1306,27 @@ public class ImageRenderer
 			int curvedLabelAngle, boolean boldLabels, float fadeFactor, DNVGraph graph )
 	{
 		List<DNVNode> goodNodes = new ArrayList<DNVNode>();
-//		DNVNode node;
+		// DNVNode node;
 		DNVNode node2;
 		Rectangle boundingRectangle;
 		Rectangle boundingRectangle2;
 		float overlap = 1;
-		Map<Integer,Rectangle> boundingRectangles = new HashMap<Integer,Rectangle>();
-		Map<Integer,List<DNVNode>> nodesByYPos = new HashMap<Integer,List<DNVNode>>();
-		Map<Integer,Map<Integer,Integer>> nodeAndKeyToIndex = new HashMap<Integer,Map<Integer,Integer>>();
+		Map<Integer, Rectangle> boundingRectangles = new HashMap<Integer, Rectangle>();
+		Map<Integer, List<DNVNode>> nodesByYPos = new HashMap<Integer, List<DNVNode>>();
+		Map<Integer, Map<Integer, Integer>> nodeAndKeyToIndex = new HashMap<Integer, Map<Integer, Integer>>();
 		getNodesByYPos( nodes, g, nodeWidth, interpolationLabels, curvedLabels, labelSize, minX, maxX, minY, maxY, minXPercent, maxXPercent,
 				minYPercent, maxYPercent, width, height, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, graph, boundingRectangles,
 				nodesByYPos, nodeAndKeyToIndex, false, DEFAULT_LABEL_HEIGHT );
-		
+
 		for( DNVNode node : nodes )
 		{
-//			node = nodes.get( i );
-			if( node.getLabel() != null && !node.getLabel().equals( "" )/* && node.isVisible()*/ )
+			// node = nodes.get( i );
+			if( node.getLabel() != null && !node.getLabel().equals( "" )/*
+																		 * &&
+																		 * node.
+																		 * isVisible
+																		 * ()
+																		 */)
 			{
 				overlap = 1;
 				boundingRectangle = boundingRectangles.get( node.getId() );
@@ -1246,10 +1338,19 @@ public class ImageRenderer
 					for( int j = nodes2.size() - 1; j > end; j-- )
 					{
 						node2 = nodes2.get( j );
-						if( !node2.getLabel().equals( "" )/* && node2.isVisible()*/ /*&& !node2.hasProperty( "faded" )*/ )
+						if( !node2.getLabel().equals( "" )/* && node2.isVisible() *//*
+																				 * &&
+																				 * !
+																				 * node2
+																				 * .
+																				 * hasProperty
+																				 * (
+																				 * "faded"
+																				 * )
+																				 */)
 						{
 							boundingRectangle2 = boundingRectangles.get( node2.getId() );
-		
+
 							if( overlap( boundingRectangle, boundingRectangle2 ) )
 							{
 								overlap /= fadeFactor;
@@ -1283,10 +1384,10 @@ public class ImageRenderer
 					node.removeProperty( "faded" );
 				}
 			}
-			
+
 			goodNodes.add( node );
 		}
-	
+
 		return goodNodes;
 	}
 
@@ -1328,26 +1429,29 @@ public class ImageRenderer
 		for( int i = 0; i < nodes.size(); i++ )
 		{
 			DNVNode tempNode = nodes.get( i );
-			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempNode.getPosition( true ) );
-			boundingRectangle = getRectangleBoundingTheLabel( tempNode, tempPos, g, nodeWidth, tempNode.getLabel( interpolationLabels ), curvedLabels,
-					labelSize, minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, nodes.size() > 1000, includeNodeBounds );
+			tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height,
+					tempNode.getPosition( true ) );
+			boundingRectangle = getRectangleBoundingTheLabel( tempNode, tempPos, g, nodeWidth, tempNode.getLabel( interpolationLabels ),
+					curvedLabels, labelSize, minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels,
+					nodes.size() > 1000, includeNodeBounds );
 			boundingRectangles.put( tempNode.getId(), boundingRectangle );
 			Integer key = getKey( boundingRectangle.positionY, areaHeight );
 			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key );
-			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key-1 );
-			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key+1 );
+			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key - 1 );
+			addByKey( nodesByYPos, nodeAndKeyToIndex, tempNode, key + 1 );
 		}
-		
-		graph.setAttribute( "nodesByYPos_"+includeNodeBounds, nodesByYPos );
+
+		graph.setAttribute( "nodesByYPos_" + includeNodeBounds, nodesByYPos );
 	}
 
 	public static Integer getKey( float y, float maxHeight )
 	{
-		Integer key = (int)(y / maxHeight );
+		Integer key = (int)( y / maxHeight );
 		return key;
 	}
 
-	private static void addByKey( Map<Integer, List<DNVNode>> nodesByYPos, Map<Integer,Map<Integer,Integer>> nodeAndKeyToIndex, DNVNode tempNode, Integer key )
+	private static void addByKey( Map<Integer, List<DNVNode>> nodesByYPos, Map<Integer, Map<Integer, Integer>> nodeAndKeyToIndex, DNVNode tempNode,
+			Integer key )
 	{
 		List<DNVNode> currentYNodes = nodesByYPos.get( key );
 		if( currentYNodes == null )
@@ -1355,10 +1459,10 @@ public class ImageRenderer
 			currentYNodes = new ArrayList<DNVNode>();
 			nodesByYPos.put( key, currentYNodes );
 		}
-		Map<Integer,Integer> nodeToIndex = nodeAndKeyToIndex.get( key );
+		Map<Integer, Integer> nodeToIndex = nodeAndKeyToIndex.get( key );
 		if( nodeToIndex == null )
 		{
-			nodeToIndex = new HashMap<Integer,Integer>();
+			nodeToIndex = new HashMap<Integer, Integer>();
 			nodeAndKeyToIndex.put( key, nodeToIndex );
 		}
 		nodeToIndex.put( tempNode.getId(), currentYNodes.size() );
@@ -1447,23 +1551,23 @@ public class ImageRenderer
 		// Position of center of the rectangle
 		private float positionX = 0;
 		private float positionY = 0;
-		
-		private float width = 0;		
+
+		private float width = 0;
 		private float height = 0;
-		
+
 		private float top = 0;
 		private float bottom = 0;
 		private float left = 0;
 		private float right = 0;
-		
+
 		public void setPosition( float x, float y )
 		{
 			positionX = x;
 			positionY = y;
 			updateTopBottom();
-			updateLeftRight();			
+			updateLeftRight();
 		}
-		
+
 		public void setPosition( Vector2D position )
 		{
 			setPosition( position.getX(), position.getY() );
@@ -1472,29 +1576,29 @@ public class ImageRenderer
 		private void updateTopBottom()
 		{
 			float heightBy2 = height / 2.0f;
-			top = positionY - heightBy2;	
+			top = positionY - heightBy2;
 			bottom = positionY + heightBy2;
 		}
-		
+
 		private void updateLeftRight()
 		{
 			float widthBy2 = width / 2.0f;
 			left = positionX - widthBy2;
 			right = positionX + widthBy2;
 		}
-		
+
 		public void setWidth( float width )
 		{
 			this.width = width;
 			updateLeftRight();
 		}
-		
+
 		public void setHeight( float height )
 		{
 			this.height = height;
 			updateTopBottom();
 		}
-		
+
 		/** The top. */
 		public float top()
 		{
@@ -1564,7 +1668,7 @@ public class ImageRenderer
 			int curvedLabelAngle, boolean boldLabels, boolean roughEstimate, boolean includeNodeBounds )
 	{
 		labelSize = getLabelSize( tempNode, labelSize, minXPercent, maxXPercent, ratio, scaleLabels );
-		Rectangle r = (Rectangle)tempNode.getAttribute( DNVEntity.LABEL_RECTANGLE+includeNodeBounds+labelSize );
+		Rectangle r = (Rectangle)tempNode.getAttribute( DNVEntity.LABEL_RECTANGLE + includeNodeBounds + labelSize );
 		if( r != null )
 		{
 			r.setPosition( tempPos );
@@ -1578,8 +1682,8 @@ public class ImageRenderer
 		Graphics2D g2d = (Graphics2D)g;
 		if( label == null || label.equals( "" ) )
 		{
-//			r.left = r.right = x;
-//			r.top = r.bottom = y;
+			// r.left = r.right = x;
+			// r.top = r.bottom = y;
 			r.setPosition( x, y );
 			int size = 0;
 			if( includeNodeBounds )
@@ -1587,7 +1691,7 @@ public class ImageRenderer
 				size = nodeWidth;
 			}
 			r.setWidth( size );
-			r.setHeight( size ); 
+			r.setHeight( size );
 			return r;
 		}
 		if( curvedLabels )
@@ -1609,10 +1713,10 @@ public class ImageRenderer
 			r.setWidth( (float)diameter );
 			r.setHeight( (float)diameter );
 			r.setPosition( tempPos );
-//			r.left = tempPos.getX() - (float)diameter / 2.0f;
-//			r.right = tempPos.getX() + (float)diameter / 2.0f;
-//			r.top = tempPos.getY() - (float)diameter / 2.0f;
-//			r.bottom = tempPos.getY() + (float)diameter / 2.0f;
+			// r.left = tempPos.getX() - (float)diameter / 2.0f;
+			// r.right = tempPos.getX() + (float)diameter / 2.0f;
+			// r.top = tempPos.getY() - (float)diameter / 2.0f;
+			// r.bottom = tempPos.getY() + (float)diameter / 2.0f;
 		}
 		else
 		{
@@ -1621,12 +1725,12 @@ public class ImageRenderer
 			float height = 0;
 			if( roughEstimate )
 			{
-				fontHeight = (float)(labelSize * 0.8f);
+				fontHeight = (float)( labelSize * 0.8f );
 				width = label.length() * 7;
-//				r.left = tempPos.getX() - ( width / 2.0f );
-//				r.right = tempPos.getX() + ( width / 2.0f );
-//				r.top = tempPos.getY() - fontHeight;
-//				r.bottom = tempPos.getY() + fontHeight;
+				// r.left = tempPos.getX() - ( width / 2.0f );
+				// r.right = tempPos.getX() + ( width / 2.0f );
+				// r.top = tempPos.getY() - fontHeight;
+				// r.bottom = tempPos.getY() + fontHeight;
 			}
 			else
 			{
@@ -1639,20 +1743,20 @@ public class ImageRenderer
 					{
 						extraHeight = 4;
 					}
-	
+
 					fontHeight = Math.abs( lm.getStrikethroughOffset() * 2 + lm.getStrikethroughThickness() ) + extraHeight;
 					width = fm.stringWidth( label );
-//					System.out.println( "=====================" );
-//					System.out.println( "boldLabels:" + boldLabels );
-//					System.out.println( "labelSize:" + labelSize );
-//					System.out.println( "fontHeight:" + fontHeight );
-//					System.out.println( "labelLength:" + label.length() );
-//					System.out.println( "width:" + width );
-//					System.out.println( "=====================" );
-//					r.left = tempPos.getX() - ( width / 2.0f );
-//					r.right = tempPos.getX() + ( width / 2.0f );
-//					r.top = tempPos.getY() - fontHeight;
-//					r.bottom = tempPos.getY() + fontHeight;
+					// System.out.println( "=====================" );
+					// System.out.println( "boldLabels:" + boldLabels );
+					// System.out.println( "labelSize:" + labelSize );
+					// System.out.println( "fontHeight:" + fontHeight );
+					// System.out.println( "labelLength:" + label.length() );
+					// System.out.println( "width:" + width );
+					// System.out.println( "=====================" );
+					// r.left = tempPos.getX() - ( width / 2.0f );
+					// r.right = tempPos.getX() + ( width / 2.0f );
+					// r.top = tempPos.getY() - fontHeight;
+					// r.bottom = tempPos.getY() + fontHeight;
 				}
 			}
 			height = fontHeight * 2;
@@ -1666,8 +1770,8 @@ public class ImageRenderer
 			r.setPosition( tempPos );
 		}
 
-		tempNode.setAttribute( DNVEntity.LABEL_RECTANGLE+includeNodeBounds+labelSize, r );
-		
+		tempNode.setAttribute( DNVEntity.LABEL_RECTANGLE + includeNodeBounds + labelSize, r );
+
 		return r;
 	}
 
@@ -1686,7 +1790,7 @@ public class ImageRenderer
 	 */
 	private static LineMetrics getLineMetrics( Graphics g, double labelSize, String label, FontMetrics fm )
 	{
-		StringBuilder sb = new StringBuilder(label);
+		StringBuilder sb = new StringBuilder( label );
 		sb.append( "_" );
 		sb.append( labelSize );
 		String key = sb.toString();
@@ -1698,7 +1802,7 @@ public class ImageRenderer
 		}
 		return lm;
 	}
-	
+
 	/**
 	 * Gets the font metrics.
 	 * 
@@ -1794,9 +1898,9 @@ public class ImageRenderer
 	 * @param boldLabels
 	 *            the bold labels
 	 */
-	private static void drawEdge( Graphics2D g2d, int width, int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX,
-			double minY, double maxY, Color color, DNVEdge tempEdge, boolean drawLabels, boolean outlinedLabels, int fontSize, boolean overview, int nodeWidth, int edgeThickness,
-			boolean boldLabels )
+	private static void drawEdge( Graphics2D g2d, int width, int height, double minXPercent, double minYPercent, double maxXPercent,
+			double maxYPercent, double minX, double maxX, double minY, double maxY, Color color, DNVEdge tempEdge, boolean drawLabels,
+			boolean outlinedLabels, int fontSize, boolean overview, int nodeWidth, int edgeThickness, boolean boldLabels )
 	{
 		if( tempEdge.isSelected() || tempEdge.isHighlighted() || edgeThickness != tempEdge.getThickness() )
 		{
@@ -1816,23 +1920,28 @@ public class ImageRenderer
 		Vector2D tempPos2;
 		tempPos = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempEdge.getFrom()
 				.getPosition( true ) );
-//		if( tempEdge.getFrom().hasAttribute( "screenPositionOffset" ) && !overview )
-//		{
-//			Vector2D screenPositionOffset = (Vector2D)tempEdge.getFrom().getAttribute( "screenPositionOffset" );
-//			tempPos.setX( tempPos.getX() + screenPositionOffset.getX() );
-//			tempPos.setY( tempPos.getY() + screenPositionOffset.getY() );
-//		}
+		// if( tempEdge.getFrom().hasAttribute( "screenPositionOffset" ) &&
+		// !overview )
+		// {
+		// Vector2D screenPositionOffset =
+		// (Vector2D)tempEdge.getFrom().getAttribute( "screenPositionOffset" );
+		// tempPos.setX( tempPos.getX() + screenPositionOffset.getX() );
+		// tempPos.setY( tempPos.getY() + screenPositionOffset.getY() );
+		// }
 		tempPos2 = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height, tempEdge.getTo()
 				.getPosition( true ) );
-//		if( tempEdge.getTo().hasAttribute( "screenPositionOffset" ) && !overview  )
-//		{
-//			Vector2D screenPositionOffset = (Vector2D)tempEdge.getTo().getAttribute( "screenPositionOffset" );
-//			tempPos2.setX( tempPos2.getX() + screenPositionOffset.getX() );
-//			tempPos2.setY( tempPos2.getY() + screenPositionOffset.getY() );
-//		}
+		// if( tempEdge.getTo().hasAttribute( "screenPositionOffset" ) &&
+		// !overview )
+		// {
+		// Vector2D screenPositionOffset =
+		// (Vector2D)tempEdge.getTo().getAttribute( "screenPositionOffset" );
+		// tempPos2.setX( tempPos2.getX() + screenPositionOffset.getX() );
+		// tempPos2.setY( tempPos2.getY() + screenPositionOffset.getY() );
+		// }
 
 		Vector3D edgeColor = tempEdge.getColor();
-		if( tempEdge.isSelected() || ( tempEdge.isHighlighted() && tempEdge.getHighlightColor() == null ) || edgeColor == null || edgeColor.equals( DNVEntity.NO_COLOR ) )
+		if( tempEdge.isSelected() || ( tempEdge.isHighlighted() && tempEdge.getHighlightColor() == null ) || edgeColor == null
+				|| edgeColor.equals( DNVEntity.NO_COLOR ) )
 		{
 			g2d.setColor( color );
 		}
@@ -1868,7 +1977,7 @@ public class ImageRenderer
 			else
 			{
 				pivotX = (int)tempPos.getX();
-			}				
+			}
 		}
 
 		if( tempEdge.isDirectional() || tempEdge.getTo().getAlpha() != 1 || tempEdge.getFrom().getAlpha() != 1 )
@@ -1885,8 +1994,8 @@ public class ImageRenderer
 			int x1 = (int)Math.round( tempPos2.getX() - tempEdge.getTo().getRadius() * nodeWidth / 2.0 * Math.cos( theta ) );
 			int y1 = (int)Math.round( tempPos2.getY() - tempEdge.getTo().getRadius() * nodeWidth / 2.0 * Math.sin( theta ) );
 			int x2 = (int)Math.round( tempPos.getX() + tempEdge.getFrom().getRadius() * nodeWidth / 2.0 * Math.cos( theta ) );
-			int y2 = (int)Math.round( tempPos.getY() + tempEdge.getFrom().getRadius() * nodeWidth / 2.0 * Math.sin( theta ) );				
-			
+			int y2 = (int)Math.round( tempPos.getY() + tempEdge.getFrom().getRadius() * nodeWidth / 2.0 * Math.sin( theta ) );
+
 			float direction1 = tempPos2.getX() - tempPos.getX();
 			float direction2 = x1 - x2;
 			if( direction1 == 0 && direction2 == 0 )
@@ -1894,31 +2003,33 @@ public class ImageRenderer
 				direction1 = tempPos2.getY() - tempPos.getY();
 				direction2 = y1 - y2;
 			}
-			
-//			g2d.fillRect( pivotX, pivotY, 50, 50 );
+
+			// g2d.fillRect( pivotX, pivotY, 50, 50 );
 
 			if( ( direction1 > 0 && direction2 > 0 ) || ( direction1 < 0 && direction2 < 0 ) )
 			{
 				if( Settings.CURVED_EDGES )
 				{
-					QuadCurve2D quadCurve = new QuadCurve2D.Float( (int)tempPos2.getX(), (int)tempPos2.getY(), pivotX, pivotY, (int)tempPos.getX(), (int)tempPos.getY());
+					QuadCurve2D quadCurve = new QuadCurve2D.Float( (int)tempPos2.getX(), (int)tempPos2.getY(), pivotX, pivotY, (int)tempPos.getX(),
+							(int)tempPos.getY() );
 					g2d.draw( quadCurve );
 				}
 				else
 				{
-					g2d.drawLine( x2, y2, x1, y1 );					
+					g2d.drawLine( x2, y2, x1, y1 );
 				}
 			}
 			else
 			{
 				if( Settings.CURVED_EDGES )
 				{
-					QuadCurve2D quadCurve = new QuadCurve2D.Float( (int)tempPos2.getX(), (int)tempPos2.getY(), pivotX, pivotY, (int)tempPos.getX(), (int)tempPos.getY());
+					QuadCurve2D quadCurve = new QuadCurve2D.Float( (int)tempPos2.getX(), (int)tempPos2.getY(), pivotX, pivotY, (int)tempPos.getX(),
+							(int)tempPos.getY() );
 					g2d.draw( quadCurve );
 				}
 				else
 				{
-					g2d.drawLine( x2, y2, x1, y1 );					
+					g2d.drawLine( x2, y2, x1, y1 );
 				}
 			}
 
@@ -1935,12 +2046,13 @@ public class ImageRenderer
 		{
 			if( Settings.CURVED_EDGES )
 			{
-				QuadCurve2D quadCurve = new QuadCurve2D.Float( (int)tempPos.getX(), (int)tempPos.getY(), pivotX, pivotY, (int)tempPos2.getX(), (int)tempPos2.getY() );
+				QuadCurve2D quadCurve = new QuadCurve2D.Float( (int)tempPos.getX(), (int)tempPos.getY(), pivotX, pivotY, (int)tempPos2.getX(),
+						(int)tempPos2.getY() );
 				g2d.draw( quadCurve );
 			}
 			else
 			{
-				g2d.drawLine( (int)tempPos.getX(), (int)tempPos.getY(), (int)tempPos2.getX(), (int)tempPos2.getY() );				
+				g2d.drawLine( (int)tempPos.getX(), (int)tempPos.getY(), (int)tempPos2.getX(), (int)tempPos2.getY() );
 			}
 		}
 
@@ -1957,9 +2069,9 @@ public class ImageRenderer
 
 	private static int getPivot( int width, int x1, int x2 )
 	{
-		int distanceFromCenter1 = Math.abs( (width/2) - x1 );
-		int distanceFromCenter2 = Math.abs( (width/2) - x2 );
-		
+		int distanceFromCenter1 = Math.abs( ( width / 2 ) - x1 );
+		int distanceFromCenter2 = Math.abs( ( width / 2 ) - x2 );
+
 		if( distanceFromCenter1 > distanceFromCenter2 )
 		{
 			return x1;
@@ -2024,7 +2136,8 @@ public class ImageRenderer
 			// If edge is shorter than the lable we must use this method of
 			// rendering the label
 			// even though it's a little slower than the other method.
-			// Also use this method on a Mac, because other method produces messed up labels.
+			// Also use this method on a Mac, because other method produces
+			// messed up labels.
 			Stroke oldStroke = g2d.getStroke();
 			Stroke stroke = new TextStroke( label, font, false, false );
 			g2d.setStroke( stroke );
@@ -2135,8 +2248,8 @@ public class ImageRenderer
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void drawNode( Graphics2D g2d, boolean showIcons, DNVNode tempNode, String iconName, Vector2D tempPos, Vector3D color, int nodeWidth,
-			int type, int maxDistanceToHighlight ) throws MalformedURLException, IOException
+	public static void drawNode( Graphics2D g2d, boolean showIcons, DNVNode tempNode, String iconName, Vector2D tempPos, Vector3D color,
+			int nodeWidth, int type, int maxDistanceToHighlight ) throws MalformedURLException, IOException
 	{
 		Image icon;
 
@@ -2171,12 +2284,13 @@ public class ImageRenderer
 		// }
 		int x = (int)tempPos.getX() - nodeWidth / 2;
 		int y = (int)tempPos.getY() - nodeWidth / 2;
-//		if( tempNode.hasAttribute( "screenPositionOffset" ) && !overview )
-//		{
-//			Vector2D screenPositionOffset = (Vector2D)tempNode.getAttribute( "screenPositionOffset" );
-//			x += screenPositionOffset.getX();
-//			y += screenPositionOffset.getY();
-//		}
+		// if( tempNode.hasAttribute( "screenPositionOffset" ) && !overview )
+		// {
+		// Vector2D screenPositionOffset = (Vector2D)tempNode.getAttribute(
+		// "screenPositionOffset" );
+		// x += screenPositionOffset.getX();
+		// y += screenPositionOffset.getY();
+		// }
 		if( nodeWidth < 5 && type == RECTANGLE )
 		{
 			g2d.fillRect( x, y, nodeWidth, nodeWidth );
@@ -2292,21 +2406,23 @@ public class ImageRenderer
 	 */
 	public static void drawLabel( Graphics2D g2d, DNVNode tempNode, Vector2D tempPos, int nodeWidth, String label, boolean showLabels,
 			boolean curvedLabels, boolean outlinedLabels, double labelSize, double minXPercent, double maxXPercent, double ratio,
-			boolean scaleLabels, boolean highlightNeighbors, int maxLabelLength, int curvedLabelAngle, boolean drawLabelBox, boolean boldLabels, boolean highlighted )
-			throws MalformedURLException, IOException
+			boolean scaleLabels, boolean highlightNeighbors, int maxLabelLength, int curvedLabelAngle, boolean drawLabelBox, boolean boldLabels,
+			boolean highlighted ) throws MalformedURLException, IOException
 	{
 		labelSize = getLabelSize( tempNode, labelSize, minXPercent, maxXPercent, ratio, scaleLabels );
 
 		nodeWidth *= tempNode.getRadius();
 		int x = (int)tempPos.getX() - nodeWidth / 2;
 		int y = (int)tempPos.getY() - nodeWidth / 2;
-//		if( tempNode.hasAttribute( "screenPositionOffset" ) )
-//		{
-//			Vector2D screenPositionOffset = (Vector2D)tempNode.getAttribute( "screenPositionOffset" );
-//			x += screenPositionOffset.getX();
-//			y += screenPositionOffset.getY();
-//			tempPos = new Vector2D( tempPos.getX() + screenPositionOffset.getX(), tempPos.getY() + screenPositionOffset.getY() );
-//		}
+		// if( tempNode.hasAttribute( "screenPositionOffset" ) )
+		// {
+		// Vector2D screenPositionOffset = (Vector2D)tempNode.getAttribute(
+		// "screenPositionOffset" );
+		// x += screenPositionOffset.getX();
+		// y += screenPositionOffset.getY();
+		// tempPos = new Vector2D( tempPos.getX() + screenPositionOffset.getX(),
+		// tempPos.getY() + screenPositionOffset.getY() );
+		// }
 		Color color;
 		Color outlineColor;
 		if( label != null && !label.trim().equals( "" ) )
@@ -2329,7 +2445,8 @@ public class ImageRenderer
 				}
 				else if( tempNode.isHighlighted() && tempNode.getHighlightColor() != null )
 				{
-					color = new Color( tempNode.getHighlightColor().getX(), tempNode.getHighlightColor().getY(), tempNode.getHighlightColor().getZ(), alpha );
+					color = new Color( tempNode.getHighlightColor().getX(), tempNode.getHighlightColor().getY(), tempNode.getHighlightColor().getZ(),
+							alpha );
 					outlineColor = new Color( 1, 1, 1, alpha );
 				}
 				else
@@ -2394,8 +2511,8 @@ public class ImageRenderer
 				{
 					if( drawLabelBox && !tempNode.isHideLabelBackground() )
 					{
-						Rectangle boundingRectangle = getRectangleBoundingTheLabel( tempNode, tempPos, g2d, nodeWidth, label, curvedLabels, labelSize,
-								minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, false, false );
+						Rectangle boundingRectangle = getRectangleBoundingTheLabel( tempNode, tempPos, g2d, nodeWidth, label, curvedLabels,
+								labelSize, minXPercent, maxXPercent, ratio, scaleLabels, maxLabelLength, curvedLabelAngle, boldLabels, false, false );
 						drawCurvedBoundingRectangle( g2d, tempNode, boundingRectangle, Math.min( tempNode.getAlpha(), alpha ), highlighted );
 						g2d.setColor( color );
 					}
@@ -2419,14 +2536,13 @@ public class ImageRenderer
 					}
 					if( outlinedLabels )
 					{
-						drawOutlinedString( g2d, label, outlineColor, color, (int)Math.round( tempPos.getX() - width / 2.0 ), (int)Math.round( tempPos
-								.getY()
-								- ( fontHeight ) + offset ) );
+						drawOutlinedString( g2d, label, outlineColor, color, (int)Math.round( tempPos.getX() - width / 2.0 ),
+								(int)Math.round( tempPos.getY() - ( fontHeight ) + offset ) );
 					}
 					else
 					{
-						g2d.drawString( label, (int)Math.round( tempPos.getX() - width / 2.0 ), (int)Math.round( tempPos.getY() - ( fontHeight )
-								+ offset ) );
+						g2d.drawString( label, (int)Math.round( tempPos.getX() - width / 2.0 ),
+								(int)Math.round( tempPos.getY() - ( fontHeight ) + offset ) );
 					}
 				}
 			}
@@ -2800,8 +2916,8 @@ public class ImageRenderer
 		if( !showIcons )
 			url = webPath + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id;
 		else
-			url = webPath + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id
-					+ "&i=" + iconName;
+			url = webPath + "NodeIconServlet?s=" + radius + "&r=" + color.getX() + "&g=" + color.getY() + "&b=" + color.getZ() + "&id=" + id + "&i="
+					+ iconName;
 
 		if( isSelected )
 		{
@@ -2816,6 +2932,7 @@ public class ImageRenderer
 		return transformPosition( pb.getGlobalMinX(), pb.getGlobalMaxX(), pb.getGlobalMinY(), pb.getGlobalMaxY(), pb.getMinX(), pb.getMaxX(),
 				pb.getMinY(), pb.getMaxY(), pb.getWidth(), pb.getHeight(), oldPosition );
 	}
+
 	/**
 	 * Transform position.
 	 * 
@@ -2900,8 +3017,8 @@ public class ImageRenderer
 
 	public static Vector2D transformScreenToWorld( Vector2D screenPos, PaintBean pb )
 	{
-		return transformScreenToWorld( screenPos.getX(), screenPos.getY(), pb.getMinX(), pb.getMaxX(), pb.getMinY(), pb.getMaxY(), pb.getGlobalMinX(), pb.getGlobalMaxX(),
-				pb.getGlobalMinY(), pb.getGlobalMaxY(), pb.getWidth(), pb.getHeight() );
+		return transformScreenToWorld( screenPos.getX(), screenPos.getY(), pb.getMinX(), pb.getMaxX(), pb.getMinY(), pb.getMaxY(),
+				pb.getGlobalMinX(), pb.getGlobalMaxX(), pb.getGlobalMinY(), pb.getGlobalMaxY(), pb.getWidth(), pb.getHeight() );
 	}
 
 	/**
@@ -2915,7 +3032,7 @@ public class ImageRenderer
 	 */
 	public static Vector2D getMovement( DNVNode node, Vector2D newPosition )
 	{
-		Vector2D tempPosition = new Vector2D(0,0);
+		Vector2D tempPosition = new Vector2D( 0, 0 );
 		if( node != null )
 		{
 			tempPosition = new Vector2D( node.getPosition( true ) );
