@@ -256,66 +256,7 @@ public class ImageRenderer
 
 			if( drawAxis && !overview )
 			{
-				float globalMinX = GraphFunctions.getMinXPosition( subgraph.getSuperGraph(), level, true );
-				float globalMaxX = GraphFunctions.getMaxXPosition( subgraph.getSuperGraph(), level, true );
-				float globalMinY = GraphFunctions.getMinYPosition( subgraph.getSuperGraph(), level, true );
-				float globalMaxY = GraphFunctions.getMaxYPosition( subgraph.getSuperGraph(), level, true );
-
-				Vector2D bottomLeft = new Vector2D( globalMinX, globalMaxY );
-				Vector2D bottomRight = new Vector2D( globalMaxX, globalMaxY );
-				Vector2D topLeft = new Vector2D( globalMinX, globalMinY );
-
-				Vector2D bottomLeftScreen = ImageRenderer.transformPosition( pb, bottomLeft );
-				Vector2D bottomRightScreen = ImageRenderer.transformPosition( pb, bottomRight );
-				Vector2D topLeftScreen = ImageRenderer.transformPosition( pb, topLeft );
-
-				g2d.setColor( Color.black );
-				g2d.setStroke( new BasicStroke( 1 ) );
-				Vector3D color = new Vector3D( 0, 0, 0 );
-				Vector3D outlineColor = new Vector3D( 1, 1, 1 );
-
-				// X-axis
-				g2d.drawLine( (int)bottomLeftScreen.getX(), (int)bottomLeftScreen.getY(), (int)bottomRightScreen.getX() + 20,
-						(int)bottomRightScreen.getY() );
-				Vector2D tempPos = new Vector2D( bottomLeft );
-				Vector2D tempPosScreen = new Vector2D( bottomLeftScreen );
-				int numberOfTicks = 5;
-				float axisTickLength = ( bottomRight.getX() - bottomLeft.getX() ) / numberOfTicks;
-				float axisTickLengthScreen = ( bottomRightScreen.getX() - bottomLeftScreen.getX() ) / numberOfTicks;
-				for( int i = 0; i <= numberOfTicks; i++ )
-				{
-					g2d.drawLine( (int)tempPosScreen.getX(), (int)tempPosScreen.getY(), (int)tempPosScreen.getX(), (int)tempPosScreen.getY() + 10 );
-					Text text = new Text( "" + ( Math.round( tempPos.getX() * 1000.0f ) / 1000.0f ), new Vector2D( tempPosScreen.getX(),
-							tempPosScreen.getY() + 15 ), outlineColor, color, 10, false, true, false, false, false, false, true );
-					text.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, globalMinX, globalMaxX, globalMinY, globalMaxY,
-							nodeWidth, height, overview );
-					tempPos.add( axisTickLength, 0 );
-					tempPosScreen.add( axisTickLengthScreen, 0 );
-				}
-
-				// Y-axis
-				g2d.drawLine( (int)bottomLeftScreen.getX(), (int)bottomLeftScreen.getY(), (int)topLeftScreen.getX(), (int)topLeftScreen.getY() );
-				tempPos.set( bottomLeft );
-				tempPosScreen.set( bottomLeftScreen );
-				axisTickLength = ( topLeft.getY() - bottomLeft.getY() ) / numberOfTicks;
-				axisTickLengthScreen = ( topLeftScreen.getY() - bottomLeftScreen.getY() ) / numberOfTicks;
-				for( int i = 0; i <= numberOfTicks; i++ )
-				{
-					g2d.drawLine( (int)tempPosScreen.getX(), (int)tempPosScreen.getY(), (int)tempPosScreen.getX() - 10, (int)tempPosScreen.getY() );
-					Text text = new Text( "" + ( Math.round( tempPos.getY() * 1000.0f ) / 1000.0f ), new Vector2D( tempPosScreen.getX() - 25,
-							tempPosScreen.getY() ), outlineColor, color, 10, false, true, false, false, false, false, true );
-					text.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, globalMinX, globalMaxX, globalMinY, globalMaxY,
-							nodeWidth, height, overview );
-					tempPos.add( 0, axisTickLength );
-					tempPosScreen.add( 0, axisTickLengthScreen );
-				}
-				// System.out.println( bottomLeftScreen + " - " +
-				// bottomRightScreen );
-				// System.out.println( bottomLeftScreen + " - " + topLeftScreen
-				// );
-
-
-
+				drawAxis( subgraph, g2d, pb, height, minXPercent, minYPercent, maxXPercent, maxYPercent, overview, level, nodeWidth );
 			}
 
 			// ------------------------------
@@ -451,6 +392,63 @@ public class ImageRenderer
 					}
 				}
 			}
+		}
+	}
+
+	public static void drawAxis( SubGraph subgraph, Graphics2D g2d, PaintBean pb, int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent,
+			boolean overview, int level, int nodeWidth )
+	{
+		float globalMinX = GraphFunctions.getMinXPosition( subgraph.getSuperGraph(), level, true );
+		float globalMaxX = GraphFunctions.getMaxXPosition( subgraph.getSuperGraph(), level, true );
+		float globalMinY = GraphFunctions.getMinYPosition( subgraph.getSuperGraph(), level, true );
+		float globalMaxY = GraphFunctions.getMaxYPosition( subgraph.getSuperGraph(), level, true );
+
+		Vector2D bottomLeft = new Vector2D( globalMinX, globalMaxY );
+		Vector2D bottomRight = new Vector2D( globalMaxX, globalMaxY );
+		Vector2D topLeft = new Vector2D( globalMinX, globalMinY );
+
+		Vector2D bottomLeftScreen = ImageRenderer.transformPosition( pb, bottomLeft );
+		Vector2D bottomRightScreen = ImageRenderer.transformPosition( pb, bottomRight );
+		Vector2D topLeftScreen = ImageRenderer.transformPosition( pb, topLeft );
+
+		g2d.setColor( Color.black );
+		g2d.setStroke( new BasicStroke( 1 ) );
+		Vector3D color = new Vector3D( 0, 0, 0 );
+		Vector3D outlineColor = new Vector3D( 1, 1, 1 );
+
+		// X-axis
+		g2d.drawLine( (int)bottomLeftScreen.getX(), (int)bottomLeftScreen.getY(), (int)bottomRightScreen.getX() + 20, (int)bottomRightScreen.getY() );
+		Vector2D tempPos = new Vector2D( bottomLeft );
+		Vector2D tempPosScreen = new Vector2D( bottomLeftScreen );
+		int numberOfTicks = 5;
+		float axisTickLength = ( bottomRight.getX() - bottomLeft.getX() ) / numberOfTicks;
+		float axisTickLengthScreen = ( bottomRightScreen.getX() - bottomLeftScreen.getX() ) / numberOfTicks;
+		for( int i = 0; i <= numberOfTicks; i++ )
+		{
+			g2d.drawLine( (int)tempPosScreen.getX(), (int)tempPosScreen.getY(), (int)tempPosScreen.getX(), (int)tempPosScreen.getY() + 10 );
+			Text text = new Text( "" + ( Math.round( tempPos.getX() * 1000.0 ) / 1000.0 ), new Vector2D( tempPosScreen.getX(),
+					tempPosScreen.getY() + 15 ), outlineColor, color, 10, false, true, false, false, false, false, true );
+			text.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, globalMinX, globalMaxX, globalMinY, globalMaxY,
+					nodeWidth, height, overview );
+			tempPos.add( axisTickLength, 0 );
+			tempPosScreen.add( axisTickLengthScreen, 0 );
+		}
+
+		// Y-axis
+		g2d.drawLine( (int)bottomLeftScreen.getX(), (int)bottomLeftScreen.getY(), (int)topLeftScreen.getX(), (int)topLeftScreen.getY() );
+		tempPos.set( bottomLeft );
+		tempPosScreen.set( bottomLeftScreen );
+		axisTickLength = ( topLeft.getY() - bottomLeft.getY() ) / numberOfTicks;
+		axisTickLengthScreen = ( topLeftScreen.getY() - bottomLeftScreen.getY() ) / numberOfTicks;
+		for( int i = 0; i <= numberOfTicks; i++ )
+		{
+			g2d.drawLine( (int)tempPosScreen.getX(), (int)tempPosScreen.getY(), (int)tempPosScreen.getX() - 10, (int)tempPosScreen.getY() );
+			Text text = new Text( "" + ( Math.round( tempPos.getY() * 1000.0 ) / 1000.0 ), new Vector2D( tempPosScreen.getX() - 25,
+					tempPosScreen.getY() ), outlineColor, color, 10, false, true, false, false, false, false, true );
+			text.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, globalMinX, globalMaxX, globalMinY, globalMaxY,
+					nodeWidth, height, overview );
+			tempPos.add( 0, axisTickLength );
+			tempPosScreen.add( 0, axisTickLengthScreen );
 		}
 	}
 
@@ -3013,6 +3011,24 @@ public class ImageRenderer
 		float newY = (float)( y * ( globalMaxY - globalMinY ) + globalMinY );
 
 		return new Vector2D( newX, newY );
+	}
+
+	public static void main( String args[] )
+	{
+		GraphsPathFilter.init();
+		PaintBean pb = new PaintBean();
+		pb.refreshGlobalBoundaries( (int)pb.getLevel() );
+		for( DNVNode node : pb.getGraph().getNodes() )
+		{
+			Vector2D original = node.getPosition();
+			Vector2D screen = transformPosition( pb, original );
+			Vector2D transformBack = transformScreenToWorld( screen, pb );
+
+			System.out.println( "original :" + original );
+			System.out.println( "screen   :" + screen );
+			System.out.println( "transform:" + transformBack );
+			System.out.println();
+		}
 	}
 
 	public static Vector2D transformScreenToWorld( Vector2D screenPos, PaintBean pb )

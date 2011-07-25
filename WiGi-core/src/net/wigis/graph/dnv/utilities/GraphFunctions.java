@@ -1208,7 +1208,10 @@ public final class GraphFunctions
 		double yRatio = newHeight / oldHeight;
 		for( DNVNode node : graph.getNodes( level ) )
 		{
+			// System.out.print( "Transforming " + node.getPosition() + " to "
+			// );
 			node.setPosition( (float)( node.getPosition().getX() * xRatio ), (float)( node.getPosition().getY() * yRatio ) );
+			// System.out.println( node.getPosition() );
 		}
 
 		if( graph.getGeometricObjects( level ) != null )
