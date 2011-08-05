@@ -210,7 +210,7 @@ public class ImageRenderer
 
 		int type = prepareRendering( subgraph, edgeThickness, g2d );
 
-		synchronized( subgraph )
+		synchronized( subgraph.getSuperGraph() )
 		{
 
 			int nodeWidth;
@@ -284,9 +284,12 @@ public class ImageRenderer
 			List<Geometric> geometricObjects = subgraph.getSuperGraph().getGeometricObjects( level );
 			if( geometricObjects != null )
 			{
-				for( Geometric object : geometricObjects )
+				synchronized( subgraph.getSuperGraph() )
 				{
-					object.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, width, height, overview );
+					for( Geometric object : geometricObjects )
+					{
+						object.draw( g2d, pb, minXPercent, maxXPercent, minYPercent, maxYPercent, minX, maxX, minY, maxY, width, height, overview );
+					}
 				}
 			}
 

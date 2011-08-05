@@ -2920,7 +2920,10 @@ public class DNVGraph implements Serializable
 	 */
 	public List<Geometric> getGeometricObjects( int level )
 	{
-		return geometricObjects.get( level );
+		synchronized( this )
+		{
+			return geometricObjects.get( level );
+		}
 	}
 
 	/**
@@ -2933,7 +2936,10 @@ public class DNVGraph implements Serializable
 	 */
 	public void setGeometricObjects( int level, List<Geometric> objects )
 	{
-		geometricObjects.put( level, objects );
+		synchronized( this )
+		{
+			geometricObjects.put( level, objects );
+		}
 	}
 
 	/**
@@ -2946,23 +2952,29 @@ public class DNVGraph implements Serializable
 	 */
 	public void addGeometricObject( int level, Geometric object )
 	{
-		List<Geometric> objects = getGeometricObjects( level );
-		if( objects == null )
+		synchronized( this )
 		{
-			objects = new ArrayList<Geometric>();
-			setGeometricObjects( level, objects );
-		}
+			List<Geometric> objects = getGeometricObjects( level );
+			if( objects == null )
+			{
+				objects = new ArrayList<Geometric>();
+				setGeometricObjects( level, objects );
+			}
 
-		objects.add( object );
+			objects.add( object );
+		}
 	}
 	
 	public void removeGeometricObject( int level, Geometric object )
 	{
-		List<Geometric> objects = getGeometricObjects( level );
-		if( objects != null )
+		synchronized( this )
 		{
-			objects.remove( object );
-		}		
+			List<Geometric> objects = getGeometricObjects( level );
+			if( objects != null )
+			{
+				objects.remove( object );
+			}
+		}
 	}
 
 	/**

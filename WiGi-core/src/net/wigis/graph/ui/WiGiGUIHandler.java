@@ -17,9 +17,6 @@ import java.util.Map;
 
 import javax.swing.JFrame;
 
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-
 import net.wigis.graph.ImageRenderer;
 import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVEdge;
@@ -30,8 +27,11 @@ import net.wigis.graph.dnv.animations.Animation;
 import net.wigis.graph.dnv.animations.RecursiveEdgeAnimation;
 import net.wigis.graph.dnv.utilities.SortByLabelSize;
 import net.wigis.graph.dnv.utilities.Vector2D;
+import net.wigis.graph.dnv.utilities.Vector3D;
 import net.wigis.settings.Settings;
 import net.wigis.web.GraphServlet;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 public class WiGiGUIHandler
 {
@@ -57,7 +57,7 @@ public class WiGiGUIHandler
 	{
 		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( wigiIconImagePath );
 		Toolkit kit = Toolkit.getDefaultToolkit();
-		wigiIconImage = kit.createImage(url);
+		wigiIconImage = kit.createImage( url );
 	}
 	
 	public Image getWigiIconImage()
@@ -114,6 +114,10 @@ public class WiGiGUIHandler
 			{
 				e.printStackTrace();
 			}
+			catch( NullPointerException e )
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -123,10 +127,7 @@ public class WiGiGUIHandler
 	}
 
 	private List<AudioStream> audioStreams = new ArrayList<AudioStream>();
-	private String[] audioFiles = {
-			"button-50.wav",
-			"button-28.wav",	
-	};
+	private String[] audioFiles = { "button-50.wav", "button-28.wav", "tada.wav" };
 	
 	private void initializeAudio()
 	{
@@ -402,7 +403,9 @@ public class WiGiGUIHandler
 	
 	private DNVNode hoveredNode = null;
 	private boolean hoveredNodeWasHighlighted = false;
+	private Vector3D hoveredNodeOldColor = null;
 	private DNVNode lastHoveredNode = null;
+	private Vector3D RED = new Vector3D( 1, 0, 0 );
 	public DNVNode getLastHoveredNode()
 	{
 		return lastHoveredNode;
@@ -463,12 +466,15 @@ public class WiGiGUIHandler
 	private void highlightHoveredNode()
 	{
 		hoveredNodeWasHighlighted = hoveredNode.isHighlighted();
+		hoveredNodeOldColor = hoveredNode.getHighlightColor();
 		hoveredNode.setHighlighted( true );
+		hoveredNode.setHighlightColor( RED );
 	}
 
 	private void restoreHoveredNode()
 	{
 		hoveredNode.setHighlighted( hoveredNodeWasHighlighted );
+		hoveredNode.setHighlightColor( hoveredNodeOldColor );
 		lastHoveredNode = hoveredNode;
 		hoveredNode = null;
 	}

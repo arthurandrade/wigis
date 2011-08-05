@@ -63,6 +63,8 @@ public class Circle extends Geometric
 	/** The fill. */
 	private boolean fill;
 
+	private boolean isScreenPosition;
+
 	/** The alpha. */
 	private float alpha;
 
@@ -84,7 +86,7 @@ public class Circle extends Geometric
 	 * @param fill
 	 *            the fill
 	 */
-	public Circle( Vector2D center, float innerRadius, float outerRadius, float thickness, Vector3D color, float alpha, boolean fill )
+	public Circle( Vector2D center, float innerRadius, float outerRadius, float thickness, Vector3D color, float alpha, boolean fill, boolean isScreenPosition )
 	{
 		this.center = new Vector2D( center );
 		this.innerRadius = innerRadius;
@@ -93,6 +95,7 @@ public class Circle extends Geometric
 		this.color = new Vector3D( color );
 		this.fill = fill;
 		this.alpha = alpha;
+		this.isScreenPosition = isScreenPosition;
 	}
 
 	/*
@@ -103,27 +106,28 @@ public class Circle extends Geometric
 	 * double, double, double, double, double, boolean)
 	 */
 	@Override
-	public void draw( Graphics2D g2d, PaintBean pb, double minXPercent, double maxXPercent, double minYPercent, double maxYPercent,
-			double globalMinX, double globalMaxX, double globalMinY, double globalMaxY, double width, double height, boolean overview )
+	public void draw( Graphics2D g2d, PaintBean pb, double minXPercent, double maxXPercent, double minYPercent, double maxYPercent, double globalMinX, double globalMaxX,
+			double globalMinY, double globalMaxY, double width, double height, boolean overview )
 	{
-		Vector2D screenCenter = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minXPercent, maxXPercent,
+		Vector2D screenCenter;
+		if( isScreenPosition )
+		{
+			screenCenter = center;
+		}
+		else
+		{
+			screenCenter = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minXPercent, maxXPercent,
 				minYPercent, maxYPercent, width, height, center );
-		Vector2D outerRadiusScreen = new Vector2D( outerRadius, 0 );
-		outerRadiusScreen = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minXPercent, maxXPercent, minYPercent,
-				maxYPercent, width, height, outerRadiusScreen );
-		outerRadiusScreen.setX( outerRadiusScreen.getX() - screenCenter.getX() );
-		Vector2D innerRadiusScreen = new Vector2D( innerRadius, 0 );
-		innerRadiusScreen = ImageRenderer.transformPosition( globalMinX, globalMaxX, globalMinY, globalMaxY, minXPercent, maxXPercent, minYPercent,
-				maxYPercent, width, height, innerRadiusScreen );
-		innerRadiusScreen.setX( innerRadiusScreen.getX() - screenCenter.getX() );
+		}
+
 		Color oldColor = g2d.getColor();
 		Stroke oldStroke = g2d.getStroke();
 		g2d.setColor( new Color( color.getX(), color.getY(), color.getZ(), alpha ) );
 		g2d.setStroke( new BasicStroke( thickness ) );
 		int x = (int)Math.round( screenCenter.getX() );
 		int y = (int)Math.round( screenCenter.getY() );
-		int outerCircleWidth = (int)Math.round( outerRadiusScreen.getX() * 2.0f );
-		int innerCircleWidth = (int)Math.round( innerRadiusScreen.getX() * 2.0f );
+		int outerCircleWidth = (int)Math.round( outerRadius * 2.0f );
+		int innerCircleWidth = (int)Math.round( innerRadius * 2.0f );
 		Ellipse2D.Float outerCircle = new Ellipse2D.Float( x - ( outerCircleWidth / 2.0f ), y - ( outerCircleWidth / 2.0f ), outerCircleWidth,
 				outerCircleWidth );
 		Ellipse2D.Float innerCircle = new Ellipse2D.Float( x - ( innerCircleWidth / 2.0f ), y - ( innerCircleWidth / 2.0f ), innerCircleWidth,

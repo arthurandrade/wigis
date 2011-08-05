@@ -635,6 +635,7 @@ public class PaintBean
 			loadTimer.setEnd();
 			System.out.println( "Loading '" + selectedFile + "' took " + loadTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
 			int maxLevel = graph.getMaxLevel();
+			System.out.println( maxLevel );
 			if( level > maxLevel )
 				level = maxLevel;
 
@@ -1174,7 +1175,7 @@ public class PaintBean
 		if( lastGraph == null || lastGraph != graph || minX != lastMinX || minY != lastMinY || maxX != lastMaxX || maxY != lastMaxY
 				|| level != lastLevel || forceSubgraphRefresh )
 		{
-			synchronized( subGraph )
+			synchronized( graph )
 			{
 				setSubGraph( SubGraphFinder.getSubGraphWithin( graph, level, minX, minY, maxX, maxY, whiteSpaceBuffer ) );
 			}
@@ -1193,6 +1194,19 @@ public class PaintBean
 			 */
 		}
 
+	}
+
+	public boolean isNodeWithin( DNVNode node )
+	{
+		double globalWidth = globalMaxX - globalMinX;
+		double globalHeight = globalMaxY - globalMinY;
+
+		double minXPos = minX * globalWidth + globalMinX;
+		double maxXPos = maxX * globalWidth + globalMinX;
+		double minYPos = minY * globalHeight + globalMinY;
+		double maxYPos = maxY * globalHeight + globalMinY;
+
+		return SubGraphFinder.isNodeWithin( node, minXPos, minYPos, maxXPos, maxYPos );
 	}
 
 	/**

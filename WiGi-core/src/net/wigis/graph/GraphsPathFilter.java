@@ -24,7 +24,9 @@
 
 package net.wigis.graph;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -78,6 +80,60 @@ public class GraphsPathFilter implements Filter
 	@Override
 	public void init( FilterConfig arg0 ) throws ServletException
 	{
+		String jbossDir = System.getProperty( "jboss.server.home.dir" );
+		if( jbossDir == null )
+		{
+			jbossDir = "";
+		}
+		else
+		{
+			jbossDir += "/conf/";
+		}
+
+		File settings = new File( jbossDir + "wigi-settings.txt" );
+		if( settings.exists() )
+		{
+			FileReader fr = null;
+			BufferedReader br = null;
+			try
+			{
+				fr = new FileReader( settings );
+				br = new BufferedReader( fr );
+
+				String line;
+				while( ( line = br.readLine() ) != null )
+				{
+					line = line.trim();
+					if( line.startsWith( "GRAPHS_PATH=" ) )
+					{
+						Settings.GRAPHS_PATH = line.substring( 12 );
+						if( !Settings.GRAPHS_PATH.endsWith( "\\" ) && !Settings.GRAPHS_PATH.endsWith( "/" ) )
+						{
+							Settings.GRAPHS_PATH += "/";
+						}
+						System.out.println( "Using graphs path: " + Settings.GRAPHS_PATH );
+						return;
+					}
+				}
+			}
+			catch( IOException e )
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					br.close();
+					fr.close();
+				}
+				catch( IOException e )
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
 		if( File.separator.equals( "/" ) )
 		{
 			Settings.GRAPHS_PATH = Settings.MAC_GRAPHS_PATH;

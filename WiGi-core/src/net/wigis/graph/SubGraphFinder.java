@@ -128,7 +128,7 @@ public final class SubGraphFinder
 	 *            the max y
 	 * @return true, if is node within
 	 */
-	private static boolean isNodeWithin( DNVNode tempNode, double minX, double minY, double maxX, double maxY )
+	public static boolean isNodeWithin( DNVNode tempNode, double minX, double minY, double maxX, double maxY )
 	{
 		Vector2D position = tempNode.getPosition();
 
