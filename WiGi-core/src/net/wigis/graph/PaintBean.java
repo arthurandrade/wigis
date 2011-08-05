@@ -398,6 +398,8 @@ public class PaintBean
 	
 	private boolean noAlpha = false;
 
+	private boolean fixedZoom = false;
+
 	/**
 	 * Checks if is interpolation method use whole graph.
 	 * 
@@ -635,7 +637,6 @@ public class PaintBean
 			loadTimer.setEnd();
 			System.out.println( "Loading '" + selectedFile + "' took " + loadTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
 			int maxLevel = graph.getMaxLevel();
-			System.out.println( maxLevel );
 			if( level > maxLevel )
 				level = maxLevel;
 
@@ -645,6 +646,12 @@ public class PaintBean
 			resetSearchResults();
 			clearHistory();
 
+			if( fixedZoom )
+			{
+				fixedZoom = false;
+				refreshGlobalBoundaries( level );
+				fixedZoom = true;
+			}
 
 			allTimes = new ArrayList<Long>( graph.getTimes( level ) );
 			Collections.sort( allTimes );
@@ -875,54 +882,57 @@ public class PaintBean
 	 */
 	public void refreshGlobalBoundaries( int level )
 	{
-		globalMaxY = GraphFunctions.getMaxYPosition( graph, level, true );
-		globalMinY = GraphFunctions.getMinYPosition( graph, level, true );
-		globalMaxX = GraphFunctions.getMaxXPosition( graph, level, true );
-		globalMinX = GraphFunctions.getMinXPosition( graph, level, true );
-		if( scalePositions )
+		if( !fixedZoom )
 		{
-			GraphFunctions.scalePositions( graph, level, 100, 100, globalMaxX - globalMinX, globalMaxY - globalMinY );
-
 			globalMaxY = GraphFunctions.getMaxYPosition( graph, level, true );
 			globalMinY = GraphFunctions.getMinYPosition( graph, level, true );
 			globalMaxX = GraphFunctions.getMaxXPosition( graph, level, true );
 			globalMinX = GraphFunctions.getMinXPosition( graph, level, true );
-		}
-		// System.out.println( "width : " + (globalMaxX - globalMinX) +
-		// " height : " + (globalMaxY - globalMinY) );
+			if( scalePositions )
+			{
+				GraphFunctions.scalePositions( graph, level, 100, 100, globalMaxX - globalMinX, globalMaxY - globalMinY );
 
-		if( globalMinY == globalMaxY )
-		{
-			globalMinY -= 10;
-			globalMaxY += 10;
-		}
-		if( globalMinX == globalMaxX )
-		{
-			globalMinX -= 10;
-			globalMaxX += 10;
-		}
+				globalMaxY = GraphFunctions.getMaxYPosition( graph, level, true );
+				globalMinY = GraphFunctions.getMinYPosition( graph, level, true );
+				globalMaxX = GraphFunctions.getMaxXPosition( graph, level, true );
+				globalMinX = GraphFunctions.getMinXPosition( graph, level, true );
+			}
+			// System.out.println( "width : " + (globalMaxX - globalMinX) +
+			// " height : " + (globalMaxY - globalMinY) );
 
-		// double height = globalMaxY - globalMinY;
-		// double width = globalMaxX - globalMinX;
-		// if( height > width )
-		// {
-		// double difference = height - width;
-		// globalMaxX += difference / 2.0;
-		// globalMinX -= difference / 2.0;
-		// }
-		// else if( width > height )
-		// {
-		// double difference = width - height;
-		// globalMaxY += difference / 2.0;
-		// globalMinY -= difference / 2.0;
-		// }
+			if( globalMinY == globalMaxY )
+			{
+				globalMinY -= 10;
+				globalMaxY += 10;
+			}
+			if( globalMinX == globalMaxX )
+			{
+				globalMinX -= 10;
+				globalMaxX += 10;
+			}
 
-		double yBuffer = ( globalMaxY - globalMinY ) * whiteSpaceBuffer;
-		double xBuffer = ( globalMaxX - globalMinX ) * whiteSpaceBuffer;
-		globalMaxY += yBuffer;
-		globalMinY -= yBuffer;
-		globalMaxX += xBuffer;
-		globalMinX -= xBuffer;
+			// double height = globalMaxY - globalMinY;
+			// double width = globalMaxX - globalMinX;
+			// if( height > width )
+			// {
+			// double difference = height - width;
+			// globalMaxX += difference / 2.0;
+			// globalMinX -= difference / 2.0;
+			// }
+			// else if( width > height )
+			// {
+			// double difference = width - height;
+			// globalMaxY += difference / 2.0;
+			// globalMinY -= difference / 2.0;
+			// }
+
+			double yBuffer = ( globalMaxY - globalMinY ) * whiteSpaceBuffer;
+			double xBuffer = ( globalMaxX - globalMinX ) * whiteSpaceBuffer;
+			globalMaxY += yBuffer;
+			globalMinY -= yBuffer;
+			globalMaxX += xBuffer;
+			globalMinX -= xBuffer;
+		}
 	}
 
 	/**
@@ -5896,6 +5906,18 @@ public class PaintBean
 	public void setDrawAxis( boolean drawAxis )
 	{
 		this.drawAxis = drawAxis;
+	}
+
+	public void setFixedZoom( boolean fixedZoom )
+	{
+		this.fixedZoom = false;
+		refreshGlobalBoundaries( level );
+		this.fixedZoom = fixedZoom;
+	}
+
+	public boolean isFixedZoom()
+	{
+		return fixedZoom;
 	}
 	
 }

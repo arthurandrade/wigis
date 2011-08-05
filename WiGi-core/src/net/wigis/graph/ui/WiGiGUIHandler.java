@@ -365,6 +365,12 @@ public class WiGiGUIHandler
 			pb.setMaxX( 1 );
 			pb.setMaxY( 1 );
 			
+			if( pb.isFixedZoom() )
+			{
+				pb.setFixedZoom( false );
+				pb.setFixedZoom( true );
+			}
+
 			return ZOOM_RESET;
 		}
 		
