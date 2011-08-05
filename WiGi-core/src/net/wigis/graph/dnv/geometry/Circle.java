@@ -68,6 +68,10 @@ public class Circle extends Geometric
 	/** The alpha. */
 	private float alpha;
 
+	public Circle( Vector2D center, float innerRadius, float outerRadius, float thickness, Vector3D color, float alpha, boolean fill )
+	{
+		init( center, innerRadius, outerRadius, thickness, color, alpha, fill, false );
+	}
 	/**
 	 * Instantiates a new circle.
 	 * 
@@ -87,6 +91,22 @@ public class Circle extends Geometric
 	 *            the fill
 	 */
 	public Circle( Vector2D center, float innerRadius, float outerRadius, float thickness, Vector3D color, float alpha, boolean fill, boolean isScreenPosition )
+	{
+		init( center, innerRadius, outerRadius, thickness, color, alpha, fill, isScreenPosition );
+	}
+
+	/**
+	 * @param center
+	 * @param innerRadius
+	 * @param outerRadius
+	 * @param thickness
+	 * @param color
+	 * @param alpha
+	 * @param fill
+	 * @param isScreenPosition
+	 */
+	private void init( Vector2D center, float innerRadius, float outerRadius, float thickness, Vector3D color, float alpha, boolean fill,
+			boolean isScreenPosition )
 	{
 		this.center = new Vector2D( center );
 		this.innerRadius = innerRadius;
