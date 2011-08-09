@@ -224,7 +224,6 @@ public class ImageRenderer
 				Map<String, Integer> drawnHeadings = new HashMap<String, Integer>();
 				for( int distance = maxDistance; distance > 0; distance-- )
 				{
-					int i = 0;
 					boolean anyNodes = false;
 					for( DNVNode node : selectedNodes )
 					{
@@ -241,10 +240,13 @@ public class ImageRenderer
 							outlineColor.setX( (float)Math.max( 0, outlineColor.getX() - 0.3 ) );
 							outlineColor.setY( (float)Math.max( 0, outlineColor.getY() - 0.3 ) );
 							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ() - 0.3 ) );
-							i += drawEllipseAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent, maxXPercent,
+							int drawn = drawBoxAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent,
+									maxXPercent,
 									maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings,
 									drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight, alignBoxInfoRelativeToBox,
 									headerAlignment );
+
+							node.setDistanceDrawn( distance, drawn > 0 );
 						}
 					}
 					if( !anyNodes )
@@ -483,7 +485,7 @@ public class ImageRenderer
 	 * @param minY
 	 * @param maxY
 	 */
-	private static int drawEllipseAround( int hops, Map<Integer, DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width,
+	private static int drawBoxAround( int hops, Map<Integer, DNVNode> allNodes, Map<Integer, DNVNode> nodes, Graphics2D g2d, int width,
 			int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent, double minX, double maxX, double minY,
 			double maxY, float nodeWidth, Vector3D fillColor, Vector3D outlineColor, PaintBean pb, boolean overview, DNVNode selectedNode,
 			Map<String, Integer> drawnHeadings, boolean drawNumberOfNodesInBox, boolean drawNeighborHighlightAsBoxes,
@@ -496,32 +498,7 @@ public class ImageRenderer
 			float maxRadius = Float.NEGATIVE_INFINITY;
 			synchronized( nodes )
 			{
-				for( DNVNode node : nodes.values() )
-				{
-					if( node.getPosition( true ).getX() > maxPos.getX() )
-					{
-						maxPos.setX( node.getPosition( true ).getX() );
-					}
-					if( node.getPosition( true ).getY() > maxPos.getY() )
-					{
-						maxPos.setY( node.getPosition( true ).getY() );
-					}
-
-					if( node.getPosition( true ).getX() < minPos.getX() )
-					{
-						minPos.setX( node.getPosition( true ).getX() );
-					}
-					if( node.getPosition( true ).getY() < minPos.getY() )
-					{
-						minPos.setY( node.getPosition( true ).getY() );
-					}
-
-					if( node.getRadius() > maxRadius )
-					{
-						maxRadius = node.getRadius();
-					}
-
-				}
+				maxRadius = getBoundaries( nodes, maxPos, minPos, maxRadius );
 			}
 
 			Vector2D maxPosScreen = transformPosition( minX, maxX, minY, maxY, minXPercent, maxXPercent, minYPercent, maxYPercent, width, height,
@@ -659,6 +636,44 @@ public class ImageRenderer
 		}
 
 		return 0;
+	}
+
+	/**
+	 * @param nodes
+	 * @param maxPos
+	 * @param minPos
+	 * @param maxRadius
+	 * @return
+	 */
+	private static float getBoundaries( Map<Integer, DNVNode> nodes, Vector2D maxPos, Vector2D minPos, float maxRadius )
+	{
+		for( DNVNode node : nodes.values() )
+		{
+			if( node.getPosition( true ).getX() > maxPos.getX() )
+			{
+				maxPos.setX( node.getPosition( true ).getX() );
+			}
+			if( node.getPosition( true ).getY() > maxPos.getY() )
+			{
+				maxPos.setY( node.getPosition( true ).getY() );
+			}
+
+			if( node.getPosition( true ).getX() < minPos.getX() )
+			{
+				minPos.setX( node.getPosition( true ).getX() );
+			}
+			if( node.getPosition( true ).getY() < minPos.getY() )
+			{
+				minPos.setY( node.getPosition( true ).getY() );
+			}
+
+			if( node.getRadius() > maxRadius )
+			{
+				maxRadius = node.getRadius();
+			}
+
+		}
+		return maxRadius;
 	}
 
 	/**

@@ -1300,9 +1300,9 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		// color.setY( 0 );
 		// color.setZ( 0 );
 		DNVNode subNode;
-		float sum = 0;
+		// float sum = 0;
 		float count = 0;
-		float temp;
+		// float temp;
 		// Vector3D tempColor;
 		Vector2D tempPosition;
 		position = new Vector2D();
@@ -1310,8 +1310,8 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		for( int i = 0; i < subNodes.size(); i++ )
 		{
 			subNode = subNodes.get( i );
-			temp = subNode.getTotalNumberOfSubNodes();
-			sum += temp;
+			// temp = subNode.getTotalNumberOfSubNodes();
+			// sum += temp;
 			count++;
 			// tempColor = new Vector3D( subNode.getColor() );
 			// tempColor.dotProduct( temp );
@@ -3302,5 +3302,24 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		{
 			graph.setNodeActive( level, id, this );
 		}
+	}
+
+	private Map<Integer, Boolean> distanceDrawn = new HashMap<Integer, Boolean>();
+
+	public void setDistanceDrawn( int distance, boolean drawn )
+	{
+		distanceDrawn.put( distance, drawn );
+	}
+
+	public boolean isDistanceDrawn( int distance )
+	{
+		Boolean drawn = distanceDrawn.get( distance );
+
+		if( drawn == null )
+		{
+			return false;
+		}
+
+		return drawn;
 	}
 }
