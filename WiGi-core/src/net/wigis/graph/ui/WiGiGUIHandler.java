@@ -2,13 +2,11 @@ package net.wigis.graph.ui;
 
 import java.awt.Component;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,9 +53,10 @@ public class WiGiGUIHandler
 
 	private void generateWiGiIconImage()
 	{
-		URL url = net.wigis.graph.ui.WiGiGUI.class.getResource( wigiIconImagePath );
-		Toolkit kit = Toolkit.getDefaultToolkit();
-		wigiIconImage = kit.createImage( url );
+		// URL url = net.wigis.graph.ui.WiGiGUI.class.getResource(
+		// wigiIconImagePath );
+		// Toolkit kit = Toolkit.getDefaultToolkit();
+		// wigiIconImage = kit.createImage( url );
 	}
 	
 	public Image getWigiIconImage()
@@ -411,7 +410,6 @@ public class WiGiGUIHandler
 	private boolean hoveredNodeWasHighlighted = false;
 	private Vector3D hoveredNodeOldColor = null;
 	private DNVNode lastHoveredNode = null;
-	private Vector3D RED = new Vector3D( 1, 0, 0 );
 	public DNVNode getLastHoveredNode()
 	{
 		return lastHoveredNode;
@@ -474,7 +472,7 @@ public class WiGiGUIHandler
 		hoveredNodeWasHighlighted = hoveredNode.isHighlighted();
 		hoveredNodeOldColor = hoveredNode.getHighlightColor();
 		hoveredNode.setHighlighted( true );
-		hoveredNode.setHighlightColor( RED );
+		hoveredNode.setHighlightColor( hoveredNode.getColor() );
 	}
 
 	private void restoreHoveredNode()
