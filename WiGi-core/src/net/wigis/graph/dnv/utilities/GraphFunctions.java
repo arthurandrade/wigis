@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVEntity;
@@ -44,6 +45,11 @@ import net.wigis.graph.dnv.geometry.Geometric;
 import net.wigis.graph.dnv.geometry.Line;
 import net.wigis.graph.dnv.geometry.Rectangle;
 import net.wigis.graph.dnv.geometry.Text;
+import net.wigis.graph.jgrapht.converter.JGraphTConverter;
+
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.alg.BronKerboschCliqueFinder;
+import org.jgrapht.graph.DefaultEdge;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1242,5 +1248,33 @@ public final class GraphFunctions
 				}
 			}
 		}
+	}
+
+	public static Collection<Set<DNVNode>> getAllMaximalCliques( DNVGraph graph, int level )
+	{
+		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = getCliqueFinder( graph, level );
+		Collection<Set<DNVNode>> cliques = cliqueFinder.getAllMaximalCliques();
+
+		return cliques;
+	}
+
+	/**
+	 * @param graph
+	 * @param level
+	 * @return
+	 */
+	private static BronKerboschCliqueFinder<DNVNode, DefaultEdge> getCliqueFinder( DNVGraph graph, int level )
+	{
+		UndirectedGraph<DNVNode, DefaultEdge> g = JGraphTConverter.convertDNVToUndirectedJGraphT( graph, level );
+		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = new BronKerboschCliqueFinder<DNVNode, DefaultEdge>( g );
+		return cliqueFinder;
+	}
+
+	public static Collection<Set<DNVNode>> getBiggestMaximalCliques( DNVGraph graph, int level )
+	{
+		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = getCliqueFinder( graph, level );
+		Collection<Set<DNVNode>> cliques = cliqueFinder.getBiggestMaximalCliques();
+
+		return cliques;
 	}
 }

@@ -99,6 +99,7 @@ public class DNVEntity
 	// alex
 	public DNVEntity( )
 	{
+
 	}
 	
 	/**

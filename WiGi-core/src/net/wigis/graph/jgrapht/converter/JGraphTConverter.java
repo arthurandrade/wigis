@@ -9,6 +9,7 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.settings.Settings;
 
+import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BiconnectivityInspector;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
@@ -17,15 +18,15 @@ import org.jgrapht.graph.SimpleGraph;
 
 public class JGraphTConverter
 {
-	public static UndirectedGraph<DNVNode, DefaultEdge> convertDNVToUndirectedJGraphT( DNVGraph graph )
+	public static UndirectedGraph<DNVNode, DefaultEdge> convertDNVToUndirectedJGraphT( DNVGraph graph, int level )
 	{
 		UndirectedGraph<DNVNode, DefaultEdge> g = new SimpleGraph<DNVNode, DefaultEdge>( DefaultEdge.class );
-		for( DNVNode node : graph.getNodes( 0 ) )
+		for( DNVNode node : graph.getNodes( level ) )
 		{
 			g.addVertex( node );
 		}
 
-		for( DNVEdge edge : graph.getEdges( 0 ) )
+		for( DNVEdge edge : graph.getEdges( level ) )
 		{
 			g.addEdge( edge.getFrom(), edge.getTo() );
 		}
@@ -37,7 +38,7 @@ public class JGraphTConverter
 	{
 		GraphsPathFilter.init();
 		DNVGraph graph = new DNVGraph( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph2large.dnv" );
-		UndirectedGraph<DNVNode, DefaultEdge> g = convertDNVToUndirectedJGraphT( graph );
+		UndirectedGraph<DNVNode, DefaultEdge> g = convertDNVToUndirectedJGraphT( graph, 0 );
 		BiconnectivityInspector<DNVNode, DefaultEdge> inspector = new BiconnectivityInspector<DNVNode, DefaultEdge>( g );
 		System.out.println( inspector.isBiconnected() );
 		Set<Set<DNVNode>> components = inspector.getBiconnectedVertexComponents();
@@ -75,5 +76,10 @@ public class JGraphTConverter
 			}
 		}
 		System.out.println( counter + " cliques of size >= 4" );
+	}
+
+	public static DNVGraph convertJGraphTToDNVGraph( Graph<DNVNode, DefaultEdge> g )
+	{
+		return null;
 	}
 }
