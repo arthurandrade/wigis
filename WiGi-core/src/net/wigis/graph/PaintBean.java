@@ -123,6 +123,8 @@ public class PaintBean
 	/** The highlight neighbors. */
 	private boolean highlightNeighbors = Settings.DEFAULT_HIGHLIGHT_NEIGHBORS;
 
+	private Vector3D neighborHighlightColor = null;
+
 	/** The highlight edges. */
 	private boolean highlightEdges = true;
 
@@ -563,9 +565,9 @@ public class PaintBean
 							edgeThickness, edgeColor, drawLabels, curvedLabels, outlinedLabels, labelSize, interpolationLabels,
 							showSearchSelectedLabels, showIcons, globalMinX, globalMaxX, globalMinY, globalMaxY, overview, level, scaleNodesOnZoom,
 							sortNodes, highlightNeighbors, highlightEdges, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels,
- drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark, drawNeighborHighlight,
- drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight,
-							alignBoxInfoRelativeToBox, timeText, drawAxis );
+							drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark,
+							drawNeighborHighlight, drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight,
+							alignBoxInfoRelativeToBox, timeText, drawAxis, neighborHighlightColor );
 					drawTimer.setEnd();
 					if( Settings.DEBUG && !overview )
 					{
@@ -5918,6 +5920,23 @@ public class PaintBean
 	public boolean isFixedZoom()
 	{
 		return fixedZoom;
+	}
+
+	/**
+	 * @return the neighborHighlightColor
+	 */
+	public Vector3D getNeighborHighlightColor()
+	{
+		return neighborHighlightColor;
+	}
+
+	/**
+	 * @param neighborHighlightColor
+	 *            the neighborHighlightColor to set
+	 */
+	public void setNeighborHighlightColor( Vector3D neighborHighlightColor )
+	{
+		this.neighborHighlightColor = neighborHighlightColor;
 	}
 	
 }

@@ -170,7 +170,7 @@ public class Text extends Geometric
 					tempPos.setY( yPos );
 					label = toki.nextToken();
 					ImageRenderer.drawLabel( g2d, node, tempPos, 1, label, true, curvedLabel, outlined, labelSize, minXPercent, maxXPercent, ratio,
-							scaleOnZoom, false, label.length(), 200, drawBackground, bold, false );
+							scaleOnZoom, false, label.length(), 200, drawBackground, bold, false, null );
 					yPos += labelSize / ( maxYPercent - minYPercent );
 				}
 				// ImageRenderer.drawLabel( (int)Math.round( width ),

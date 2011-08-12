@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVEntity;
 import net.wigis.graph.dnv.DNVGraph;
@@ -45,11 +46,14 @@ import net.wigis.graph.dnv.geometry.Geometric;
 import net.wigis.graph.dnv.geometry.Line;
 import net.wigis.graph.dnv.geometry.Rectangle;
 import net.wigis.graph.dnv.geometry.Text;
+import net.wigis.graph.jgrapht.JGraphTEdge;
 import net.wigis.graph.jgrapht.converter.JGraphTConverter;
+import net.wigis.settings.Settings;
 
+import org.jgrapht.GraphPath;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.alg.KShortestPaths;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -1252,7 +1256,7 @@ public final class GraphFunctions
 
 	public static Collection<Set<DNVNode>> getAllMaximalCliques( DNVGraph graph, int level )
 	{
-		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = getCliqueFinder( graph, level );
+		BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>> cliqueFinder = getCliqueFinder( graph, level );
 		Collection<Set<DNVNode>> cliques = cliqueFinder.getAllMaximalCliques();
 
 		return cliques;
@@ -1263,18 +1267,118 @@ public final class GraphFunctions
 	 * @param level
 	 * @return
 	 */
-	private static BronKerboschCliqueFinder<DNVNode, DefaultEdge> getCliqueFinder( DNVGraph graph, int level )
+	private static BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>> getCliqueFinder( DNVGraph graph, int level )
 	{
-		UndirectedGraph<DNVNode, DefaultEdge> g = JGraphTConverter.convertDNVToUndirectedJGraphT( graph, level );
-		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = new BronKerboschCliqueFinder<DNVNode, DefaultEdge>( g );
+		UndirectedGraph<DNVNode, JGraphTEdge<DNVNode>> g = JGraphTConverter.convertDNVToUndirectedJGraphT( graph, level );
+		BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>> cliqueFinder = new BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>>( g );
 		return cliqueFinder;
 	}
 
 	public static Collection<Set<DNVNode>> getBiggestMaximalCliques( DNVGraph graph, int level )
 	{
-		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = getCliqueFinder( graph, level );
+		BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>> cliqueFinder = getCliqueFinder( graph, level );
 		Collection<Set<DNVNode>> cliques = cliqueFinder.getBiggestMaximalCliques();
 
 		return cliques;
+	}
+	
+	public static List<List<DNVNode>> getNodesOnKShortestPaths( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode, int k )
+	{
+		List<List<DNVNode>> allPaths = new ArrayList<List<DNVNode>>();
+		
+		UndirectedGraph<DNVNode,JGraphTEdge<DNVNode>> g = JGraphTConverter.convertDNVToUndirectedJGraphT( graph, level );
+		
+		KShortestPaths<DNVNode,JGraphTEdge<DNVNode>> paths = new KShortestPaths<DNVNode, JGraphTEdge<DNVNode>>( g, startNode, k );
+		List<GraphPath<DNVNode,JGraphTEdge<DNVNode>>> thePaths = paths.getPaths( endNode );
+		if( thePaths == null )
+		{
+			return null;
+		}
+
+		for( GraphPath<DNVNode,JGraphTEdge<DNVNode>> path : thePaths )
+		{
+			List<DNVNode> tempPath = new ArrayList<DNVNode>();
+			tempPath.add( path.getStartVertex() );
+			DNVNode lastNode = path.getStartVertex();
+			for( JGraphTEdge<DNVNode> edge : path.getEdgeList() )
+			{
+				if( edge.getSource() == lastNode )
+				{
+					tempPath.add( edge.getTarget() );
+					lastNode = edge.getTarget();
+				}
+				else
+				{
+					tempPath.add( edge.getSource() );
+					lastNode = edge.getSource();
+				}
+			}
+			allPaths.add( tempPath );
+		}
+
+		
+		return allPaths;
+	}
+	
+	public static DNVNode getMostFrequentIntermediateNode( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode )
+	{
+		List<List<DNVNode>> allPaths = GraphFunctions.getNodesOnKShortestPaths( graph, 0, startNode, endNode, 100 );
+		if( allPaths == null )
+		{
+			return null;
+		}
+		System.out.println( "Finding paths from " + startNode.getLabel() + " to " + endNode.getLabel() );
+//		int count = 0;
+		for( List<DNVNode> path : allPaths )
+		{
+//			System.out.println( "Start of path " + count++ + " length = " + path.size() );
+			for( DNVNode node : path )
+			{
+//				System.out.println( "\t" + node.getLabel() );
+				Integer nodeCount = 0;
+				if( node.hasProperty( "nodeCount" ) )
+				{
+					nodeCount = Integer.parseInt( node.getProperty( "nodeCount" ) );
+				}
+				nodeCount++;
+				node.setProperty( "nodeCount", "" + nodeCount );
+			}
+		}
+		
+		List<DNVNode> allNodes = graph.getNodes( 0 );
+		SortByFloatProperty sbfp = new SortByFloatProperty( "nodeCount", true );
+		Collections.sort( allNodes, sbfp );
+		DNVNode mostFrequentNode = null;
+		for( DNVNode node : allNodes )
+		{
+			if( node != startNode && node != endNode )
+			{
+				mostFrequentNode = node;
+				break;
+			}
+		}
+		
+		for( DNVNode node : allNodes )
+		{
+			if( node == mostFrequentNode )
+			{
+				node.setProperty( "pathFrequency_" + startNode.getId() + "_" + endNode.getId(), node.getProperty( "nodeCount" ) );
+			}
+			node.removeProperty( "nodeCount" );
+		}
+		
+		return mostFrequentNode;
+	}
+	
+	public static void main( String args[] )
+	{
+		GraphsPathFilter.init();
+		DNVGraph graph = new DNVGraph( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1small.dnv" );
+		DNVNode startNode = graph.getNodes().get( (int)(Math.random()*graph.getNodes().size()) );
+		DNVNode endNode = graph.getNodes().get( (int)(Math.random()*graph.getNodes().size()) );
+		DNVNode frequent = getMostFrequentIntermediateNode( graph, 0, startNode, endNode );
+		
+		System.out.println( "Most frequent node " + frequent.getLabel() + " with " + frequent.getProperty( "pathFrequency_" + startNode.getId() + "_" + endNode.getId() ) + " occurrances." );
+		 
 	}
 }

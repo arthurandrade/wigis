@@ -435,13 +435,13 @@ public class GraphGenerator
 			edgeTimer.setStart();
 			while( edgesPerNewNode_assigned < edgesPerNewNode )
 			{
-				System.out.println( edgesPerNewNode_assigned + " < " + edgesPerNewNode );
+//				System.out.println( edgesPerNewNode_assigned + " < " + edgesPerNewNode );
 				currentConnectivity = findCorrectConnectivity( totalConnectivity, nodesByConnectivity, node1, keysTimer );
-				System.out.println( currentConnectivity );
+//				System.out.println( currentConnectivity );
 				// Get the list of nodes with given connectivity
 				tempList = nodesByConnectivity.get( currentConnectivity );
 
-				System.out.println( tempList.size() );
+//				System.out.println( tempList.size() );
 				// add edge to a node of the given connectivity
 				connected = false;
 				for( int k = 0; k < tempList.size() && !connected; k++ )
@@ -651,15 +651,15 @@ public class GraphGenerator
 		{
 			if( type == SMALL )
 			{
-				initialize( filename, 3, 10, 4, 1.3f );				
+				initialize( filename, 3, 10, 4, 1.3f );
 			}
 			if( type == MEDIUM )
 			{
-				initialize( filename, 4, 35, 4, 1.3f );				
+				initialize( filename, 4, 35, 4, 1.2f );
 			}
 			if( type == LARGE )
 			{
-				initialize( filename, 6, 60, 4, 1.3f );				
+				initialize( filename, 6, 60, 4, 1.05f );
 			}
 		}
 		
@@ -725,16 +725,17 @@ public class GraphGenerator
 			new GraphProperties( "graph3large.dnv", GraphProperties.LARGE ),
 
 			// Graphs for fourth interaction method
-			new GraphProperties( "graph4fam.dnv", GraphProperties.SMALL ),	
-			new GraphProperties( "graph4small.dnv", GraphProperties.SMALL ),	
-			new GraphProperties( "graph4medium.dnv", GraphProperties.MEDIUM ),	
+			new GraphProperties( "graph4fam.dnv", GraphProperties.SMALL ), 
+			new GraphProperties( "graph4small.dnv", GraphProperties.SMALL ),
+			new GraphProperties( "graph4medium.dnv", GraphProperties.MEDIUM ),
 			new GraphProperties( "graph4large.dnv", GraphProperties.LARGE ),
 		};
 		
 		for( int i = 0; i < graphProperties.length; i++ )
 		{
 			GraphProperties gp = graphProperties[i];
-			if( !( new File( Settings.GRAPHS_PATH + "UserStudy/testGraphs/" + gp.getFilename() ) ).exists() )
+			String path = Settings.GRAPHS_PATH; // + "/UserStudy/testGraphs/";
+			if( !( new File( path + gp.getFilename() ) ).exists() )
 			{
 				DNVGraph entireGraph = new DNVGraph();
 				DNVGraph tempGraph;
@@ -750,13 +751,13 @@ public class GraphGenerator
 				}
 				int totalNumberOfNodes = Math.round(entireGraph.getGraphSize( 0 ) * gp.getClusterConnectionFactor() );
 				entireGraph = generateSmallworldGraph( totalNumberOfNodes, totalNumberOfNodes*2, false, entireGraph, true );
-				entireGraph.writeGraph( Settings.GRAPHS_PATH + "UserStudy/testGraphs/" + gp.getFilename() );
+				entireGraph.writeGraph( path + gp.getFilename() );
 				HashMap<Integer, Integer> histogram = GenerateHistogramOfConnectivity.generateHistogram( entireGraph, 0 );
-				GenerateHistogramOfConnectivity.writeHistogram( Settings.GRAPHS_PATH + "UserStudy/testGraphs/histograms/" + gp.getFilename() + ".csv", false, histogram );
+				GenerateHistogramOfConnectivity.writeHistogram( path + "/histograms/" + gp.getFilename() + ".csv", false, histogram );
 			}
 			else
 			{
-				System.out.println( Settings.GRAPHS_PATH + "UserStudy/testGraphs/" + gp.getFilename() + " already exists. Delete first if you want to replace it." );
+				System.out.println( path + gp.getFilename() + " already exists. Delete first if you want to replace it." );
 			}
 		}
 	}
@@ -820,7 +821,7 @@ public class GraphGenerator
 //			}
 //		}
 		
-//		generateUserStudyGraphs();
+		generateUserStudyGraphs();
 //		GraphProperties graphProperties[] = {
 //				// Graphs for first interaction method
 //				new GraphProperties( "graph1fam.dnv", GraphProperties.SMALL ),	

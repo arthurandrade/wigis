@@ -202,7 +202,7 @@ public class ImageRenderer
 			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels,
 			int maxDistanceToHighlight, boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox,
 			boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight, boolean alignBoxInfoRelativeToBox, Text timeText,
-			boolean drawAxis ) throws IOException
+			boolean drawAxis, Vector3D neighborHighlightColor ) throws IOException
 	{
 		g2d.setColor( Color.white );
 		g2d.fillRect( 0, 0, width, height );
@@ -372,7 +372,7 @@ public class ImageRenderer
 				drawLabels( subgraph, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, drawLabels, curvedLabels,
 						outlinedLabels, labelSize, interpolationLabels, showSearchSelectedLabels, minX, maxX, minY, maxY, overview, level,
 						highlightNeighbors, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels, drawLabelBox, g2d, nodeWidth,
-						nodes, selectedNodes, sortByLabelSize, boldLabels, fadeFactor, maxNumberOfSelectedLabels );
+						nodes, selectedNodes, sortByLabelSize, boldLabels, fadeFactor, maxNumberOfSelectedLabels, neighborHighlightColor );
 				labelsTimer.setEnd();
 				// ------------------------------
 				if( Settings.DEBUG && !overview )
@@ -757,12 +757,13 @@ public class ImageRenderer
 			boolean interpolationLabels, boolean showSearchSelectedLabels, double minX, double maxX, double minY, double maxY, boolean overview,
 			int level, boolean highlightNeighbors, int maxLabelLength, int curvedLabelAngle, boolean scaleLabels, boolean hideConflictingLabels,
 			boolean drawLabelBox, Graphics2D g2d, int nodeWidth, List<DNVNode> nodes, List<DNVNode> selectedNodes, SortByLabelSize sortByLabelSize,
-			boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels ) throws MalformedURLException, IOException
+			boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels, Vector3D neighborHighlightColor ) throws MalformedURLException,
+			IOException
 	{
 		DNVNode tempNode;
 		drawMustDrawLabels( subgraph, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, curvedLabels, outlinedLabels,
 				labelSize, interpolationLabels, minX, maxX, minY, maxY, overview, level, highlightNeighbors, maxLabelLength, curvedLabelAngle,
-				scaleLabels, hideConflictingLabels, drawLabelBox, g2d, nodeWidth, sortByLabelSize, boldLabels, fadeFactor );
+				scaleLabels, hideConflictingLabels, drawLabelBox, g2d, nodeWidth, sortByLabelSize, boldLabels, fadeFactor, neighborHighlightColor );
 
 		if( drawLabels )
 		{
@@ -780,7 +781,7 @@ public class ImageRenderer
 				boolean highlighted = highlightNode( highlightNeighbors, tempNode );
 				drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, drawLabels, curvedLabels, outlinedLabels,
 						labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle, scaleLabels,
-						drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlighted );
+						drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlighted, neighborHighlightColor );
 				// }
 			}
 		}
@@ -825,7 +826,8 @@ public class ImageRenderer
 						tempNode.setSelected( selected );
 						drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, selected, curvedLabels, outlinedLabels,
 								labelSize, interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle,
-								scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode ) );
+								scaleLabels, drawLabelBox, tempNode, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, tempNode ),
+								neighborHighlightColor );
 						tempNode.setSelected( temp );
 					}
 				}
@@ -916,7 +918,8 @@ public class ImageRenderer
 			double maxYPercent, double ratio, boolean curvedLabels, boolean outlinedLabels, double labelSize, boolean interpolationLabels,
 			double minX, double maxX, double minY, double maxY, boolean overview, int level, boolean highlightNeighbors, int maxLabelLength,
 			int curvedLabelAngle, boolean scaleLabels, boolean hideConflictingLabels, boolean drawLabelBox, Graphics2D g2d, int nodeWidth,
-			SortByLabelSize sortByLabelSize, boolean boldLabels, float fadeFactor ) throws MalformedURLException, IOException
+			SortByLabelSize sortByLabelSize, boolean boldLabels, float fadeFactor, Vector3D neighborHighlightColor ) throws MalformedURLException,
+			IOException
 	{
 		if( !overview && subgraph.getSuperGraph().getMustDrawLabels( level ).size() > 0 )
 		{
@@ -950,7 +953,7 @@ public class ImageRenderer
 			{
 				drawLabel( width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, true, curvedLabels, outlinedLabels, labelSize,
 						interpolationLabels, minX, maxX, minY, maxY, highlightNeighbors, maxLabelLength, curvedLabelAngle, scaleLabels, drawLabelBox,
-						node, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, node ) );
+						node, g2d, nodeWidth, boldLabels, highlightNode( highlightNeighbors, node ), neighborHighlightColor );
 			}
 		}
 	}
@@ -1254,7 +1257,8 @@ public class ImageRenderer
 	private static void drawLabel( int width, int height, double minXPercent, double minYPercent, double maxXPercent, double maxYPercent,
 			double ratio, boolean drawLabels, boolean curvedLabels, boolean outlinedLabels, double labelSize, boolean interpolationLabels,
 			double minX, double maxX, double minY, double maxY, boolean highlightNeighbors, int maxLabelLength, int curvedLabelAngle,
-			boolean scaleLabels, boolean drawLabelBox, DNVNode tempNode, Graphics2D g2d, int nodeWidth, boolean boldLabels, boolean highlighted )
+			boolean scaleLabels, boolean drawLabelBox, DNVNode tempNode, Graphics2D g2d, int nodeWidth, boolean boldLabels, boolean highlighted,
+			Vector3D neighborHighlightColor )
 			throws MalformedURLException, IOException
 	{
 		Vector2D tempPos;
@@ -1262,7 +1266,7 @@ public class ImageRenderer
 				tempNode.getPosition( true ) );
 		drawLabel( g2d, tempNode, tempPos, nodeWidth, tempNode.getLabel( interpolationLabels ), drawLabels, curvedLabels, outlinedLabels, labelSize,
 				minXPercent, maxXPercent, ratio, scaleLabels, highlightNeighbors, maxLabelLength, curvedLabelAngle, drawLabelBox, boldLabels,
-				highlighted );
+				highlighted, neighborHighlightColor );
 	}
 
 	public static final int DEFAULT_LABEL_HEIGHT = 10;
@@ -2423,7 +2427,7 @@ public class ImageRenderer
 	public static void drawLabel( Graphics2D g2d, DNVNode tempNode, Vector2D tempPos, int nodeWidth, String label, boolean showLabels,
 			boolean curvedLabels, boolean outlinedLabels, double labelSize, double minXPercent, double maxXPercent, double ratio,
 			boolean scaleLabels, boolean highlightNeighbors, int maxLabelLength, int curvedLabelAngle, boolean drawLabelBox, boolean boldLabels,
-			boolean highlighted ) throws MalformedURLException, IOException
+			boolean highlighted, Vector3D neighborHighlightColor ) throws MalformedURLException, IOException
 	{
 		labelSize = getLabelSize( tempNode, labelSize, minXPercent, maxXPercent, ratio, scaleLabels );
 
@@ -2454,10 +2458,23 @@ public class ImageRenderer
 						return;
 					}
 				}
-				if( tempNode.isSelected() || highlighted || ( tempNode.isHighlighted() && tempNode.getHighlightColor() == null ) )
+				if( tempNode.isSelected() || ( highlighted && neighborHighlightColor == null )
+						|| ( tempNode.isHighlighted() && tempNode.getHighlightColor() == null ) )
 				{
 					color = new Color( SELECTED_HIGHLIGHT_COLOR.getX(), SELECTED_HIGHLIGHT_COLOR.getY(), SELECTED_HIGHLIGHT_COLOR.getZ(), alpha );
 					outlineColor = new Color( 1, 1, 1, alpha );
+				}
+				else if( highlighted && neighborHighlightColor != null )
+				{
+					color = new Color( neighborHighlightColor.getX(), neighborHighlightColor.getY(), neighborHighlightColor.getZ(), alpha );
+					if( ( neighborHighlightColor.getX() + neighborHighlightColor.getY() + neighborHighlightColor.getZ() ) / 3.0 > 0.5 )
+					{
+						outlineColor = new Color( 0, 0, 0, alpha );
+					}
+					else
+					{
+						outlineColor = new Color( 1, 1, 1, alpha );
+					}
 				}
 				else if( tempNode.isHighlighted() && tempNode.getHighlightColor() != null )
 				{

@@ -162,9 +162,10 @@ public class NodeIconServlet extends HttpServlet
 			size /= node.getRadius();
 			try
 			{
-				ImageRenderer.drawLabel( g2d, node, pos, size, label, pb.isShowLabels(), pb.isCurvedLabels(), pb.isOutlinedLabels(), pb
-						.getLabelSize(), 1, 1, 1, pb.isScaleNodesOnZoom(), pb.isHighlightNeighbors(), pb.getMaxLabelLength(), pb
-						.getCurvedLabelAngle(), pb.isDrawLabelBox(), pb.isBoldLabels(), ImageRenderer.highlightNode( pb.isHighlightNeighbors(), node ) );
+				ImageRenderer.drawLabel( g2d, node, pos, size, label, pb.isShowLabels(), pb.isCurvedLabels(), pb.isOutlinedLabels(),
+						pb.getLabelSize(), 1, 1, 1, pb.isScaleNodesOnZoom(), pb.isHighlightNeighbors(), pb.getMaxLabelLength(),
+						pb.getCurvedLabelAngle(), pb.isDrawLabelBox(), pb.isBoldLabels(),
+						ImageRenderer.highlightNode( pb.isHighlightNeighbors(), node ), null );
 				ImageRenderer.drawNode( g2d, showIcons, node, icon, pos, color, size, ImageRenderer.CIRCLE, -1 );
 				response.setContentType( "image/png" );
 				ImageIO.write( img, "png", response.getOutputStream() );

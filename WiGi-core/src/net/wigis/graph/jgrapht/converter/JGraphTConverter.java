@@ -7,20 +7,21 @@ import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.jgrapht.JGraphTEdge;
 import net.wigis.settings.Settings;
 
 import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BiconnectivityInspector;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 public class JGraphTConverter
 {
-	public static UndirectedGraph<DNVNode, DefaultEdge> convertDNVToUndirectedJGraphT( DNVGraph graph, int level )
+	@SuppressWarnings("unchecked")
+	public static UndirectedGraph<DNVNode, JGraphTEdge<DNVNode>> convertDNVToUndirectedJGraphT( DNVGraph graph, int level )
 	{
-		UndirectedGraph<DNVNode, DefaultEdge> g = new SimpleGraph<DNVNode, DefaultEdge>( DefaultEdge.class );
+		UndirectedGraph<DNVNode, JGraphTEdge<DNVNode>> g = new SimpleGraph<DNVNode, JGraphTEdge<DNVNode>>((Class<? extends JGraphTEdge<DNVNode>>)JGraphTEdge.class );
 		for( DNVNode node : graph.getNodes( level ) )
 		{
 			g.addVertex( node );
@@ -38,8 +39,8 @@ public class JGraphTConverter
 	{
 		GraphsPathFilter.init();
 		DNVGraph graph = new DNVGraph( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph2large.dnv" );
-		UndirectedGraph<DNVNode, DefaultEdge> g = convertDNVToUndirectedJGraphT( graph, 0 );
-		BiconnectivityInspector<DNVNode, DefaultEdge> inspector = new BiconnectivityInspector<DNVNode, DefaultEdge>( g );
+		UndirectedGraph<DNVNode, JGraphTEdge<DNVNode>> g = convertDNVToUndirectedJGraphT( graph, 0 );
+		BiconnectivityInspector<DNVNode, JGraphTEdge<DNVNode>> inspector = new BiconnectivityInspector<DNVNode, JGraphTEdge<DNVNode>>( g );
 		System.out.println( inspector.isBiconnected() );
 		Set<Set<DNVNode>> components = inspector.getBiconnectedVertexComponents();
 		System.out.println( "graph contains " + components.size() + " biconnected components" );
@@ -52,7 +53,7 @@ public class JGraphTConverter
 			}
 		}
 
-		BronKerboschCliqueFinder<DNVNode, DefaultEdge> cliqueFinder = new BronKerboschCliqueFinder<DNVNode, DefaultEdge>( g );
+		BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>> cliqueFinder = new BronKerboschCliqueFinder<DNVNode, JGraphTEdge<DNVNode>>( g );
 		Collection<Set<DNVNode>> cliques = cliqueFinder.getAllMaximalCliques();
 		printCliques( cliques );
 		cliques = cliqueFinder.getBiggestMaximalCliques();
@@ -78,7 +79,7 @@ public class JGraphTConverter
 		System.out.println( counter + " cliques of size >= 4" );
 	}
 
-	public static DNVGraph convertJGraphTToDNVGraph( Graph<DNVNode, DefaultEdge> g )
+	public static DNVGraph convertJGraphTToDNVGraph( Graph<DNVNode, JGraphTEdge<DNVNode>> g )
 	{
 		return null;
 	}
