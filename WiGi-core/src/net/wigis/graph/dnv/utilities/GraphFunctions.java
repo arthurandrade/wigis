@@ -53,6 +53,7 @@ import net.wigis.settings.Settings;
 import org.jgrapht.GraphPath;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.BronKerboschCliqueFinder;
+import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.alg.KShortestPaths;
 
 // TODO: Auto-generated Javadoc
@@ -1327,7 +1328,7 @@ public final class GraphFunctions
 		{
 			return null;
 		}
-		System.out.println( "Finding paths from " + startNode.getLabel() + " to " + endNode.getLabel() );
+//		System.out.println( "Finding paths from " + startNode.getLabel() + " to " + endNode.getLabel() );
 //		int count = 0;
 		for( List<DNVNode> path : allPaths )
 		{
@@ -1370,6 +1371,14 @@ public final class GraphFunctions
 		return mostFrequentNode;
 	}
 	
+	public static boolean doesPathExist( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode )
+	{
+		UndirectedGraph<DNVNode, JGraphTEdge<DNVNode>> g = JGraphTConverter.convertDNVToUndirectedJGraphT( graph, level );
+		ConnectivityInspector<DNVNode, JGraphTEdge<DNVNode>> inspector = new ConnectivityInspector<DNVNode, JGraphTEdge<DNVNode>>( g );
+
+		return inspector.pathExists( startNode, endNode );
+	}
+
 	public static void main( String args[] )
 	{
 		GraphsPathFilter.init();

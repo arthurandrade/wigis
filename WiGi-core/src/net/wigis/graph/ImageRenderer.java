@@ -219,7 +219,7 @@ public class ImageRenderer
 
 			if( drawNeighborArea )
 			{
-				int maxDistance = 10;
+				int maxDistance = 15;
 				Map<String, Boolean> headerAlignment = new HashMap<String, Boolean>();
 				Map<String, Integer> drawnHeadings = new HashMap<String, Integer>();
 				for( int distance = maxDistance; distance > 0; distance-- )

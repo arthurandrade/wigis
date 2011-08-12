@@ -269,6 +269,7 @@ public class GraphGenerator
 		n.setLevel( 0 );
 		n.setColor( 0.5f, 0.5f, 1.0f );
 		n.setLabel( RandomNames.getRandomName() );
+		n.setBbId( n.getLabel() );
 		graph.addNode( 0, n );
 
 		addNodeToConnectivityMap( nodesByConnectivity, n );
@@ -734,7 +735,7 @@ public class GraphGenerator
 		for( int i = 0; i < graphProperties.length; i++ )
 		{
 			GraphProperties gp = graphProperties[i];
-			String path = Settings.GRAPHS_PATH; // + "/UserStudy/testGraphs/";
+			String path = Settings.GRAPHS_PATH + "UserStudy/testGraphs/";
 			if( !( new File( path + gp.getFilename() ) ).exists() )
 			{
 				DNVGraph entireGraph = new DNVGraph();
