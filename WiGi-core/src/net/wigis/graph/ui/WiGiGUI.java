@@ -440,7 +440,14 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		}
 		else if( e.getKeyCode() == KeyEvent.VK_S )
 		{
-			pb.setPlaySound( !pb.isPlaySound() );
+			if( ctrlPressed )
+			{
+				pb.saveGraph();
+			}
+			else
+			{
+				pb.setPlaySound( !pb.isPlaySound() );
+			}
 		}
 		else if( e.getKeyCode() == KeyEvent.VK_L )
 		{
