@@ -126,7 +126,7 @@ public class WiGiGUIHandler
 	}
 
 	private List<AudioStream> audioStreams = new ArrayList<AudioStream>();
-	private String[] audioFiles = { "button-50.wav", "button-28.wav", "tada.wav" };
+	private String[] audioFiles = { "button-50.wav", "button-28.wav", "tada.wav", "Buzzer.wav" };
 	
 	private void initializeAudio()
 	{
