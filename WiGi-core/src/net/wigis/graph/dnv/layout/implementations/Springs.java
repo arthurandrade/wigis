@@ -218,7 +218,7 @@ public class Springs implements TimeLimitedLayoutInterface
 		{
 			tempDNV = nodes.next();
 			forceStrength.add( tempDNV.getForce() );
-			if( !tempDNV.isSelected() )
+			if( !tempDNV.hasProperty( "pinned" ) )
 			{
 				tempDNV.applyForce( 0.7f, true );
 			}
@@ -648,7 +648,7 @@ public class Springs implements TimeLimitedLayoutInterface
 		springForce.setX( dx );
 		springForce.setY( dy );
 		float distance = springForce.length();
-
+		
 		if( distance < TOLERANCE )
 		{
 			// Set force to 0
