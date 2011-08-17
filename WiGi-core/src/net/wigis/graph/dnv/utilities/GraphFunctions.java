@@ -1323,7 +1323,63 @@ public final class GraphFunctions
 	
 	public static DNVNode getMostFrequentIntermediateNode( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode )
 	{
-		List<List<DNVNode>> allPaths = GraphFunctions.getNodesOnKShortestPaths( graph, 0, startNode, endNode, 100 );
+		int numberOfPaths = 0;
+		boolean done = false;
+		DNVNode mostFrequentNode = null;
+		DNVNode secondMostFrequentNode;
+		while( !done )
+		{
+			numberOfPaths += 100;
+			System.out.println( numberOfPaths );
+			List<DNVNode> allNodes = getNodesSortedByFrequencyOnShortestPath( graph, level, startNode, endNode, numberOfPaths );
+			if( allNodes == null )
+			{
+				return null;
+			}
+			mostFrequentNode = null;
+			secondMostFrequentNode = null;
+			for( DNVNode node : allNodes )
+			{
+				if( node != startNode && node != endNode )
+				{
+					if( mostFrequentNode == null )
+					{
+						mostFrequentNode = node;
+					}
+					else
+					{
+						secondMostFrequentNode = node;
+						break;
+					}
+				}
+			}
+			
+			int count1 = Integer.parseInt( mostFrequentNode.getProperty( "nodeCount" ) );
+			int count2 = Integer.parseInt( secondMostFrequentNode.getProperty( "nodeCount" ) );
+			System.out.println( "diff:" + Math.abs( count1 - count2 ) );
+			System.out.println( "percentage:" + count1 / (double)numberOfPaths );
+			if( count1 / (double)numberOfPaths > 0.6 /*|| Math.abs( count1 - count2 ) >= numberOfPaths * 0.1*/ || numberOfPaths >= 1000 )
+			{
+				done = true;
+			}
+
+			for( DNVNode node : allNodes )
+			{
+				if( node == mostFrequentNode && done )
+				{
+					node.setProperty( "pathFrequency_" + startNode.getId() + "_" + endNode.getId(), node.getProperty( "nodeCount" ) );
+				}
+				node.removeProperty( "nodeCount" );
+			}
+		}
+		
+		
+		return mostFrequentNode;
+	}
+
+	public static List<DNVNode> getNodesSortedByFrequencyOnShortestPath( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode, int numberOfPaths )
+	{
+		List<List<DNVNode>> allPaths = GraphFunctions.getNodesOnKShortestPaths( graph, level, startNode, endNode, numberOfPaths );
 		if( allPaths == null )
 		{
 			return null;
@@ -1346,29 +1402,10 @@ public final class GraphFunctions
 			}
 		}
 		
-		List<DNVNode> allNodes = graph.getNodes( 0 );
+		List<DNVNode> allNodes = graph.getNodes( level );
 		SortByFloatProperty sbfp = new SortByFloatProperty( "nodeCount", true );
 		Collections.sort( allNodes, sbfp );
-		DNVNode mostFrequentNode = null;
-		for( DNVNode node : allNodes )
-		{
-			if( node != startNode && node != endNode )
-			{
-				mostFrequentNode = node;
-				break;
-			}
-		}
-		
-		for( DNVNode node : allNodes )
-		{
-			if( node == mostFrequentNode )
-			{
-				node.setProperty( "pathFrequency_" + startNode.getId() + "_" + endNode.getId(), node.getProperty( "nodeCount" ) );
-			}
-			node.removeProperty( "nodeCount" );
-		}
-		
-		return mostFrequentNode;
+		return allNodes;
 	}
 	
 	public static boolean doesPathExist( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode )
