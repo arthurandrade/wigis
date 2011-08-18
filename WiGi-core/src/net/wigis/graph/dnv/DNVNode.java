@@ -119,10 +119,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	private Vector2D velocity = new Vector2D( 0, 0 );
 
 	/** The Constant DEFAULT_TIMESTEP. */
-	private static final float DEFAULT_TIMESTEP = 0.6f;
+	public static float DEFAULT_TIMESTEP = 0.6f;
 
 	/** The time step. */
-	private float timeStep[] = { DEFAULT_TIMESTEP / 2.0f, DEFAULT_TIMESTEP };
+	public static float timeStep[] = { DEFAULT_TIMESTEP / 2.0f, DEFAULT_TIMESTEP };
 
 	/** The mass. */
 	private float mass = 1.0f;
@@ -241,6 +241,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	public DNVNode()
 	{
 		super();
+		initAttributesForTGL();
 	}
 
 	public DNVNode( DNVGraph graph )
@@ -280,6 +281,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		{
 			setProperty( "Contents", decorator.getDescription() );
 		}
+		initAttributesForTGL();
 	}
 
 	/**
@@ -418,6 +420,8 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		this.graph = graph;
 		this.subGraph = new SubGraph( graph, level - 1 );
 		deserialize( line );
+		
+		initAttributesForTGL();
 	}
 
 	/**
@@ -443,6 +447,8 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 				this.setProperty( key, copy.getProperties().get( key ) );
 			}
 		}
+		
+		initAttributesForTGL();
 	}
 
 	/**
@@ -537,11 +543,23 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	 */
 	private void initialize( Vector2D position, String label, DNVGraph graph )
 	{
+		initAttributesForTGL();
 		setPosition( position );
 		setLabel( label );
 		setGraph( graph );
 		setVisible( true );
 		// this.subGraph = new SubGraph( graph, level - 1 );
+	}
+
+	/**
+	 * 
+	 */
+	private void initAttributesForTGL()
+	{
+		setAttribute( "justMadeLocal", false );
+		setAttribute( "dx", 0.0 );
+		setAttribute( "dy", 0.0 );
+		setAttribute( "repulsion", 10 );
 	}
 
 	/**
