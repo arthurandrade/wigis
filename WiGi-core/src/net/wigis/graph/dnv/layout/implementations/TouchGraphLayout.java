@@ -23,12 +23,12 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 	private double lastMaxMotion = 0;
 	private double motionRatio = 0;
 	private boolean damping = true;
-	private double rigidity = 1;
-	private double newRigidity = 1;
+	private float rigidity = 1;
+	private float newRigidity = 1;
 
 	private DNVNode dragNode = null;
 
-	public void setRigidity( double r )
+	public void setRigidity( float r )
 	{
 		newRigidity = r; // update rigidity at the end of the relax() thread
 	}
@@ -42,14 +42,14 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 	{
 		for( DNVEdge e : edges )
 		{
-			double vx = e.getTo().getPosition().getX() - e.getFrom().getPosition().getX();
-			double vy = e.getTo().getPosition().getY() - e.getFrom().getPosition().getY();
-			double len = Math.sqrt( vx * vx + vy * vy );
+			float vx = e.getTo().getPosition().getX() - e.getFrom().getPosition().getX();
+			float vy = e.getTo().getPosition().getY() - e.getFrom().getPosition().getY();
+			float len = (float)Math.sqrt( vx * vx + vy * vy );
 
 //			System.out.println( "len:" + len );
 			
-			double dx = vx * rigidity; // rigidity makes edges tighter
-			double dy = vy * rigidity;
+			float dx = vx * rigidity; // rigidity makes edges tighter
+			float dy = vy * rigidity;
 
 			dx /= ( e.getRestingDistance() * 100 );
 			dy /= ( e.getRestingDistance() * 100 );
@@ -65,25 +65,33 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 //			System.out.println( "edge move " + dx * len + ", " + dy * len );
 			
 //			System.out.println( "dx before: " + e.getTo().getAttribute( "dx" ) );
-			if( (Boolean)e.getTo().getAttribute( "justMadeLocal" ) || !(Boolean)e.getFrom().getAttribute( "justMadeLocal" ) )
+			if( e.getTo().justMadeLocal || !e.getFrom().justMadeLocal )
 			{
-				e.getTo().setAttribute( "dx", (Double)e.getTo().getAttribute( "dx" ) - dx * len );
-				e.getTo().setAttribute( "dy", (Double)e.getTo().getAttribute( "dy" ) - dy * len );
+				e.getTo().dx -= dx * len;
+				e.getTo().dy -= dy * len;
+//				e.getTo().setAttribute( "dx", (Double)e.getTo().getAttribute( "dx" ) - dx * len );
+//				e.getTo().setAttribute( "dy", (Double)e.getTo().getAttribute( "dy" ) - dy * len );
 			}
 			else
 			{
-				e.getTo().setAttribute( "dx", ( (Double)e.getTo().getAttribute( "dx" ) - dx * len ) / 10 );
-				e.getTo().setAttribute( "dy", ( (Double)e.getTo().getAttribute( "dy" ) - dy * len ) / 10 );
+				e.getTo().dx -= dx * len / 10;
+				e.getTo().dy -= dy * len / 10;
+//				e.getTo().setAttribute( "dx", ( (Double)e.getTo().getAttribute( "dx" ) - dx * len ) / 10 );
+//				e.getTo().setAttribute( "dy", ( (Double)e.getTo().getAttribute( "dy" ) - dy * len ) / 10 );
 			}
-			if( (Boolean)e.getFrom().getAttribute( "justMadeLocal" ) || !(Boolean)e.getTo().getAttribute( "justMadeLocal" ) )
+			if( e.getFrom().justMadeLocal || !e.getTo().justMadeLocal )
 			{
-				e.getFrom().setAttribute( "dx", (Double)e.getFrom().getAttribute( "dx" ) + dx * len );
-				e.getFrom().setAttribute( "dy", (Double)e.getFrom().getAttribute( "dy" ) + dy * len );
+				e.getFrom().dx += dx * len;
+				e.getFrom().dy += dy * len;
+//				e.getFrom().setAttribute( "dx", (Double)e.getFrom().getAttribute( "dx" ) + dx * len );
+//				e.getFrom().setAttribute( "dy", (Double)e.getFrom().getAttribute( "dy" ) + dy * len );
 			}
 			else
 			{
-				e.getFrom().setAttribute( "dx", ( (Double)e.getFrom().getAttribute( "dx" ) + dx * len ) / 10 );
-				e.getFrom().setAttribute( "dy", ( (Double)e.getFrom().getAttribute( "dy" ) + dy * len ) / 10 );
+				e.getFrom().dx += dx * len / 10;
+				e.getFrom().dy += dy * len / 10;
+//				e.getFrom().setAttribute( "dx", ( (Double)e.getFrom().getAttribute( "dx" ) + dx * len ) / 10 );
+//				e.getFrom().setAttribute( "dy", ( (Double)e.getFrom().getAttribute( "dy" ) + dy * len ) / 10 );
 			}
 //			System.out.println( "dx after: " + e.getTo().getAttribute( "dx" ) );
 		}
@@ -123,31 +131,39 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 										// in the 'force field'
 					}
 
-					int repSum = (Integer)n1.getAttribute( "repulsion" ) * (Integer)n2.getAttribute( "repulsion" ) / 100;
+					int repSum = n1.repulsion * n2.repulsion / 100;
 
 //					System.out.println( "repel move " + dx * repSum * rigidity + ", " + dy * repSum * rigidity );
 
 //					System.out.println( "dx before: " + n1.getAttribute( "dx" ) );
-					if( (Boolean)n1.getAttribute( "justMadeLocal" ) || !(Boolean)n2.getAttribute( "justMadeLocal" ) )
+					if( n1.justMadeLocal || !n2.justMadeLocal )
 					{
-						n1.setAttribute( "dx", (Double)n1.getAttribute( "dx" ) + dx * repSum * rigidity );
-						n1.setAttribute( "dy", (Double)n1.getAttribute( "dy" ) + dy * repSum * rigidity );
+						n1.dx += dx * repSum * rigidity;
+						n1.dy += dy * repSum * rigidity;
+//						n1.setAttribute( "dx", (Double)n1.getAttribute( "dx" ) + dx * repSum * rigidity );
+//						n1.setAttribute( "dy", (Double)n1.getAttribute( "dy" ) + dy * repSum * rigidity );
 					}
 					else
 					{
-						n1.setAttribute( "dx", ( (Double)n1.getAttribute( "dx" ) + dx * repSum * rigidity ) / 10 );
-						n1.setAttribute( "dy", ( (Double)n1.getAttribute( "dy" ) + dy * repSum * rigidity ) / 10 );
+						n1.dx += dx * repSum * rigidity / 10;
+						n1.dy += dy * repSum * rigidity / 10;
+//						n1.setAttribute( "dx", ( (Double)n1.getAttribute( "dx" ) + dx * repSum * rigidity ) / 10 );
+//						n1.setAttribute( "dy", ( (Double)n1.getAttribute( "dy" ) + dy * repSum * rigidity ) / 10 );
 					}
 //					System.out.println( "dx after: " + n1.getAttribute( "dx" ) );
-					if( (Boolean)n2.getAttribute( "justMadeLocal" ) || !(Boolean)n1.getAttribute( "justMadeLocal" ) )
+					if( n2.justMadeLocal || !n1.justMadeLocal )
 					{
-						n2.setAttribute( "dx", (Double)n2.getAttribute( "dx" ) - dx * repSum * rigidity );
-						n2.setAttribute( "dy", (Double)n2.getAttribute( "dy" ) - dy * repSum * rigidity );
+						n2.dx -= dx * repSum * rigidity;
+						n2.dy -= dy * repSum * rigidity;
+//						n2.setAttribute( "dx", (Double)n2.getAttribute( "dx" ) - dx * repSum * rigidity );
+//						n2.setAttribute( "dy", (Double)n2.getAttribute( "dy" ) - dy * repSum * rigidity );
 					}
 					else
 					{
-						n2.setAttribute( "dx", ( (Double)n2.getAttribute( "dx" ) - dx * repSum * rigidity ) / 10 );
-						n2.setAttribute( "dy", ( (Double)n2.getAttribute( "dy" ) - dy * repSum * rigidity ) / 10 );
+						n2.dx -= dx * repSum * rigidity / 10;
+						n2.dy -= dy * repSum * rigidity / 10;
+//						n2.setAttribute( "dx", ( (Double)n2.getAttribute( "dx" ) - dx * repSum * rigidity ) / 10 );
+//						n2.setAttribute( "dy", ( (Double)n2.getAttribute( "dy" ) - dy * repSum * rigidity ) / 10 );
 					}
 				}
 			}
@@ -225,8 +241,8 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 
 		for( DNVNode n : nodes )
 		{
-			double dx = (Double)n.getAttribute( "dx" );
-			double dy = (Double)n.getAttribute( "dy" );
+			float dx = n.dx;
+			float dy = n.dy;
 //			System.out.println( "dx:" + dx );
 //			System.out.println( "dy:" + dy );
 			
@@ -237,10 +253,10 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 							// long straight line of nodes. It wiggles too much
 							// and doesn't straighten out.
 
-			n.setAttribute( "dx", dx / 2 ); // Slow down, but don't stop. Nodes
+			n.dx = dx / 2; // Slow down, but don't stop. Nodes
 											// in motion store momentum. This
 											// helps when the force
-			n.setAttribute( "dy", dy / 2 ); // on a node is very low, but you
+			n.dy = dy / 2; // on a node is very low, but you
 											// still want to get optimal layout.
 
 			double distMoved = Math.sqrt( dx * dx + dy * dy ); // how far did

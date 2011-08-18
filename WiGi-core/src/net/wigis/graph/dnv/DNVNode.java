@@ -86,6 +86,11 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	// private Vector2D previousPosition = new Vector2D();
 	/** The position. */
 	private Vector2D position = new Vector2D();
+	
+	public float dx = 0;
+	public float dy = 0;
+	public boolean justMadeLocal = false;
+	public int repulsion = 10;
 
 	/** The original position. */
 	private Vector2D originalPosition = null;
@@ -556,10 +561,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	 */
 	private void initAttributesForTGL()
 	{
-		setAttribute( "justMadeLocal", false );
-		setAttribute( "dx", 0.0 );
-		setAttribute( "dy", 0.0 );
-		setAttribute( "repulsion", 10 );
+//		setAttribute( "justMadeLocal", false );
+//		setAttribute( "dx", 0.0 );
+//		setAttribute( "dy", 0.0 );
+//		setAttribute( "repulsion", 10 );
 	}
 
 	/**
