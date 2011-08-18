@@ -1,10 +1,13 @@
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.graph.dnv.layout.helpers.Grid;
 import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
 import net.wigis.graph.dnv.utilities.Vector2D;
 
@@ -97,11 +100,16 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 		}
 	}
 
-	private synchronized void avoidLabels( List<DNVNode> nodes )
+	private synchronized void avoidLabels( Collection<DNVNode> nodes, Collection<DNVNode> allNodes )
 	{
-		for( DNVNode n1 : nodes )
+		Grid grid = new Grid( 150, allNodes );
+		
+		List<DNVNode> nodesList = new ArrayList<DNVNode>( nodes );
+		
+		for( DNVNode n1 : nodesList )
 		{
-			for( DNVNode n2 : nodes )
+//			System.out.println( nodesList.size() + " vs. " + grid.getPotentialNodes( n1 ).size() );
+			for( DNVNode n2 : grid.getPotentialNodes( n1 ) )
 			{
 				if( n1 != n2 )
 				{
@@ -165,6 +173,12 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 //						n2.setAttribute( "dx", ( (Double)n2.getAttribute( "dx" ) - dx * repSum * rigidity ) / 10 );
 //						n2.setAttribute( "dy", ( (Double)n2.getAttribute( "dy" ) - dy * repSum * rigidity ) / 10 );
 					}
+					
+//					System.out.println( "len:" + len );
+//					if( len >= 100000 && n2.canRevive() )
+//					{
+//						n2.setActive();
+//					}
 				}
 			}
 		}
@@ -233,13 +247,15 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 		}
 	}
 
-	private synchronized void moveNodes( List<DNVNode> nodes )
+	private synchronized void moveNodes( Collection<DNVNode> nodes )
 	{
 		lastMaxMotion = maxMotion;
 		final double[] maxMotionA = new double[1];
 		maxMotionA[0] = 0;
 
-		for( DNVNode n : nodes )
+		List<DNVNode> nodesList = new ArrayList<DNVNode>( nodes );
+		
+		for( DNVNode n : nodesList )
 		{
 			float dx = n.dx;
 			float dy = n.dy;
@@ -264,6 +280,10 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 																// actually
 																// move?
 
+//			if( distMoved < DNVNode.MIN_FORCE )
+//			{
+//				n.setInActive();
+//			}
 //			System.out.println( "distMoved:" + distMoved );
 			
 			if( !n.isFixed() && !( n == dragNode ) )
@@ -290,9 +310,12 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 	{
 		for( int i = 0; i < 10; i++ )
 		{
-			relaxEdges( graph.getEdges( level ) );
-			avoidLabels( graph.getNodes( level ) );
-			moveNodes( graph.getNodes( level ) );
+			synchronized( graph )
+			{
+				relaxEdges( graph.getEdges( level ) );
+				avoidLabels( graph.getActiveNodes( level ), graph.getNodes( level ) );
+				moveNodes( graph.getActiveNodes( level ) );
+			}
 		}
 		if( rigidity != newRigidity )
 			rigidity = newRigidity; // update rigidity
@@ -302,7 +325,7 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 	public void runLayout( DNVGraph graph, int level )
 	{
 		graph.removeStoredPosition( level );
-		System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
+//		System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
 //		int i = 0;
 		damper = 1;
 		while(damper>=0.1 || !damping || maxMotion>=0.001)
@@ -311,7 +334,7 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 			{
 				relax( graph, level );
 			}
-			System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
+//			System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
 //			i++;
 			try
 			{

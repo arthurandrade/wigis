@@ -1017,7 +1017,7 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 
 	/** The Constant REVIVE_LIMIT. */
 	private static final int REVIVE_LIMIT = 5;
-
+	
 	/**
 	 * Apply force.
 	 * 
@@ -3312,7 +3312,11 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	{
 		if( graph != null )
 		{
-			graph.setNodeInactive( level, id );
+			if( graph.isNodeActive( level, id ) )
+			{
+				graph.setNodeInactive( level, id );	
+				revive = 0;
+			}
 		}
 	}
 
