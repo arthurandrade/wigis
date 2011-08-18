@@ -241,8 +241,7 @@ public class ImageRenderer
 							outlineColor.setY( (float)Math.max( 0, outlineColor.getY() - 0.3 ) );
 							outlineColor.setZ( (float)Math.max( 0, outlineColor.getZ() - 0.3 ) );
 							int drawn = drawBoxAround( distance, subgraph.getNodes(), nodes, g2d, width, height, minXPercent, minYPercent,
-									maxXPercent,
-									maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings,
+									maxXPercent, maxYPercent, minX, maxX, minY, maxY, nodeWidth, color, outlineColor, pb, overview, node, drawnHeadings,
 									drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight, alignBoxInfoRelativeToBox,
 									headerAlignment );
 
@@ -645,7 +644,7 @@ public class ImageRenderer
 	 * @param maxRadius
 	 * @return
 	 */
-	private static float getBoundaries( Map<Integer, DNVNode> nodes, Vector2D maxPos, Vector2D minPos, float maxRadius )
+	public static float getBoundaries( Map<Integer, DNVNode> nodes, Vector2D maxPos, Vector2D minPos, float maxRadius )
 	{
 		for( DNVNode node : nodes.values() )
 		{

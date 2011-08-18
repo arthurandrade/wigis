@@ -82,13 +82,13 @@ public final class SubGraphFinder
 		double minY = minYPercent * height + originalMinY;
 		double maxY = maxYPercent * height + originalMinY;
 		SubGraph subGraph = new SubGraph( graph, level );
-		if( minXPercent == 0 && minYPercent == 0 && maxXPercent == 1 && maxYPercent == 1 )
+		if( graph.getVisibleNodes( level ).size() < 2000 || ( minXPercent == 0 && minYPercent == 0 && maxXPercent == 1 && maxYPercent == 1 ) )
 		{
 			subGraph.setEdges( graph.getVisibleEdges( level ) );
 			subGraph.setNodes( graph.getVisibleNodes( level ) );
 			return subGraph;
 		}
-
+		
 		List<DNVNode> nodes = new ArrayList<DNVNode>( graph.getVisibleNodes( level ).values() );
 		DNVNode tempNode;
 		if( nodes != null )

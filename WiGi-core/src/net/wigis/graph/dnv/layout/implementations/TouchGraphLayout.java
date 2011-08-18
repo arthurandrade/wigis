@@ -113,7 +113,6 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 			{
 				if( n1 != n2 )
 				{
-
 					double dx = 0;
 					double dy = 0;
 					double vx = n1.getPosition().getX() - n2.getPosition().getX();
