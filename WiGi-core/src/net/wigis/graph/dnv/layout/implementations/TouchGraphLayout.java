@@ -315,6 +315,14 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 				avoidLabels( graph.getActiveNodes( level ), graph.getNodes( level ) );
 				moveNodes( graph.getActiveNodes( level ) );
 			}
+			try
+			{
+				Thread.sleep( 10 );
+			}
+			catch( InterruptedException e )
+			{
+				break;
+			}
 		}
 		if( rigidity != newRigidity )
 			rigidity = newRigidity; // update rigidity
