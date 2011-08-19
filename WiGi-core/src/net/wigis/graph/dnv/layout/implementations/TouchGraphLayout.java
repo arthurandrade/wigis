@@ -296,11 +296,15 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 
 		maxMotion = maxMotionA[0];
 		if( maxMotion > 0 )
+		{
 			motionRatio = lastMaxMotion / maxMotion - 1; // subtract 1 to make a
 															// positive value
 															// mean that
+		}
 		else
+		{
 			motionRatio = 0; // things are moving faster
+		}
 
 		damp();
 	}
@@ -325,7 +329,9 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 			}
 		}
 		if( rigidity != newRigidity )
+		{
 			rigidity = newRigidity; // update rigidity
+		}
 	}
 
 	@Override
