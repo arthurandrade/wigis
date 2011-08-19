@@ -11,7 +11,7 @@ import net.wigis.graph.dnv.layout.helpers.Grid;
 import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
 import net.wigis.graph.dnv.utilities.Vector2D;
 
-public class TouchGraphLayout implements SimpleLayoutInterface
+public class TouchGraphLayout implements SimpleLayoutInterface, Runnable
 {
 	public static final String LABEL = "TouchGraph Layout";
 
@@ -21,13 +21,17 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 		return LABEL;
 	}
 
-	private double damper = 0;
-	private double maxMotion = 0;
+    private Thread relaxer;
+
+	public double damper = 0;
+	public double maxMotion = 0;
 	private double lastMaxMotion = 0;
 	private double motionRatio = 0;
-	private boolean damping = true;
+	public boolean damping = true;
 	private float rigidity = 1;
 	private float newRigidity = 1;
+	private DNVGraph graph;
+	private int level = 0;
 
 	private DNVNode dragNode = null;
 
@@ -192,6 +196,7 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 	{
 		damping = false;
 		damper = 1.0; // A value of 1.0 means no damping
+		motionRatio = 0;
 	}
 
 	public void resetDamper()
@@ -299,7 +304,7 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 		{
 			motionRatio = lastMaxMotion / maxMotion - 1; // subtract 1 to make a
 															// positive value
-															// mean that
+															// mean that things are moving faster
 		}
 		else
 		{
@@ -311,21 +316,25 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 
 	public synchronized void relax( DNVGraph graph, int level )
 	{
-		for( int i = 0; i < 10; i++ )
+//		System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
+		if( graph != null && (damper>=0.1 || !damping || maxMotion>=0.001) )
 		{
-			synchronized( graph )
+			for( int i = 0; i < 10; i++ )
 			{
-				relaxEdges( graph.getEdges( level ) );
-				avoidLabels( graph.getActiveNodes( level ), graph.getNodes( level ) );
-				moveNodes( graph.getActiveNodes( level ) );
-			}
-			try
-			{
-				Thread.sleep( 10 );
-			}
-			catch( InterruptedException e )
-			{
-				break;
+				synchronized( graph )
+				{
+					relaxEdges( graph.getEdges( level ) );
+					avoidLabels( graph.getActiveNodes( level ), graph.getNodes( level ) );
+					moveNodes( graph.getActiveNodes( level ) );
+				}
+				try
+				{
+					Thread.sleep( 10 );
+				}
+				catch( InterruptedException e )
+				{
+					break;
+				}
 			}
 		}
 		if( rigidity != newRigidity )
@@ -360,5 +369,58 @@ public class TouchGraphLayout implements SimpleLayoutInterface
 			}
 		}
 	}
+    private void myWait() { //I think it was Netscape that caused me not to use Wait, or was it java 1.1?
+        try {
+                Thread.sleep(100);
+        } catch (InterruptedException e) {
+                //break;
+        }
+    }
+	
+    public void run() {
+        Thread me = Thread.currentThread();
+//      me.setPriority(1);       //Makes standard executable look better, but the applet look worse.
+//        System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
+        while (relaxer == me) {
+            relax( graph, level );
+            try {
+                relaxer.sleep(20);  //Delay to wait for the prior repaint command to finish.
+                while(damper<0.1 && damping && maxMotion<0.001) myWait();
+//              System.out.println("damping " + damping + " damp " + damper + "  maxM " + maxMotion + "  motR " + motionRatio );
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+    }
+
+    public void start() {
+        relaxer = new Thread(this);
+        relaxer.start();
+    }
+
+    public void stop() {
+        relaxer = null;
+    }
+
+	public DNVGraph getGraph()
+	{
+		return graph;
+	}
+
+	public void setGraph( DNVGraph graph )
+	{
+		this.graph = graph;
+	}
+
+	public int getLevel()
+	{
+		return level;
+	}
+
+	public void setLevel( int level )
+	{
+		this.level = level;
+	}
+
 
 }
