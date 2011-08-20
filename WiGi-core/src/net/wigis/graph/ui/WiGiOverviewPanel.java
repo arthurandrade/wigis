@@ -100,18 +100,21 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mouseClicked( MouseEvent arg0 )
 	{
-		if( arg0.getClickCount() == 2 )
+		if( callback.isMouseEnabled() )
 		{
-			pb.setMinX( 0 );
-			pb.setMaxX( 1 );
-			pb.setMinY( 0 );
-			pb.setMaxY( 1 );
-			if( renderComponent != null )
+			if( arg0.getClickCount() == 2 )
 			{
-				renderComponent.repaint();
+				pb.setMinX( 0 );
+				pb.setMaxX( 1 );
+				pb.setMinY( 0 );
+				pb.setMaxY( 1 );
+				if( renderComponent != null )
+				{
+					renderComponent.repaint();
+				}
+				
+				callback();
 			}
-			
-			callback();
 		}
 	}
 	
@@ -134,120 +137,129 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mousePressed( MouseEvent arg0 )
 	{
-		int x = arg0.getX();
-		int y = arg0.getY();
-		mouseDownX = x;
-		mouseDownY = y;
-
-		int minX = (int)Math.round( OVERVIEW_SIZE * pb.getMinX() );
-		int maxX = (int)Math.round( OVERVIEW_SIZE * pb.getMaxX() );
-		int minY = (int)Math.round( OVERVIEW_SIZE * pb.getMinY() );
-		int maxY = (int)Math.round( OVERVIEW_SIZE * pb.getMaxY() );
-		
-		if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
+		if( callback.isMouseEnabled() )
 		{
-			draggingSECorner = true;
-			return;
-		}
-		
-		if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
-		{
-			draggingNECorner = true;
-			return;
-		}
-
-		if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
-		{
-			draggingNWCorner = true;
-			return;
-		}
-		
-		if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
-		{
-			draggingSWCorner = true;
-			return;
-		}
-
-		if( x >= minX && x <= maxX && y >= minY && y <= maxY )
-		{
-			draggingZoom = true;
+			int x = arg0.getX();
+			int y = arg0.getY();
+			mouseDownX = x;
+			mouseDownY = y;
+	
+			int minX = (int)Math.round( OVERVIEW_SIZE * pb.getMinX() );
+			int maxX = (int)Math.round( OVERVIEW_SIZE * pb.getMaxX() );
+			int minY = (int)Math.round( OVERVIEW_SIZE * pb.getMinY() );
+			int maxY = (int)Math.round( OVERVIEW_SIZE * pb.getMaxY() );
+			
+			if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
+			{
+				draggingSECorner = true;
+				return;
+			}
+			
+			if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
+			{
+				draggingNECorner = true;
+				return;
+			}
+	
+			if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
+			{
+				draggingNWCorner = true;
+				return;
+			}
+			
+			if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
+			{
+				draggingSWCorner = true;
+				return;
+			}
+	
+			if( x >= minX && x <= maxX && y >= minY && y <= maxY )
+			{
+				draggingZoom = true;
+			}
 		}
 	}
 
 	@Override
 	public void mouseReleased( MouseEvent arg0 )
 	{
-		draggingZoom = false;
-		draggingSECorner = false;
-		draggingNECorner = false;
-		draggingNWCorner = false;
-		draggingSWCorner = false;
-		if( renderComponent != null )
+		if( callback.isMouseEnabled() )
 		{
-			renderComponent.repaint();
+			draggingZoom = false;
+			draggingSECorner = false;
+			draggingNECorner = false;
+			draggingNWCorner = false;
+			draggingSWCorner = false;
+			if( renderComponent != null )
+			{
+				renderComponent.repaint();
+			}
 		}
 	}
 
 	@Override
 	public void mouseDragged( MouseEvent arg0 )
 	{
-		int x = arg0.getX();
-		int y = arg0.getY();
-		
-		double xMove = (mouseDownX - x) / (double)OVERVIEW_SIZE;
-		double yMove = (mouseDownY - y) / (double)OVERVIEW_SIZE;
-		if( draggingZoom )
-		{			
-			pb.setMinX( pb.getMinX() - xMove );
-			pb.setMaxX( pb.getMaxX() - xMove );
-			pb.setMinY( pb.getMinY() - yMove );
-			pb.setMaxY( pb.getMaxY() - yMove );
-		}
-		else if( draggingSECorner )
+		if( callback.isMouseEnabled() )
 		{
-			pb.setMaxX( pb.getMaxX() - Math.min( xMove, yMove) );
-			pb.setMaxY( pb.getMaxY() - Math.min( xMove, yMove) );			
-		}
-		else if( draggingNECorner )
-		{
-			if( xMove > 0 )
-			{
-				pb.setMaxX( pb.getMaxX() + Math.min( xMove, yMove) );
-				pb.setMinY( pb.getMinY() - Math.min( xMove, yMove) );
+			int x = arg0.getX();
+			int y = arg0.getY();
+			
+			double xMove = (mouseDownX - x) / (double)OVERVIEW_SIZE;
+			double yMove = (mouseDownY - y) / (double)OVERVIEW_SIZE;
+			if( draggingZoom )
+			{			
+				pb.setMinX( pb.getMinX() - xMove );
+				pb.setMaxX( pb.getMaxX() - xMove );
+				pb.setMinY( pb.getMinY() - yMove );
+				pb.setMaxY( pb.getMaxY() - yMove );
 			}
-			else
+			else if( draggingSECorner )
 			{
 				pb.setMaxX( pb.getMaxX() - Math.min( xMove, yMove) );
-				pb.setMinY( pb.getMinY() + Math.min( xMove, yMove) );				
+				pb.setMaxY( pb.getMaxY() - Math.min( xMove, yMove) );			
 			}
-		}
-		else if( draggingNWCorner )
-		{
-			pb.setMinX( pb.getMinX() - Math.min( xMove, yMove) );
-			pb.setMinY( pb.getMinY() - Math.min( xMove, yMove) );			
-		}
-		else if( draggingSWCorner )
-		{
-			if( xMove < 0 )
+			else if( draggingNECorner )
+			{
+				if( xMove > 0 )
+				{
+					pb.setMaxX( pb.getMaxX() + Math.min( xMove, yMove) );
+					pb.setMinY( pb.getMinY() - Math.min( xMove, yMove) );
+				}
+				else
+				{
+					pb.setMaxX( pb.getMaxX() - Math.min( xMove, yMove) );
+					pb.setMinY( pb.getMinY() + Math.min( xMove, yMove) );				
+				}
+			}
+			else if( draggingNWCorner )
 			{
 				pb.setMinX( pb.getMinX() - Math.min( xMove, yMove) );
-				pb.setMaxY( pb.getMaxY() + Math.min( xMove, yMove) );
+				pb.setMinY( pb.getMinY() - Math.min( xMove, yMove) );			
 			}
-			else
+			else if( draggingSWCorner )
 			{
-				pb.setMinX( pb.getMinX() + Math.min( xMove, yMove) );
-				pb.setMaxY( pb.getMaxY() - Math.min( xMove, yMove) );
+				if( xMove < 0 )
+				{
+					pb.setMinX( pb.getMinX() - Math.min( xMove, yMove) );
+					pb.setMaxY( pb.getMaxY() + Math.min( xMove, yMove) );
+				}
+				else
+				{
+					pb.setMinX( pb.getMinX() + Math.min( xMove, yMove) );
+					pb.setMaxY( pb.getMaxY() - Math.min( xMove, yMove) );
+				}
 			}
+	
+			mouseDownX = x;
+			mouseDownY = y;
+			if( renderComponent != null )
+			{
+				renderComponent.repaint();
+			}
+			
+			callback();
 		}
-
-		mouseDownX = x;
-		mouseDownY = y;
-		if( renderComponent != null )
-		{
-			renderComponent.repaint();
-		}
-		
-		callback();
 	}
 	
 	private static final Cursor SE_RESIZE_CURSOR = new Cursor( Cursor.SE_RESIZE_CURSOR ); 
@@ -260,50 +272,53 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mouseMoved( MouseEvent arg0 )
 	{
-		int x = arg0.getX();
-		int y = arg0.getY();
-
-		int minX = (int)Math.round( OVERVIEW_SIZE * pb.getMinX() );
-		int maxX = (int)Math.round( OVERVIEW_SIZE * pb.getMaxX() );
-		int minY = (int)Math.round( OVERVIEW_SIZE * pb.getMinY() );
-		int maxY = (int)Math.round( OVERVIEW_SIZE * pb.getMaxY() );
-
-		if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
+		if( callback.isMouseEnabled() )
 		{
-			// Set cursor
-			this.setCursor( SE_RESIZE_CURSOR );
-			return;
+			int x = arg0.getX();
+			int y = arg0.getY();
+	
+			int minX = (int)Math.round( OVERVIEW_SIZE * pb.getMinX() );
+			int maxX = (int)Math.round( OVERVIEW_SIZE * pb.getMaxX() );
+			int minY = (int)Math.round( OVERVIEW_SIZE * pb.getMinY() );
+			int maxY = (int)Math.round( OVERVIEW_SIZE * pb.getMaxY() );
+	
+			if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
+			{
+				// Set cursor
+				this.setCursor( SE_RESIZE_CURSOR );
+				return;
+			}
+			
+			if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
+			{
+				// Set cursor
+				this.setCursor( NE_RESIZE_CURSOR );
+				return;
+			}
+	
+			if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
+			{
+				// Set cursor
+				this.setCursor( NW_RESIZE_CURSOR );
+				return;
+			}
+			
+			if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
+			{
+				// Set cursor
+				this.setCursor( SW_RESIZE_CURSOR );
+				return;
+			}
+	
+			if( x >= minX && x <= maxX && y >= minY && y <= maxY )
+			{
+				// Set cursor
+				this.setCursor( MOVE_CURSOR );
+				return;
+			}
+	
+			this.setCursor( DEFAULT_CURSOR );
 		}
-		
-		if( x >= maxX - INSIDE_BUFFER && x <= maxX + OUTSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
-		{
-			// Set cursor
-			this.setCursor( NE_RESIZE_CURSOR );
-			return;
-		}
-
-		if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= minY - OUTSIDE_BUFFER && y <= minY + INSIDE_BUFFER )
-		{
-			// Set cursor
-			this.setCursor( NW_RESIZE_CURSOR );
-			return;
-		}
-		
-		if( x >= minX - OUTSIDE_BUFFER && x <= minX + INSIDE_BUFFER && y >= maxY - INSIDE_BUFFER && y <= maxY + OUTSIDE_BUFFER )
-		{
-			// Set cursor
-			this.setCursor( SW_RESIZE_CURSOR );
-			return;
-		}
-
-		if( x >= minX && x <= maxX && y >= minY && y <= maxY )
-		{
-			// Set cursor
-			this.setCursor( MOVE_CURSOR );
-			return;
-		}
-
-		this.setCursor( DEFAULT_CURSOR );
 	}
 
 	public void setRenderComponent( Component renderComponent )
