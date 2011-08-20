@@ -171,7 +171,7 @@ public class Settings
 //	public static final String DOCUMENT_TOPIC_MDS_LAYOUT = "Document Topic MDS Layout";
 
 	/** The LAYOU t_ algorithms. */
-	public static LayoutInterface[] LAYOUT_ALGORITHMS = { new TouchGraphLayout() ,new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new Springs() };
+	public static LayoutInterface[] LAYOUT_ALGORITHMS = { new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new TouchGraphLayout(), new Springs() };
 
 	// Clustering algorithms
 	/** The Constant K_MOST_CONNECTED_CLUSTERING. */
