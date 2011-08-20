@@ -1330,7 +1330,7 @@ public final class GraphFunctions
 		while( !done )
 		{
 			numberOfPaths += 10;
-			System.out.println( numberOfPaths );
+//			System.out.println( numberOfPaths );
 			List<DNVNode> allNodes = getNodesSortedByFrequencyOnShortestPath( graph, level, startNode, endNode, numberOfPaths );
 			if( allNodes == null )
 			{
@@ -1356,10 +1356,10 @@ public final class GraphFunctions
 			
 			int count1 = Integer.parseInt( mostFrequentNode.getProperty( "nodeCount" ) );
 			int count2 = Integer.parseInt( secondMostFrequentNode.getProperty( "nodeCount" ) );
-			System.out.println( "First candidate:" + mostFrequentNode.getLabel() );
-			System.out.println( "Second candidate:" + secondMostFrequentNode.getLabel() );
-			System.out.println( "diff:" + Math.abs( count1 - count2 ) );
-			System.out.println( "percentage:" + count1 / (double)numberOfPaths );
+//			System.out.println( "First candidate:" + mostFrequentNode.getLabel() );
+//			System.out.println( "Second candidate:" + secondMostFrequentNode.getLabel() );
+//			System.out.println( "diff:" + Math.abs( count1 - count2 ) );
+//			System.out.println( "percentage:" + count1 / (double)numberOfPaths );
 			if( (count1 / (double)numberOfPaths) > 0.7 /*|| Math.abs( count1 - count2 ) >= numberOfPaths * 0.1*/ || numberOfPaths >= 300 )
 			{
 				done = true;
@@ -1390,7 +1390,7 @@ public final class GraphFunctions
 		int count = 0;
 		for( List<DNVNode> path : allPaths )
 		{
-			System.out.println( "Start of path " + count++ + " length = " + path.size() );
+//			System.out.println( "Start of path " + count++ + " length = " + path.size() );
 			for( DNVNode node : path )
 			{
 //				System.out.println( "\t" + node.getLabel() );
