@@ -1329,7 +1329,7 @@ public final class GraphFunctions
 		DNVNode secondMostFrequentNode;
 		while( !done )
 		{
-			numberOfPaths += 10;
+			numberOfPaths += 100;
 //			System.out.println( numberOfPaths );
 			List<DNVNode> allNodes = getNodesSortedByFrequencyOnShortestPath( graph, level, startNode, endNode, numberOfPaths );
 			if( allNodes == null )
@@ -1360,7 +1360,7 @@ public final class GraphFunctions
 //			System.out.println( "Second candidate:" + secondMostFrequentNode.getLabel() );
 //			System.out.println( "diff:" + Math.abs( count1 - count2 ) );
 //			System.out.println( "percentage:" + count1 / (double)numberOfPaths );
-			if( (count1 / (double)numberOfPaths) > 0.7 /*|| Math.abs( count1 - count2 ) >= numberOfPaths * 0.1*/ || numberOfPaths >= 300 )
+			if( (count1 / (double)numberOfPaths) > 0.7 /*|| Math.abs( count1 - count2 ) >= numberOfPaths * 0.1*/ || numberOfPaths >= 3000 )
 			{
 				done = true;
 			}
