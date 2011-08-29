@@ -147,11 +147,17 @@ public class DNVEntity
 	 */
 	public void setId( Integer id )
 	{
+		boolean visible = isVisible();
+		boolean selected = isSelected();
+		boolean highlighted = isHighlighted();
 		this.id = id;
 		if( graph.getIdGenerator().getCurrentId() <= id )
 		{
 			graph.getIdGenerator().setNextId( id + 1 );
 		}
+		setVisible( visible );
+		setSelected( selected );
+		setHighlighted( highlighted );
 	}
 
 	/**

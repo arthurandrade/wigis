@@ -1823,7 +1823,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		{
 			visibleFromEdges.remove( edge.getId() );
 		}
-		edge.getTo().setNeighborVisible( this, visible && isVisible() );
+		if( edge.getTo() != null )
+		{
+			edge.getTo().setNeighborVisible( this, visible && isVisible() );
+		}
 	}
 
 	public void setToEdgeVisible( DNVEdge edge, boolean visible )
@@ -1836,7 +1839,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		{
 			visibleToEdges.remove( edge.getId() );
 		}
-		edge.getFrom().setNeighborVisible( this, visible && isVisible() );
+		if( edge.getFrom() != null )
+		{
+			edge.getFrom().setNeighborVisible( this, visible && isVisible() );
+		}
 	}
 
 	/**
