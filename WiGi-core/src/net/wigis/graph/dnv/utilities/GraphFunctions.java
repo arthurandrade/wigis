@@ -1321,7 +1321,7 @@ public final class GraphFunctions
 		return allPaths;
 	}
 	
-	public static DNVNode getMostFrequentIntermediateNode( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode )
+	public static DNVNode getMostFrequentIntermediateNode( DNVGraph graph, int level, DNVNode startNode, DNVNode endNode, int maxNumberOfPaths )
 	{
 		int numberOfPaths = 0;
 		boolean done = false;
@@ -1360,7 +1360,7 @@ public final class GraphFunctions
 //			System.out.println( "Second candidate:" + secondMostFrequentNode.getLabel() );
 //			System.out.println( "diff:" + Math.abs( count1 - count2 ) );
 //			System.out.println( "percentage:" + count1 / (double)numberOfPaths );
-			if( (count1 / (double)numberOfPaths) > 0.7 /*|| Math.abs( count1 - count2 ) >= numberOfPaths * 0.1*/ || numberOfPaths >= 3000 )
+			if( (count1 / (double)numberOfPaths) > 0.7 /*|| Math.abs( count1 - count2 ) >= numberOfPaths * 0.1*/ || numberOfPaths >= maxNumberOfPaths )
 			{
 				done = true;
 			}
@@ -1424,7 +1424,7 @@ public final class GraphFunctions
 		DNVGraph graph = new DNVGraph( Settings.GRAPHS_PATH + "UserStudy/testGraphs/graph1small.dnv" );
 		DNVNode startNode = graph.getNodes().get( (int)(Math.random()*graph.getNodes().size()) );
 		DNVNode endNode = graph.getNodes().get( (int)(Math.random()*graph.getNodes().size()) );
-		DNVNode frequent = getMostFrequentIntermediateNode( graph, 0, startNode, endNode );
+		DNVNode frequent = getMostFrequentIntermediateNode( graph, 0, startNode, endNode, 1000 );
 		
 		System.out.println( "Most frequent node " + frequent.getLabel() + " with " + frequent.getProperty( "pathFrequency_" + startNode.getId() + "_" + endNode.getId() ) + " occurrances." );
 		 
