@@ -28,7 +28,7 @@ import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
 import net.wigis.graph.dnv.interaction.implementations.InterpolationWithSpring;
 import net.wigis.graph.dnv.interaction.implementations.SpringInteraction;
 import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
-import net.wigis.graph.dnv.layout.implementations.CircularLayout;
+import net.wigis.graph.dnv.layout.implementations.*;
 import net.wigis.graph.dnv.layout.implementations.DisjointGraphLayout;
 import net.wigis.graph.dnv.layout.implementations.FruchtermanReingold;
 import net.wigis.graph.dnv.layout.implementations.MDSLayout;
@@ -171,7 +171,7 @@ public class Settings
 //	public static final String DOCUMENT_TOPIC_MDS_LAYOUT = "Document Topic MDS Layout";
 
 	/** The LAYOU t_ algorithms. */
-	public static LayoutInterface[] LAYOUT_ALGORITHMS = { new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new TouchGraphLayout(), new Springs() };
+	public static LayoutInterface[] LAYOUT_ALGORITHMS = { new FM3Layout(), new BinaryStressLayout(), new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new TouchGraphLayout(), new Springs() };
 
 	// Clustering algorithms
 	/** The Constant K_MOST_CONNECTED_CLUSTERING. */
