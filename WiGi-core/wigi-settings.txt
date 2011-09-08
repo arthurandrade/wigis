@@ -1,1 +1,1 @@
-GRAPHS_PATH=/Users/yunteng/Documents/work/Tobias/graphs/
+GRAPHS_PATH=/graphs/

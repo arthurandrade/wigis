@@ -64,7 +64,7 @@ public class GenerateDNVGraphFromDB
 
 		try
 		{
-			DBManager dbm = DBManager.getInstance( "brynj001_graphs" );
+			DBManager dbm = new DBManager( "brynj001_graphs" );
 			String query = "SELECT * FROM graphs WHERE name = '" + graphName + "'";
 			ResultSet results = dbm.getResults( query );
 			results.first();

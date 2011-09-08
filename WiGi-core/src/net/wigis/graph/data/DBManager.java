@@ -40,7 +40,7 @@ public class DBManager
 {
 
 	/** The our instance. */
-	private static DBManager ourInstance;
+	private DBManager ourInstance;
 
 	/** The conn. */
 	private Connection conn = null;
@@ -87,7 +87,7 @@ public class DBManager
 	 * 
 	 * @return single instance of DBManager
 	 */
-	public static synchronized DBManager getInstance()
+	public synchronized DBManager getInstance()
 	{
 		if( ourInstance == null )
 		{
@@ -105,7 +105,7 @@ public class DBManager
 	 *            the database name
 	 * @return single instance of DBManager
 	 */
-	public static synchronized DBManager getInstance( String databaseName )
+	public synchronized DBManager getInstance( String databaseName )
 	{
 		if( ourInstance == null )
 		{
@@ -195,23 +195,23 @@ public class DBManager
 	 *            the query
 	 * @return the results
 	 */
-	public ResultSet getResults( String query )
+	public ResultSet getResults( String query ) throws SQLException
 	{
 		// System.out.println("this is the getRes query: "+query);
 		Statement statement;
 		ResultSet resultSet = null;
 		// System.out.println(query);
 
-		try
-		{
+//		try
+//		{
 			getConnection();
 			statement = conn.createStatement();
 			resultSet = statement.executeQuery( query );
-		}
-		catch( Exception ex )
-		{
-			System.out.println( "in catch of getResults: " + ex );
-		}
+//		}
+//		catch( Exception ex )
+//		{
+//			System.out.println( "in catch of getResults: " + ex );
+//		}
 
 		return resultSet;
 

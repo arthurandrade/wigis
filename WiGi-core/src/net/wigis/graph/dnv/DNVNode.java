@@ -3355,4 +3355,17 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 
 		return drawn;
 	}
+
+	public void updateNeighbors()
+	{
+		for( DNVEdge fromEdge : fromEdges.values() )
+		{
+			neighbors.put( fromEdge.getTo().getId(), fromEdge.getTo() );
+		}
+		
+		for( DNVEdge toEdge : toEdges.values() )
+		{
+			neighbors.put( toEdge.getFrom().getId(), toEdge.getFrom() );
+		}
+	}
 }

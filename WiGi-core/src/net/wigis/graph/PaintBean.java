@@ -2950,9 +2950,17 @@ public class PaintBean
 			List<DNVEntity> nodesAndEdges = history.get( historyIndex );
 			for( DNVEntity entity : nodesAndEdges )
 			{
+				boolean visible = entity.isVisible();
+				entity.setGraph( graph );
 				graph.addNode( level, entity );
+				entity.setVisible( visible );
 			}
 
+			for( DNVNode node : graph.getNodes( level ) )
+			{
+				node.updateNeighbors();
+			}
+			
 			for( DNVNode node : graph.getNodes( level ) )
 			{
 				node.verifyNeighbors();
