@@ -37,7 +37,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +53,10 @@ import net.wigis.graph.dnv.geometry.Geometric;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
+import net.wigis.graph.dnv.utilities.Vector3D;
+import net.wigis.stats.Dk1Calc;
+import net.wigis.stats.Dk2Calc;
+import net.wigis.stats.Dk3Calc;
 import blackbook.ejb.client.visualization.proxy.EdgeDecorator;
 import blackbook.ejb.client.visualization.proxy.ResourceDecorator;
 
@@ -137,6 +144,9 @@ public class DNVGraph implements Serializable
 
 	/** The nodes by time. */
 	private Map<Integer, Map<Long, Map<Integer, DNVEntity>>> nodesByTime = new HashMap<Integer, Map<Long, Map<Integer, DNVEntity>>>();
+	
+	/** The nodes by dktime. */
+	private Map<Integer, Map<Long, Map<Integer, DNVEntity>>> nodesByDKTime = new HashMap<Integer, Map<Long, Map<Integer, DNVEntity>>>();
 
 	/** The maximum pairwise shortest paths. */
 	private Map<Integer, Integer> maximumPairwiseShortestPaths = new HashMap<Integer, Integer>();
@@ -169,6 +179,34 @@ public class DNVGraph implements Serializable
 
 	/** The paint bean. */
 	private PaintBean paintBean = null;
+	
+	Dk1Calc dk1Calc;
+	Dk2Calc dk2Calc;
+	Dk3Calc dk3Calc;
+	
+	/**	The dk1 result.	*/
+	/*private String dk1;
+	
+	/**	The dk2 result.	*/
+	//private String dk2;
+	
+	/**	The dk3 result.	*/
+	//private String dk3;
+	
+	/**	Hashtable containing all dk1 result(s) for the layout algorithm.	*/
+	//Hashtable<Integer, ArrayList<Integer>> dk1Layout = new Hashtable<Integer, ArrayList<Integer>>();
+	
+	/**	Hashtable containing all dk2 result(s) for the layout algorithm.	*/
+	//Hashtable<Integer, ArrayList<Integer>> dk2LayoutNodes = new Hashtable<Integer, ArrayList<Integer>>();
+	
+	/**	Hashtable containing all dk2 result(s) for the layout algorithm.	*/
+	//Hashtable<Integer, ArrayList<Integer>> dk2LayoutEdges = new Hashtable<Integer, ArrayList<Integer>>();
+	
+	/**	Hashtable containing all dk3 result(s) for the layout algorithm.	*/
+	//Hashtable<Integer, ArrayList<Integer>> dk3LayoutNodes = new Hashtable<Integer, ArrayList<Integer>>();
+	
+	/**	Hashtable containing all dk3 result(s) for the layout algorithm.	*/
+	//Hashtable<Integer, ArrayList<Integer>> dk3LayoutEdges = new Hashtable<Integer, ArrayList<Integer>>();
 
 	public static void p(Object o)
 	{
@@ -195,6 +233,7 @@ public class DNVGraph implements Serializable
 	 * @param filename
 	 *            the filename
 	 */
+
 	public DNVGraph( String filename )
 	{
 		loadGraphFromFile( filename );
@@ -353,6 +392,7 @@ public class DNVGraph implements Serializable
 		clearAll();
 		this.filename = filename;
 		File file = new File( filename );
+		Timer timer = new Timer( Timer.MILLISECONDS );		
 		if( file.exists() )
 		{
 			String line;
@@ -366,9 +406,50 @@ public class DNVGraph implements Serializable
 				{
 					handleLine( line );
 					line = br.readLine();
+					
+
+					//extract and save the dk results.
+					/*if(line != null){
+						if(line.contains("Key=\"dk1\"")){
+							timer.setStart();
+							int index = line.indexOf("Value=");
+							String dk1 = line.substring(index+7,line.length()-4);
+							setProperty("dk1",dk1);
+							timer.setEnd();
+							System.out.println( "Loading dk1 took " + timer.getLastSegment( Timer.SECONDS ) + " seconds." );
+						}
+						if(line.contains("Key=\"dk2\"")){
+							timer.setStart();
+							int index = line.indexOf("Value=");
+							String dk2 = line.substring(index+7,line.length()-4);
+							setProperty("dk2",dk2);
+							timer.setEnd();
+							System.out.println( "Loading dk2 took " + timer.getLastSegment( Timer.SECONDS ) + " seconds." );
+						}
+						if(line.contains("Key=\"dk3\"")){
+							timer.setStart();
+							int index = line.indexOf("Value=");
+							String dk3 = line.substring(index+7,line.length()-4);
+							setProperty("dk3",dk3);
+							timer.setEnd();
+							System.out.println( "Loading dk3 took " + timer.getLastSegment( Timer.SECONDS ) + " seconds." );
+						}
+						else if(line.contains("Key=\"dk1Layout\"")){
+							extractDk1Layout(line);
+						}
+						else if(line.contains("Key=\"dk2Layout\"")){
+							extractDk2OrDk3Layout(line,"dk2Layout");
+						}
+						else if(line.contains("Key=\"dk3Layout\"")){
+							extractDk2OrDk3Layout(line,"dk3Layout");
+						}
+					}*/
+					
+					
 				}
 				br.close();
 				fr.close();
+
 			}
 			catch( FileNotFoundException e )
 			{
@@ -995,22 +1076,7 @@ public class DNVGraph implements Serializable
 			}
 
 			// Add node by time
-			if( entity.getProperty( "time" ) != null && !entity.getProperty( "time" ).equals( "" ) )
-			{
-				Map<Long, Map<Integer, DNVEntity>> times = nodesByTime.get( level );
-				if( times == null )
-				{
-					times = new HashMap<Long, Map<Integer, DNVEntity>>();
-					nodesByTime.put( level, times );
-				}
-				Map<Integer, DNVEntity> entityList = times.get( entity.getProperty( "time" ) );
-				if( entityList == null )
-				{
-					entityList = new HashMap<Integer, DNVEntity>();
-					times.put( Long.parseLong( entity.getProperty( "time" ) ), entityList );
-				}
-				entityList.put( entity.getId(), entity );
-			}
+			updateTimeForEntity(level, entity);
 
 			Map<Integer, DNVEntity> nodeList = nodesAndEdges.get( level );
 			if( nodeList == null )
@@ -1028,6 +1094,43 @@ public class DNVGraph implements Serializable
 			entity.setSelected( selected );
 			entity.setVisible( visible );
 			entity.setHighlighted( highlighted );
+		}
+	}
+
+	public void updateTimeForEntity(Integer level, DNVEntity entity) {
+		if( entity.getProperty( "time" ) != null && !entity.getProperty( "time" ).equals( "" ) )
+		{
+			Map<Long, Map<Integer, DNVEntity>> times = nodesByTime.get( level );
+			if( times == null )
+			{
+				times = new HashMap<Long, Map<Integer, DNVEntity>>();
+				nodesByTime.put( level, times );
+			}
+			Map<Integer, DNVEntity> entityList = times.get( entity.getProperty( "time" ) );
+			if( entityList == null )
+			{
+				entityList = new HashMap<Integer, DNVEntity>();
+				times.put( Long.parseLong( entity.getProperty( "time" ) ), entityList );
+			}
+			entityList.put( entity.getId(), entity );
+		}
+	}
+	public void updateDKTimeForEntity(Integer level, DNVEntity entity) {
+		if( entity.getProperty( "dktime" ) != null && !entity.getProperty( "dktime" ).equals( "" ) )
+		{
+			Map<Long, Map<Integer, DNVEntity>> times = nodesByDKTime.get( level );
+			if( times == null )
+			{
+				times = new HashMap<Long, Map<Integer, DNVEntity>>();
+				nodesByDKTime.put( level, times );
+			}
+			Map<Integer, DNVEntity> entityList = times.get( entity.getProperty( "dktime" ) );
+			if( entityList == null )
+			{
+				entityList = new HashMap<Integer, DNVEntity>();
+				times.put( Long.parseLong( entity.getProperty( "dktime" ) ), entityList );
+			}
+			entityList.put( entity.getId(), entity );
 		}
 	}
 
@@ -3038,6 +3141,37 @@ public class DNVGraph implements Serializable
 
 		return maxTime;
 	}
+	
+	/**
+	 * Gets the max time.
+	 * 
+	 * @param level
+	 *            the level
+	 * @return the max time
+	 */
+	public long getMaxDKTime( int level )
+	{
+		long maxTime = Long.MIN_VALUE;
+
+		List<DNVEntity> entities = getNodesAndEdges( level );
+
+		String property;
+		long time;
+		for( DNVEntity entity : entities )
+		{
+			property = entity.getProperty( "dktime" );
+			if( property != null && !property.equals( "" ) )
+			{
+				time = Long.parseLong( property );
+				if( time > maxTime )
+				{
+					maxTime = time;
+				}
+			}
+		}
+
+		return maxTime;
+	}
 
 	/**
 	 * Gets the number of times.
@@ -3049,6 +3183,18 @@ public class DNVGraph implements Serializable
 	public int getNumberOfTimes( int level )
 	{
 		return nodesByTime.get( level ).size();
+	}
+	
+	/**
+	 * Gets the number of dk times.
+	 * 
+	 * @param level
+	 *            the level
+	 * @return the number of times
+	 */
+	public int getNumberOfDKTimes( int level )
+	{
+		return nodesByDKTime.get( level ).size();
 	}
 
 	/**
@@ -3063,6 +3209,27 @@ public class DNVGraph implements Serializable
 		try
 		{
 			return nodesByTime.get( level ).keySet();
+		}
+		catch( NullPointerException npe )
+		{}
+
+		return new ArrayList<Long>();
+	}
+	
+	
+	
+	/**
+	 * Gets the dktimes.
+	 * 
+	 * @param level
+	 *            the level
+	 * @return the times
+	 */
+	public Collection<Long> getDKTimes( int level )
+	{
+		try
+		{
+			return nodesByDKTime.get( level ).keySet();
 		}
 		catch( NullPointerException npe )
 		{}
@@ -3405,4 +3572,278 @@ public class DNVGraph implements Serializable
 			return attributes.containsKey( attribute );
 		}
 	}
+
+	public void clearNodesByDKTime() {
+		// TODO Auto-generated method stub
+		synchronized(this){
+			nodesByDKTime = new HashMap<Integer, Map<Long, Map<Integer, DNVEntity>>>();
+	
+			for(DNVNode node: getNodes(0)){
+				node.removeProperty("dktime");
+				node.removeProperty("minDKTime");
+				node.removeProperty("maxDKTime");
+				node.updateEntityDKTimeInGraph();
+			}
+			for(DNVEdge edge: getEdges(0)){
+				edge.removeProperty("dktime");
+				edge.removeProperty("minDKTime");
+				edge.removeProperty("maxDKTime");
+				edge.updateEntityDKTimeInGraph();
+			}
+		}
+	}
+	
+	/*
+	 * derived from terrorism analysis
+	 */
+	private HashSet<String> propertyEdgeSet = new HashSet<String>();
+	public void buildEdgesForSameProperty(String property){
+		synchronized(this){
+			if(propertyEdgeSet.contains(property)){
+				return;
+			}
+			String minTime = getProperty("minTime");
+			String maxTime = getProperty("maxTime");
+			propertyEdgeSet.add(property);
+			String propertyValues = getProperty(property);
+			List<DNVNode> nodes = getNodes(0);
+			if(propertyValues == null){
+				return;
+			}
+			String[] valuesArr = propertyValues.split("\t");
+			Vector3D color = new Vector3D( (float)Math.max( 0.3, Math.random() ), (float)Math.max( 0.3, Math.random() ), (float)Math.max( 0.3, Math.random() ) );
+			HashMap<String, DNVNode> propertyToNode = new HashMap<String, DNVNode>();
+			for(int i = 0; i < valuesArr.length; i++){
+				DNVNode newNode = new DNVNode(this);
+				newNode.setColor( color );
+				propertyToNode.put(valuesArr[i], newNode);
+				newNode.setProperty("newlyAdded", "true");
+				newNode.setProperty(property, valuesArr[i]);
+				newNode.setLabel(valuesArr[i]);
+				
+				newNode.setProperty("time", minTime);
+				newNode.setProperty("minTime", minTime);
+				newNode.setProperty("maxTime", minTime);
+				//newNode.updateEntityTimeInGraph();
+				
+				addNode(0, newNode);
+				System.out.println("add node " + valuesArr[i]);
+			}
+			for(DNVNode node : nodes){
+				if(node.getProperty("newlyAdded") == null){
+					String nodePropertyValue = node.getProperty(property);
+					if(nodePropertyValue != null){
+						//System.out.println("event with value" + nodePropertyValue);					
+						String[] nodePropertyValueArr = nodePropertyValue.split("\t");
+						for(int j = 0; j < nodePropertyValueArr.length; j++){
+							DNVNode centralNode = propertyToNode.get(nodePropertyValueArr[j]);
+							if(centralNode == null){
+								System.out.println("values shouldn't exist" + nodePropertyValue);
+							}else{
+								DNVEdge edge = new DNVEdge(this);
+								edge.setFrom(node);
+								edge.setTo(centralNode);
+								addEdge(0, edge);
+							}
+						}
+					}
+				}
+			}
+			for(String key : propertyToNode.keySet()){
+				DNVNode node = propertyToNode.get(key);
+				node.setRadius(20);
+				node.setForceLabel(true);
+			}
+		}
+	}
+	
+	public void deleteEdgesForSameProperty(String property){
+		synchronized(this){
+			if(!propertyEdgeSet.contains(property)){
+				return;
+			}
+			propertyEdgeSet.remove(property);
+			for(DNVNode node : getNodes(0)){
+				if(node.getProperty("newlyAdded") != null && node.getProperty(property) != null){
+					this.removeNodeById(node.getId());
+				}
+			}
+		}
+	}
+	private HashMap<String, String> filters = new HashMap<String, String>();
+	public HashMap<String, String> getFilters(){
+		return filters;
+	}
+	public void manageEdgeWithProperty(){
+		for(DNVNode node : getNodes(0)){
+			if(node.getProperty("newlyAdded") != null){
+				for(String filter: filters.keySet()){
+					if(filters.get(filter).equals(node.getProperty(filter))){
+						node.setVisible(true);
+						break;
+					}
+				}
+				if(node.isVisible()){
+					for(DNVNode neighbor : node.getNeighbors()){
+						boolean flag = true;
+						for(String filter: filters.keySet()){
+							ArrayList<String> neighborValues = new ArrayList<String>();
+							for(String neighborValue : neighbor.getProperty(filter).split("\t")){
+								neighborValues.add(neighborValue);
+							}
+							if(!neighborValues.contains(filters.get(filter))){
+								flag = false;
+								break;
+							}
+						}
+						if(flag){
+							neighbor.setVisible(true);
+							node.getEdgeToNeighbor(neighbor.getId()).setVisible(true);
+						}
+					}
+					node.setForceLabel(true);
+				}else{
+					node.setForceLabel(false);
+				}
+			}
+		}
+	}
+	public void showEdgesWithProperty(String property, String value){
+		for(DNVNode node : getNodes(0)){
+			node.setVisible(false);
+		}
+		for(DNVEdge edge : getEdges(0)){
+			edge.setVisible(false);
+		}
+		filters.put(property, value);
+		manageEdgeWithProperty();
+	}
+	
+	public void hideEdgesWithProperty(String property, String value){
+		if(filters.get(property) != null){
+			filters.remove(property);
+		}
+		if(filters.size() == 0){
+			for(DNVNode node : getNodes(0)){
+				node.setVisible(true);
+			}
+			for(DNVEdge edge : getEdges(0)){
+				edge.setVisible(true);
+			}
+			return;
+		}
+		for(DNVNode node : getNodes(0)){
+			node.setVisible(false);
+		}
+		for(DNVEdge edge : getEdges(0)){
+			edge.setVisible(false);
+		}	
+		manageEdgeWithProperty();
+	}
+	/*public void extractDk1Layout(String line){
+		Hashtable<Integer, ArrayList<Integer>> table = new Hashtable();
+		int index = -1;
+		String temp = "";
+		
+		index = line.indexOf("Value=");
+		line = line.substring(index+7, line.length()-4);
+		
+
+		while(line.isEmpty() == false){
+			index = line.indexOf("]");
+			temp = line.substring(0,index+1);
+			line = line.substring(index+1,line.length());
+			index = temp.indexOf("{");
+			String degree = temp.substring(8, index);
+			index = temp.indexOf("{Nodes:");
+			String nodes = temp.substring(index+7, temp.length()-2);
+			
+			ArrayList<Integer> nodesList = new ArrayList<Integer>();
+			
+			if(nodes.contains(",")){
+				index = 0;
+				while(index != -1){
+					index = nodes.indexOf(",");
+					nodesList.add(Integer.parseInt(nodes.substring(0,index)));
+					nodes = nodes.substring(index+1,nodes.length());
+					index = nodes.indexOf(",");
+				}
+				nodesList.add(Integer.parseInt(nodes.substring(0,nodes.length())));
+			}else{
+				nodesList.add(Integer.parseInt(nodes));
+			}
+			
+			table.put(Integer.parseInt(degree), nodesList);
+			
+		}		
+		setDk1Layout(table);
+	}
+	
+	
+	public void extractDk2OrDk3Layout(String line, String type){
+		Hashtable<Integer, ArrayList<Integer>> tableNodes = new Hashtable();
+		Hashtable<Integer, ArrayList<Integer>> tableEdges = new Hashtable();
+		int index = -1;
+		int index2 = -1;
+		
+		String temp = "";
+		
+		index = line.indexOf("Value=");
+		line = line.substring(index+7, line.length()-4);
+		
+
+		while(line.isEmpty() == false){
+			index = line.indexOf("]");
+			temp = line.substring(0,index+1);
+			line = line.substring(index+1,line.length());
+			index = temp.indexOf("{");
+			String degree = temp.substring(8, index);
+			index = temp.indexOf("{Nodes:");
+			index2 = temp.indexOf("{Edges:");
+			String nodes = temp.substring(index+7, index2-1);
+			String edges = temp.substring(index2+7, temp.length()-2);
+
+			
+			
+			ArrayList<Integer> nodesList = new ArrayList<Integer>();
+			ArrayList<Integer> edgesList = new ArrayList<Integer>();
+			
+			if(nodes.contains(",")){
+				index = 0;
+				while(index != -1){
+					index = nodes.indexOf(",");
+					nodesList.add(Integer.parseInt(nodes.substring(0,index)));
+					nodes = nodes.substring(index+1,nodes.length());
+					index = nodes.indexOf(",");
+				}
+				nodesList.add(Integer.parseInt(nodes.substring(0,nodes.length())));
+			}else{
+				nodesList.add(Integer.parseInt(nodes));
+			}
+			
+			if(edges.contains(",")){
+				index = 0;
+				while(index != -1){
+					index = edges.indexOf(",");
+					edgesList.add(Integer.parseInt(edges.substring(0,index)));
+					edges = edges.substring(index+1,edges.length());
+					index = edges.indexOf(",");
+				}
+				edgesList.add(Integer.parseInt(edges.substring(0,edges.length())));
+			}else{
+				edgesList.add(Integer.parseInt(edges));
+			}
+			
+			tableNodes.put(Integer.parseInt(degree), nodesList);
+			tableEdges.put(Integer.parseInt(degree), edgesList);
+			
+		}		
+		if(type.compareToIgnoreCase("dk2Layout")==0){
+			setDk2LayoutNodes(tableNodes);
+			setDk2LayoutEdges(tableEdges);
+		}else if(type.compareToIgnoreCase("dk3Layout")==0){
+			setDk3LayoutNodes(tableNodes);
+			setDk3LayoutEdges(tableEdges);
+		}
+	}*/
 }

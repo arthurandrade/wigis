@@ -171,7 +171,7 @@ public class Settings
 //	public static final String DOCUMENT_TOPIC_MDS_LAYOUT = "Document Topic MDS Layout";
 
 	/** The LAYOU t_ algorithms. */
-	public static LayoutInterface[] LAYOUT_ALGORITHMS = { new FM3Layout(), new BinaryStressLayout(), new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new TouchGraphLayout(), new Springs() };
+	public static LayoutInterface[] LAYOUT_ALGORITHMS = {new FM3Layout(), new Dk1Layout(), new Dk2Layout(), new Dk3Layout(), new BinaryStressLayout(), new FruchtermanReingold(), new CircularLayout(), new MDSLayout(), new DisjointGraphLayout(), new TouchGraphLayout(), new Springs() };
 
 	// Clustering algorithms
 	/** The Constant K_MOST_CONNECTED_CLUSTERING. */
@@ -185,9 +185,12 @@ public class Settings
 
 	/** The Constant STRUCTURAL_EQUIVALENCE_CLUSTERING. */
 	public static final String STRUCTURAL_EQUIVALENCE_CLUSTERING = "Structural Equivalence Clustering";
+	
+	/** The Constant DK1_CLUSERING. */
+	public static final String DK1_CLUSERING = "DK1 Clustering";
 
 	/** The CLUSTERIN g_ algorithms. */
-	public static String[] CLUSTERING_ALGORITHMS = { K_MOST_CONNECTED_CLUSTERING, STRUCTURAL_EQUIVALENCE_CLUSTERING };
+	public static String[] CLUSTERING_ALGORITHMS = { K_MOST_CONNECTED_CLUSTERING, STRUCTURAL_EQUIVALENCE_CLUSTERING, DK1_CLUSERING};
 
 	// Interaction algorithms
 //	/** The Constant INTERPOLATION_INTERACTION. */

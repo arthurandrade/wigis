@@ -1123,8 +1123,8 @@ public class ImageRenderer
 
 		if( edges != null )
 		{
-			synchronized( edges )
-			{
+			//synchronized( edges )
+			//{
 				for( DNVEdge tempEdge : edges )
 				{
 					if( tempEdge.getFrom() != null && tempEdge.getTo() != null )
@@ -1150,7 +1150,7 @@ public class ImageRenderer
 					drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, selectedEdgeColor,
 							tempEdge, true, outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
 				}
-			}
+			//}
 		}
 		return nodeWidth;
 	}

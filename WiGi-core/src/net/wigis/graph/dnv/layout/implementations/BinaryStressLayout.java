@@ -1,7 +1,9 @@
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,12 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import net.JNILib;
 import net.wigis.graph.GraphsPathFilter;
+import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.layout.interfaces.LayoutInterface;
 import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
+import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.settings.Settings;
 
@@ -25,7 +28,7 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 
 	public static final String LABEL = "Binary Stress Layout";
 	private static double BSthreshold = 0.001;
-	private static double CGthreshold = 1e-10;
+	private static double CGthreshold = 1e-5;
 	private static int maxIteration = 20;
 	private double[] x_pos;
 	private double[] y_pos;
@@ -33,10 +36,14 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 	private double[] treey_pos;
 	private double[] cosB;
 	private double[] sinB;
-	private double[] treecosB;
-	private double[] treesinB;
 	private Map<Integer,ArrayList<Integer>> indexToNeighbors;
 	
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
+	}
 	
 	@Override
 	public String getLabel() {
@@ -120,7 +127,7 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 		return res;
 	}
 	/*
-	 * generate the random init layout positions
+	 * generate the random init layout positions, map everything between -1 to 1
 	 */
 	private void generateInitRandomCoord(int n){
 		Random generator = new Random();
@@ -133,10 +140,7 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 			treey_pos[i] = y_pos[i] = generator.nextFloat() * 2 - 1;
 		}
 	}
-	/* 
-	 * map the unique nodes id to index range 0 ~ nodes.size() - 1
-	 * use the index value of the node as hash key, hash value is the neighbors' indexes of the node
-	 */
+	
 	private void printArray(double[] arr,String name){
 		System.out.println("printing " + name);
 		for(int i = 0;i < Math.min(10,arr.length); i++){
@@ -145,36 +149,36 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 		System.out.println();
 		
 	}
+	
+	/* 
+	 * map the unique nodes id to index range 0 ~ nodes.size() - 1
+	 * use the index value of the node as hash key, hash value is the neighbors' indexes of the node
+	 */
 	private void mapNodeIndex(List<DNVNode> nodes){
 		Map<Integer,Integer> idToIndex = new HashMap<Integer,Integer>();
 		indexToNeighbors = new HashMap<Integer,ArrayList<Integer>>();
 		int index = 0;
-		//sort the nodes according to their degree in descending order
-		Collections.sort(nodes,new Comparator<DNVNode>(){
 
-			@Override
-			public int compare(DNVNode arg0, DNVNode arg1) {
-				// TODO Auto-generated method stub
-				return (arg0.getDegree() > arg1.getDegree()? -1 : (arg0.getDegree() == arg1.getDegree() ? 0 : 1));
-			}
-			
-		});
-		double[] gap = new double[nodes.size() - 1];
-		for(index = 0; index < nodes.size() - 1; index++){
+		for(index = 0; index < nodes.size(); index++){
 			idToIndex.put(nodes.get(index).getId(), index);
-			gap[index] = nodes.get(index + 1).getDegreeCentrality() - nodes.get(index).getDegreeCentrality(); 
 		}
-		idToIndex.put(nodes.get(index).getId(), index);
 		
 		index = 0;
 		for(DNVNode node : nodes){
-			List<DNVNode> neighbors = node.getNeighbors();
+			indexToNeighbors.put(index, new ArrayList<Integer>());
+			for(DNVEdge edge : node.getToEdges()){
+				indexToNeighbors.get(index).add(idToIndex.get(edge.getFromId()));
+			}
+			for(DNVEdge edge : node.getFromEdges()){
+				indexToNeighbors.get(index).add(idToIndex.get(edge.getToId()));
+			}
+			/*List<DNVNode> neighbors = node.getNeighbors();
 			indexToNeighbors.put(index, new ArrayList<Integer>());
 			for(DNVNode neighbor : neighbors){
 				if(!neighbor.equals(node)){
 					indexToNeighbors.get(index).add(idToIndex.get(neighbor.getId()));
 				}
-			}
+			}*/
 			index++;
 		}
 		
@@ -197,10 +201,6 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 		int n = x_pos.length;
 		cosB = new double[n];
 		sinB = new double[n];
-		/*treecosB = new double[n];
-		treesinB = new double[n];
-		Bound range = getRange(treex_pos, treey_pos);
-		range.print();*/
 		Bound range = new Bound(-1, 1, -1, 1);
 		QuadTree tree = new QuadTree(range);
 		for(int i = 0; i < n; i++){
@@ -211,49 +211,9 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 			double[] B = tree.getCosSin(x_pos[i], y_pos[i]);
 			cosB[i] = B[0];
 			sinB[i] = B[1];
-			//cosB[i] = B[0];
-			//sinB[i] = B[1];
-			//System.out.println(cosB[i] + " " + sinB[i] );
 		}
-		//getRange(x_pos,y_pos);
-		
-		
-		/*for(int i = 0; i < n; i++){
-			for(int j = i + 1; j < n; j++){
-				double dist = (double) Math.sqrt((x_pos[i] - x_pos[j]) * (x_pos[i] - x_pos[j]) + (y_pos[i] - y_pos[j]) * (y_pos[i] - y_pos[j]));
-				cosB[i] += (x_pos[i] - x_pos[j]) / dist;
-				sinB[i] += (y_pos[i] - y_pos[j]) / dist;
-				cosB[j] += (x_pos[j] - x_pos[i]) / dist;
-				sinB[j] += (y_pos[j] - y_pos[i]) / dist;
-			}
-			//System.out.println("x_pos " + x_pos[i] + " y_pos " + y_pos[i]);
-		}
-		printArray(treecosB, "treecosB");
-		printArray(cosB, "cosB");
-		printArray(treesinB, "treesinB");		
-		printArray(sinB, "sinB");*/
-		//System.out.println("norm2 of diff cosB " + vecNorm(addvec(treecosB,cosB,false)));
-		//System.out.println("norm2 of diff sinB " + vecNorm(addvec(treesinB,sinB,false)) + "\n\n\n");
 	}
-	
-	private void passMatrix(int n, double alpha){
-		long startTime = System.currentTimeMillis();
-		JNILib.initMatrix(n, alpha);
-		for(int i = 0; i < n; i++){
-			ArrayList<Integer> neighbors = indexToNeighbors.get(i);
-			int[] neighborArr = new int[neighbors.size()];
-			for(int j = 0; j < neighbors.size(); j++){
-				neighborArr[j] = neighbors.get(j);
-			}
-			JNILib.passValue(i, neighbors.size(), neighborArr);
-		}
-		long endTime = System.currentTimeMillis();
-		System.out.println("construct mat took " + (endTime - startTime) + " miliseconds");
-		startTime = System.currentTimeMillis();
-		JNILib.decomMatrix();
-		endTime = System.currentTimeMillis();
-		System.out.println("LU decoposition took " + (endTime - startTime) + " miliseconds");
-	}
+
 	private double[] ConjugateGradient(double alpha, double[] init, double[] b){
 		double[] res = init;
 		double[] r = addvec(b, mat_mul_vec(alpha, init), false);
@@ -266,60 +226,63 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 			res = addvec(res, p, alpha_cg, true);
 			r = addvec(r, Ap, alpha_cg, false);
 			double rsnew = vecNorm(r);
-			//System.out.println("r norm: " + rsnew);
-			//double relNorm = vecNorm(addvec(b, mat_mul_vec(alpha, res),false));
 			if(Math.sqrt(rsnew) < CGthreshold){
 				break;
 			}
 			p = addvec(r, p, rsnew / rsold, true);
 			rsold = rsnew;
 		}
-		//double relNorm = vecNorm(addvec(b, mat_mul_vec(alpha, res),false));
+		/*double relNorm = vecNorm(addvec(b, mat_mul_vec(alpha, res),false));
+		if(relNorm > 10){
+			System.out.println("		relNorm for CG is too big!");
+		}*/
 		//System.out.println("after cg " + relNorm);
 		return res;
 	}
-	private void runBSMLayout(DNVGraph graph, int level){	
-		long startTime = System.currentTimeMillis();
+	public void runBSMLayout(DNVGraph graph, int level){	
+		Timer timer = new Timer();
+		timer.setStart();
+		//float timeForSinCos = 0;
+		//float timeForCG = 0;
+			
 		List<DNVNode> nodes = graph.getNodes(level);
 		int n = nodes.size();
 		mapNodeIndex(nodes);
 		//get the default layout of the graph, store positions in x_pos and y_pos
 		int index = 0;
-		generateInitRandomCoord(n);
-		
-		/*x_pos = new double[n];
+		x_pos = new double[n];
 		y_pos = new double[n];
-		for(DNVNode node : nodes){
-			Vector2D pos = node.getPosition();
-			//treex_pos[index] = 
-			x_pos[index] = pos.getX();
-			//treey_pos[index] = 
-			y_pos[index] = pos.getY();
-			index++;
-		}*/
+		for(int i = 0; i < nodes.size(); i++){
+			x_pos[i] = nodes.get(i).getPosition().getX();
+			y_pos[i] = nodes.get(i).getPosition().getY();
+		}
+		//generateInitRandomCoord(n);
+		
+		
 		Bound range = getRange(x_pos, y_pos);	
 		for(int i = 0; i < n; i++){
 			double[] constrainedPos = range.constrain(x_pos[i], y_pos[i]);
 			x_pos[i] = constrainedPos[0];
 			y_pos[i] = constrainedPos[1];
 		}
-		calcCosSin();
-		//getRange(cosB,sinB);
+		//timer.setEnd();
 		//calcCosSin_quadtree();
-		//getRange(cosB,sinB);
+		calcCosSin();
+		//timer.setEnd();
+		//timeForSinCos += timer.getLastSegment(Timer.SECONDS);
+
 		
 		int iter = 0;
-		double alpha = n;
-		//passMatrix(n, alpha);		
+		double alpha = n;	
 		for(; iter < maxIteration; iter++){
-			System.out.println("running iteration " + iter);
-			//printArray(x_pos, "x_pos");
-			double[] newx_pos = ConjugateGradient(alpha, x_pos, cosB);//JNILib.LUSolver(cosB);
-			//printArray(y_pos, "y_pos");
-			double[] newy_pos = ConjugateGradient(alpha, y_pos, sinB);//JNILib.LUSolver(sinB);
-			//System.out.println("\nxrange");
+			//System.out.println("running iteration " + iter);
+
+			double[] newx_pos = ConjugateGradient(alpha, x_pos, cosB);
+			double[] newy_pos = ConjugateGradient(alpha, y_pos, sinB);
+			//timer.setEnd();
+			//timeForCG += timer.getLastSegment(Timer.SECONDS);
+			
 			range = getRange(newx_pos, newy_pos);
-			//System.out.println("\n");
 			for(int i = 0; i < n; i++){
 				double[] constrainedPos = range.constrain(newx_pos[i], newy_pos[i]);
 				newx_pos[i] = constrainedPos[0];
@@ -335,57 +298,43 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 			x_pos = newx_pos;
 			y_pos = newy_pos;
 			
-			calcCosSin();
-			//getRange(cosB,sinB);
+			//timer.setEnd();
 			//calcCosSin_quadtree();
-			//getRange(cosB,sinB);
-			
-			
+			calcCosSin();
+			//timer.setEnd();
+			//timeForSinCos += timer.getLastSegment(Timer.SECONDS);
 			
 		}
-		/*for(; iter < maxIteration; iter++){
-			System.out.println("running iteration " + iter);
-			double[] newx_pos = JNILib.LUSolver(cosB);//ConjugateGradient(alpha, x_pos, cosB);
-			double relNorm = vecNorm(addvec(cosB, mat_mul_vec(alpha, newx_pos),false));
-			System.out.println("norm of Ax-cosB " + relNorm);
-			double[] newy_pos = JNILib.LUSolver(sinB);//ConjugateGradient(alpha, y_pos, sinB); 
-			relNorm = vecNorm(addvec(sinB, mat_mul_vec(alpha, newy_pos),false));
-			System.out.println("norm of Ay-sinB " + relNorm);
-			//x_pos = ConjugateGradient(alpha, x_pos, cosB);
-			//y_pos = ConjugateGradient(alpha, y_pos, sinB); 
-			double[] diffx = addvec(newx_pos, x_pos, false);
-			double[] diffy = addvec(newy_pos, y_pos, false);
-
-			if(vecNorm(diffx) / normx < BSthreshold && vecNorm(diffy) / normy < BSthreshold){
-				x_pos = newx_pos;
-				y_pos = newy_pos;
-				break;
-			}
-			x_pos = newx_pos;
-			y_pos = newy_pos;
-			//normx = (double) Math.sqrt(vecNorm(x_pos));
-			//normy = (double) Math.sqrt(vecNorm(y_pos));
-			normx = vecNorm(x_pos);
-			normy = vecNorm(y_pos);
-			try{
-				calcCosSin();
-			}catch(StackOverflowError e){
-				System.out.println("stack overflow at iter " + iter);
-				break;
-			}
-			//alpha = 1f;
-		}*/
 		
-		long endTime = System.currentTimeMillis();
-		long consumeTime = endTime - startTime;
-		System.out.println(LABEL + " finished in " + consumeTime + " milliseconds. " + iter + " iterations " +nodes.size() + " nodes");
-		System.out.println(consumeTime / (double)iter + " milliseconds per iteration\n");
+		float consumeTime = timer.getTimeSinceStart(Timer.SECONDS);
+		System.out.println(LABEL + " finished in " + consumeTime + " seconds. " + iter + " iterations " +nodes.size() + " nodes");
+		System.out.println(consumeTime / (double)iter + " seconds per iteration\n");
+		
+		if(writer != null){
+			try {
+				//writer.write(LABEL + " finished in " + consumeTime + " seconds. " + iter + " iterations " +nodes.size() + " nodes\n");
+				//writer.write(consumeTime / (double)iter + " seconds per iteration\n\n");
+				int e = graph.getEdges().size();
+				double time = consumeTime;
+				writer.write(time + "\t" + time/n + "\t" + time/e + "\t" + time/(n+e) + "\t" + time/(e/n) + "\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//System.out.println("time for sin cos " + timeForSinCos + " seconds");
+		//System.out.println("time for CG " + timeForCG + "seconds");
+		
 		//set the layout positions
 		index = 0;
 		for(DNVNode node : nodes){
 			node.setPosition((float)x_pos[index], (float)y_pos[index]);
 			index++;
 		}
+		
+		
+		
+		
 	}
 	private double[] mat_mul_vec(double alpha, double[] V){
 		double[] res = new double[V.length];
@@ -409,10 +358,8 @@ public class BinaryStressLayout implements SimpleLayoutInterface {
 	@Override
 	public void runLayout(DNVGraph graph, int level) {
 		System.out.println( "Running Binary Stress layout" );
-		//long startTime = System.currentTimeMillis();
-		runBSMLayout(graph, level);		
-		//long endTime = System.currentTimeMillis();
-		//System.out.println("finish running test layout");
+		
+		runBSMLayout(graph, level);
 	}
 	
 	/*public static void main( String args[] )

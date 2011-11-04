@@ -24,6 +24,8 @@
 
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -881,6 +883,8 @@ public class Springs implements TimeLimitedLayoutInterface
 	@Override
 	public void runLayout( DNVGraph graph, int level, double maxSeconds, boolean initializePositions, boolean layoutAllLevels )
 	{
+		Timer timer = new Timer(Timer.MILLISECONDS);
+		timer.setStart();
 		if( layoutAllLevels )
 		{
 			for( level = graph.getMaxLevel(); level >= 0; level-- )
@@ -892,7 +896,19 @@ public class Springs implements TimeLimitedLayoutInterface
 		{
 			layoutLevel( graph, level, maxSeconds, initializePositions );
 		}
-
+		timer.setEnd();
+		if(writer != null){
+			try{
+				//writer.write(LABEL + " finished in " + timer.getLastSegment( Timer.SECONDS ) + " seconds.\n");
+				int n = graph.getNodes(0).size();
+				int e = graph.getEdges().size();
+				double time = timer.getTimeSinceStart(Timer.SECONDS);;
+				writer.write(time + "\t" + time/n + "\t" + time/e + "\t" + time/(n+e) + "\t" + time/(e/n) + "\n");
+			}catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		// springs.printTimers();
 	}
 
@@ -934,5 +950,12 @@ public class Springs implements TimeLimitedLayoutInterface
 	public String getLabel()
 	{
 		return LABEL;
+	}
+	
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
 	}
 }

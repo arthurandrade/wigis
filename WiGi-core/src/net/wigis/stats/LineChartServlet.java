@@ -98,6 +98,7 @@ public class LineChartServlet  extends HttpServlet
 		}
 		
 		sb.bufferedImageChart( response.getOutputStream() );
+		//sb.bufferedImageSubGraphChart(response.getOutputStream());
 		
 	}
 }

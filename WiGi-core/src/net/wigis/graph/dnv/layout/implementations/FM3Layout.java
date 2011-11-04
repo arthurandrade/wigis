@@ -2,6 +2,7 @@ package net.wigis.graph.dnv.layout.implementations;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,12 @@ import net.wigis.settings.Settings;
 
 public class FM3Layout implements SimpleLayoutInterface{
 	public static final String LABEL = "FM3 Layout";
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
+	}
 	@Override
 	public String getLabel() {
 		// TODO Auto-generated method stub
@@ -52,7 +59,18 @@ public class FM3Layout implements SimpleLayoutInterface{
 			
 			if(position != null){
 				long endTime = System.currentTimeMillis();
-				//System.out.println("get result " + position.length);
+				if(writer != null){
+					try {
+						//writer.write(LABEL + " finished in " + (endTime - startTime)/1000.0 + " seconds\n\n");
+						int n = graph.getNodes(0).size();
+						int e = graph.getEdges().size();
+						double time = (endTime - startTime)/1000.0;
+						writer.write(time + "\t" + time/n + "\t" + time/e + "\t" + time/(n+e) + "\t" + time/(e/n) + "\n");
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				index = 0;
 				for(DNVNode node : nodes){
 					node.setPosition(position[index * 2], position[index * 2 + 1]);
@@ -67,6 +85,7 @@ public class FM3Layout implements SimpleLayoutInterface{
 			e.printStackTrace();
 		}
 	}
+
 		
 	
 

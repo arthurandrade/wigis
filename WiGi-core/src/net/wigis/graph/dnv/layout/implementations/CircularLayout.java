@@ -24,6 +24,7 @@
 
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -210,5 +211,11 @@ public class CircularLayout implements SortingLayoutInterface
 	public String getLabel()
 	{
 		return LABEL;
+	}
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
 	}
 }

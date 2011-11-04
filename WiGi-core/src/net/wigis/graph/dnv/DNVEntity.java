@@ -906,4 +906,21 @@ public class DNVEntity
 	{
 		this.highlightColor = highlightColor;
 	}
+	
+	public void updateEntityTimeInGraph()
+	{
+		if( graph != null )
+		{
+			graph.updateTimeForEntity( level, this );
+		}
+	}
+	
+	
+	public void updateEntityDKTimeInGraph()
+	{
+		if( graph != null )
+		{
+			graph.updateDKTimeForEntity( level, this );
+		}
+	}
 }

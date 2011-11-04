@@ -29,7 +29,7 @@ class Node{
 	private int subCnt;
 	private Bound boundary;
 	private boolean valid;
-	private static double threshold = 0.1;
+	//private static double threshold = 0.5;
 	private int level;
 	private int weight;
 	public Node(Bound boundary, int level){
@@ -76,7 +76,7 @@ class Node{
 		if(directDist <= 1e-10){
 			return res;
 		}
-		if(subCnt == 0 || boundary.size() / directDist < threshold ){
+		if(subCnt == 0/* || boundary.size() / directDist < threshold */){
 			res[0] = weight * (x2 - geox) / directDist;
 			res[1] = weight * (y2 - geoy) / directDist;
 		}

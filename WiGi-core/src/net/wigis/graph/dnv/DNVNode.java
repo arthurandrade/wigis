@@ -43,6 +43,7 @@ import net.wigis.graph.dnv.layout.implementations.Springs;
 import net.wigis.graph.dnv.utilities.SortByFloatProperty;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.graph.dnv.utilities.Vector3D;
+import net.wigis.stats.NodeStatistics;
 import net.wigis.stats.StatsBean;
 import net.wigis.svetlin.__Math;
 import net.wigis.svetlin.__String;
@@ -3144,6 +3145,54 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 	public int degree = 0;
 	public double degreeCentrality = 0;
 	public String neighborsHtmlList = "";
+	
+	
+	//========================================
+	// STATS - Greg
+	//========================================
+	public String inDegree = "None";
+	public String outDegree = "None";
+	
+	public String getInDegree(){
+		return String.valueOf(computeNodeInDegree());
+	}
+	
+	public void setInDegree(String ID){
+		inDegree = ID;
+	}
+	
+	public String getOutDegree(){
+		return String.valueOf(computeNodeOutDegree());
+	}
+	
+	public void setOutDegree(String ID){
+		outDegree = ID;
+	}
+	
+	public Integer computeNodeOutDegree(){
+		ArrayList<DNVEdge> edgesList = new ArrayList<DNVEdge>(graph.getEdges());
+		Integer counter = 0;
+		
+		for(DNVEdge e:edgesList){
+			if(e.getFrom().toString().compareToIgnoreCase(this.toString()) == 0){
+				counter++;
+			}
+		}
+		return counter;
+	}
+	
+	public Integer computeNodeInDegree(){
+		ArrayList<DNVEdge> edgesList = new ArrayList<DNVEdge>(graph.getEdges());
+		Integer counter = 0;
+		
+		for(DNVEdge e:edgesList){
+			if(e.getTo().toString().compareToIgnoreCase(this.toString()) == 0){
+				counter++;
+			}
+		}
+		return counter; 
+	}
+	
 
 	//-------------------------------
 	// label non empty

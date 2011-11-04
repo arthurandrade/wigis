@@ -24,6 +24,7 @@
 
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
 import java.util.Collection;
 import java.util.List;
 
@@ -339,5 +340,11 @@ public class MultipoleForceDirectedLayout implements SpaceRestrictedLayoutInterf
 	public String getLabel()
 	{
 		return "Multipole Force Directed Layout";
+	}
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
 	}
 }

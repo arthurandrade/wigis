@@ -430,6 +430,15 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 					pb.runLayout();
 				}
 			}.start();
+		}else if( e.getKeyCode() == KeyEvent.VK_C )
+		{			
+			new Thread()
+			{
+				public void run()
+				{
+					pb.compLayout();
+				}
+			}.start();
 		}
 		else if( e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE )
 		{

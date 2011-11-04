@@ -132,7 +132,10 @@ public class SubGraph
 	 */
 	public void addEdge( DNVEdge edge )
 	{
-		edges.put( edge.getId(), edge );
+		//synchronized( edges )
+		//{
+			edges.put( edge.getId(), edge );
+		//}
 	}
 
 	/**
@@ -222,7 +225,10 @@ public class SubGraph
 	 */
 	public void setEdges( Map<Integer, DNVEdge> edges )
 	{
-		this.edges = edges;
+		//synchronized( this.edges )
+		//{
+			this.edges = edges;
+		//}
 	}
 
 	/**

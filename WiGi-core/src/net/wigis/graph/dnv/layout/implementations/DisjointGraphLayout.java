@@ -24,6 +24,7 @@
 
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +48,12 @@ import net.wigis.settings.Settings;
  */
 public class DisjointGraphLayout implements SimpleLayoutInterface
 {
-
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
+	}
 	/**
 	 * Layout.
 	 * 

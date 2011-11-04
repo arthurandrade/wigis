@@ -24,6 +24,7 @@
 
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
 import java.util.List;
 
 import net.wigis.graph.dnv.DNVEdge;
@@ -356,6 +357,12 @@ public class HopDistanceLayout implements NodeCentralizedLayoutInterface
 	public String getLabel()
 	{
 		return "Hop Distance Layout";
+	}
+	private BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
 	}
 
 }

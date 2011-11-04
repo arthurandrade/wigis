@@ -1,5 +1,6 @@
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,7 @@ import net.wigis.graph.dnv.utilities.Vector2D;
 public class TouchGraphLayout implements SimpleLayoutInterface, Runnable
 {
 	public static final String LABEL = "TouchGraph Layout";
-
+	private BufferedWriter writer;
 	@Override
 	public String getLabel()
 	{
@@ -420,6 +421,12 @@ public class TouchGraphLayout implements SimpleLayoutInterface, Runnable
 	public void setLevel( int level )
 	{
 		this.level = level;
+	}
+
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
 	}
 
 

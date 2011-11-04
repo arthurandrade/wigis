@@ -24,6 +24,8 @@
 
 package net.wigis.graph.dnv.layout.implementations;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +35,7 @@ import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.layout.helpers.Grid;
 import net.wigis.graph.dnv.layout.interfaces.SpaceRestrictedLayoutInterface;
 import net.wigis.graph.dnv.utilities.GraphFunctions;
+import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 
 // TODO: Auto-generated Javadoc
@@ -64,9 +67,15 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 	 * @param useNodeSize
 	 *            the use node size
 	 */
+	private static boolean enableWrite = true;
 	// // private static Log logger = LogFactory.getLog(
 	// FruchtermanReingold.class );
-
+	public FruchtermanReingold(){
+		
+	}
+	public FruchtermanReingold(boolean enableWrite){
+		this.enableWrite = enableWrite;
+	}
 	public static void runIteration( float width, float height, DNVGraph graph, int level, float temperature, boolean useNumberOfSubnodes,
 			boolean useRestingDistance, boolean useNodeSize )
 	{
@@ -97,6 +106,8 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 	public static void runIteration( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float temperature,
 			boolean useNumberOfSubnodes, boolean useRestingDistance, boolean useNodeSize )
 	{
+		
+		
 		float area = width * height;
 		float k = (float)Math.sqrt( area / nodes.size() );
 		float kPower2 = k * k;
@@ -183,7 +194,7 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 		// apply the forces
 		for( DNVNode v : nodes )
 		{
-			if( v.getProperty( "pinned" ) == null )
+			if( v.getProperty( "pinned" ) == null ||  v.getProperty( "pinned" ).equals("false"))
 			{
 				difference.set( v.getForce() );
 				length = difference.length();
@@ -196,6 +207,7 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 				// -height / 2.0f, v.getPosition().getY() ) ) );
 			}
 		}
+		
 	}
 
 	/**
@@ -410,9 +422,14 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 	 * @param useNodeSize
 	 *            the use node size
 	 */
+	public void setEnableWrite(boolean enableWrite){
+		this.enableWrite = enableWrite;
+	}
 	private static void layoutLevel( float width, float height, Collection<DNVNode> nodes, Collection<DNVEdge> edges, float coolingFactor,
 			boolean useNumberOfSubnodes, boolean useEdgeRestingDistance, boolean useNodeSize )
 	{
+		Timer timer = new Timer( Timer.MILLISECONDS );
+		timer.setStart();
 		float size = Math.max( GraphFunctions.getGraphWidth( nodes, false ), width );
 		size = Math.max( size, Math.max( GraphFunctions.getGraphHeight( nodes, false ), height ) );
 		float temperature = size / 10.0f;
@@ -430,6 +447,20 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 				// System.out.println( "Temperature : " + temperature );
 			}
 		}
+		timer.setEnd();
+		if(writer != null && enableWrite){
+			try{
+				//writer.write(timer.getLastSegment( Timer.SECONDS ) + "\n");
+				int n = nodes.size();
+				int e = edges.size();
+				double time = timer.getTimeSinceStart(Timer.SECONDS);;
+				writer.write(time + "\t" + time/n + "\t" + time/e + "\t" + time/(n+e) + "\t" + time/(e/n) + "\n");
+				//writer.write(LABEL + " finished in " + timer.getLastSegment( Timer.SECONDS ) + " seconds.\n");
+			}catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/** The Constant FRUCHTERMAN_REINGOLD_LAYOUT. */
@@ -439,5 +470,11 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 	public String getLabel()
 	{
 		return LABEL;
+	}
+	private static BufferedWriter writer;
+	@Override
+	public void setOutputWriter(BufferedWriter writer) {
+		// TODO Auto-generated method stub
+		this.writer = writer;
 	}
 }

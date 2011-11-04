@@ -26,11 +26,15 @@ package net.wigis.graph;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,6 +60,7 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.SubGraph;
 import net.wigis.graph.dnv.clustering.ConnectedClustering;
+import net.wigis.graph.dnv.clustering.DK1Clustering;
 import net.wigis.graph.dnv.clustering.KMostConnected;
 import net.wigis.graph.dnv.clustering.SolarSystemClustering;
 import net.wigis.graph.dnv.clustering.StructuralEquivalenceClustering;
@@ -63,6 +68,8 @@ import net.wigis.graph.dnv.geometry.Text;
 import net.wigis.graph.dnv.interaction.implementations.InterpolationMethod;
 import net.wigis.graph.dnv.interaction.interfaces.InteractionInterface;
 import net.wigis.graph.dnv.layout.implementations.CircularLayout;
+import net.wigis.graph.dnv.layout.implementations.Dk1Layout;
+import net.wigis.graph.dnv.layout.implementations.FruchtermanReingold;
 import net.wigis.graph.dnv.layout.implementations.RandomLayout;
 import net.wigis.graph.dnv.layout.interfaces.CenterPositionFixedLayoutInterface;
 import net.wigis.graph.dnv.layout.interfaces.LayoutInterface;
@@ -295,6 +302,9 @@ public class PaintBean
 
 	/** The time expanded. */
 	private boolean timeExpanded = false;
+	
+	/** The terrorism analysis expanded. */
+	private boolean terrorismExpanded = false;
 
 	/** The data expanded. */
 	private boolean dataExpanded = false;
@@ -316,9 +326,18 @@ public class PaintBean
 
 	/** The max time. */
 	private int maxTime = 0;
+	
+	/** The min time. */
+	private int minDKTime = 0;
+
+	/** The max time. */
+	private int maxDKTime = 0;
 
 	/** The all times. */
 	private List<Long> allTimes = new ArrayList<Long>();
+	
+	/** The all dktimes. */
+	private List<Long> allDKTimes = new ArrayList<Long>();
 
 	// private boolean hasBeenDisplayed = false;
 
@@ -655,14 +674,7 @@ public class PaintBean
 				fixedZoom = true;
 			}
 
-			allTimes = new ArrayList<Long>( graph.getTimes( level ) );
-			Collections.sort( allTimes );
-			setMinTime( 0 );
-			setMaxTime( Math.max( 0, allTimes.size() - 1 ) );
-			if( !isShowTimeSelector() )
-			{
-				timeText = null;
-			}
+			refreshTime();
 
 			findSubGraph();
 //			if( subGraph.getNodesList().size() > 1000 )
@@ -674,6 +686,31 @@ public class PaintBean
 		}
 		printTime( "loadGrpah()", startTime );
 	}
+
+	public void refreshTime() {
+		allTimes = new ArrayList<Long>( graph.getTimes( level ) );
+		Collections.sort( allTimes );
+		setMinTime( 0 );
+		setMaxTime( Math.max( 0, allTimes.size() - 1 ) );
+		if( !isShowTimeSelector() )
+		{
+			timeText = null;
+		}
+	}
+	
+
+	
+	public void refreshDKTime() {
+		allDKTimes = new ArrayList<Long>( graph.getDKTimes( level ) );
+		Collections.sort( allDKTimes );
+		setMinDKTime( 0 );
+		setMaxDKTime( Math.max( 0, allDKTimes.size() - 1 ) );
+		if( !isShowDKTimeSelector() )
+		{
+			timeText = null;
+		}
+	}
+	
 
 	/**
 	 * Sets the graph.
@@ -1564,6 +1601,29 @@ public class PaintBean
 			this.level = (int)level;
 			resetNumberOfClusters();
 			updateNumberAffected();
+			for(int l = 0; l < level; l++){
+				for(DNVNode node : graph.getNodes(l)){
+					node.setVisible(false);
+				}
+				for(DNVEdge edge : graph.getEdges(l)){
+					edge.setVisible(false);
+				}
+			}
+			for(DNVNode node : graph.getNodes((int) level)){
+				node.setVisible(true);
+			}
+			for(DNVEdge edge : graph.getEdges((int) level)){
+				edge.setVisible(true);
+			}
+			for(int l = (int) (level+1); l < graph.getMaxLevel(); l++){
+				for(DNVNode node : graph.getNodes(l)){
+					node.setVisible(false);
+				}
+				for(DNVEdge edge : graph.getEdges(l)){
+					edge.setVisible(false);
+				}
+			}
+			forceSubgraphRefresh();
 		}
 	}
 
@@ -2207,6 +2267,118 @@ public class PaintBean
 		printTime( "runLayout(...", startTime );
 
 	}
+	public void compLayout(){
+		ArrayList<LayoutInterface> layouts = new ArrayList<LayoutInterface>();
+		layouts.add(this.getLayoutMethod("FM3 Layout"));
+		layouts.add(this.getLayoutMethod("Binary Stress Layout"));
+		layouts.add(this.getLayoutMethod("Fructerman-Reingold"));
+		layouts.add(this.getLayoutMethod("Spring Layout"));
+		layouts.add(this.getLayoutMethod("DK1-Layout"));
+		layouts.add(this.getLayoutMethod("DK2-Layout"));
+		layouts.add(this.getLayoutMethod("DK3-Layout"));
+		
+		try {
+			String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
+			new File("/Users/scarlettteng/dev/" + fname).mkdir();
+			File file = new File("/Users/scarlettteng/dev/" + fname + "/" + "time.txt");
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			FileWriter outputFileWriter = new FileWriter(file);
+			BufferedWriter outputWriter = new BufferedWriter( outputFileWriter );
+			outputWriter.write("graph contains " + graph.getNodes(0).size() + " nodes " + graph.getEdges().size() + " edges\n\n");
+			for(LayoutInterface layout : layouts){
+				Dk1Layout.randomizePosition(graph);
+				if(layout instanceof FruchtermanReingold){
+					((FruchtermanReingold)layout).setEnableWrite(true);
+				}
+				this.setLayoutMethod(layout);		
+				layout.setOutputWriter(outputWriter);				
+				layoutRunning = true;
+
+				runLayout( clusterBeforeLayout, layoutAllLevels, clusteringMethod, graph, level, 1, nodeSize, coolingFactor,
+						recommendationCircle, layoutMethod, false );
+
+				forceSubgraphRefresh();
+				
+				saveImg("/Users/scarlettteng/dev/" + fname + "/" + layout.getLabel() + ".jpg");
+				layoutRunning = false;
+			}
+			outputWriter.flush();
+			outputWriter.close();
+			outputFileWriter.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+	public void saveImg(String filename){
+		try {
+			//System.out.println("http://localhost:8080/WiGi/wigi/GraphServlet?r=qual");
+//			imageSrc = new URL("http://localhost:8080/WiGi/wigi/GraphServlet?r=qual");
+//			
+//			BufferedImage src = ImageIO.read(imageSrc);
+
+			int rendering = BufferedImage.TYPE_INT_RGB;
+			BufferedImage img = new BufferedImage( width, height, rendering );
+			Graphics2D graphics2D = img.createGraphics();
+			paint( graphics2D, width, height, false, sortNodes && ( rendering != BufferedImage.TYPE_BYTE_INDEXED ) );
+			File file = new File(filename);
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			ImageIO.write(img, "jpg", file);
+			//BufferedImage image = toBufferedImage(src);
+			//save(image, "jpg");
+			
+		}catch(IOException e){
+			System.out.println("	saveImg : ImageIOException");
+		}
+	}
+	public void saveSnapShot(){
+		try {
+			String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
+			File dir = new File("/Users/scarlettteng/dev/" + fname);
+			if(!dir.isDirectory()){
+				dir.mkdir();
+			}
+			String filename = "/Users/scarlettteng/dev/" + fname + "/" + System.currentTimeMillis() + ".jpg";
+			int rendering = BufferedImage.TYPE_INT_RGB;
+			BufferedImage img = new BufferedImage( width, height, rendering );
+			Graphics2D graphics2D = img.createGraphics();
+			paint( graphics2D, width, height, false, sortNodes && ( rendering != BufferedImage.TYPE_BYTE_INDEXED ) );
+			File file = new File(filename);
+			if(!file.exists()){
+				file.createNewFile();
+			}
+			ImageIO.write(img, "jpg", file);		
+		}catch(IOException e){
+			System.out.println("	saveImg : ImageIOException");
+		}
+	}
+
+
+    private void save(BufferedImage image, String ext) {
+        String fileName = "/Users/scarlettteng/savingAnImage";
+        File file = new File(fileName + "." + ext);
+        try {
+            ImageIO.write(image, ext, file);  // ignore returned boolean
+        } catch(IOException e) {
+            System.out.println("Write error for " + file.getPath() +
+                               ": " + e.getMessage());
+        }
+    }
+
+    private BufferedImage toBufferedImage(Image src) {
+        int w = src.getWidth(null);
+        int h = src.getHeight(null);
+        int type = BufferedImage.TYPE_INT_RGB;  // other options
+        BufferedImage dest = new BufferedImage(w, h, type);
+        Graphics2D g2 = dest.createGraphics();
+        g2.drawImage(src, 0, 0, null);
+        g2.dispose();
+        return dest;
+    }
 
 	/**
 	 * Randomize positions.
@@ -2253,6 +2425,9 @@ public class PaintBean
 		if( clusteringMethod.equals( Settings.K_MOST_CONNECTED_CLUSTERING ) )
 		{
 			KMostConnected.cluster( graph, (int)numberOfClusters, level, true );
+		}
+		else if(clusteringMethod.equals( Settings.DK1_CLUSERING )){
+			DK1Clustering.cluster(graph);
 		}
 		else if( clusteringMethod.equals( Settings.SOLAR_SYSTEM_CLUSTERING ) )
 		{
@@ -5268,6 +5443,16 @@ public class PaintBean
 
 		return true;
 	}
+	
+	public boolean isShowDKTimeSelector()
+	{
+		if( graph.getMaxDKTime( level ) == Long.MIN_VALUE )
+		{
+			return false;
+		}
+
+		return true;
+	}
 
 	/**
 	 * Sets the min time.
@@ -5283,8 +5468,26 @@ public class PaintBean
 			updateNodesWithinTimeframe();
 		}
 	}
+	
+	/**
+	 * Sets the min dktime.
+	 * 
+	 * @param minTime
+	 *            the new min time
+	 */
+	public void setMinDKTime( int minDKTime )
+	{
+		//System.out.println("input " + minDKTime + " set new minDKTime " + this.minDKTime);
+		if( minDKTime != this.minDKTime )
+		{
+			this.minDKTime = minDKTime;
+			//System.out.println("input " + minDKTime + " set new minDKTime " + this.minDKTime);
+			updateNodesWithinDKTimeframe();
+		}
+	}
 
 	private Text timeText;
+	//private Text timeText;
 	/**
 	 * Update nodes within timeframe.
 	 */
@@ -5293,8 +5496,16 @@ public class PaintBean
 		synchronized( graph )
 		{
 			String timeStr;
+			
+			
 			for( DNVNode node : graph.getNodes( level ) )
 			{
+				/*System.out.println( "node minTime:" + node.getProperty( "minTime" ) );
+				System.out.println( "global minTime:" + allTimes.get(  minTime ) );
+				System.out.println( "node minTime:" + node.getProperty( "minTime" ) );
+				System.out.println( "global minTime:" + allTimes.get(  minTime ) );
+				System.out.println( "node minTime:" + node.getProperty( "minTime" ) );*/
+				
 				timeStr = node.getProperty( "minTime" );
 				if( timeStr != null )
 				{
@@ -5325,7 +5536,7 @@ public class PaintBean
 					node.setVisible( false );
 				}
 			}
-	
+			
 			for( DNVEdge edge : graph.getEdges( level ) )
 			{
 				timeStr = edge.getProperty( "time" );
@@ -5341,10 +5552,90 @@ public class PaintBean
 					edge.setVisible( false );
 				}
 			}
+	
+			
 			
 			if( allTimes.size() > 0 )
 			{
 				timeText = new Text( getMinTimeValue() + " - " + getMaxTimeValue(), new Vector2D( width / 2, 12 ), new Vector3D(1,1,1), new Vector3D(0,0,0), 18, true, true, false, false, false, false, true );
+			}
+			else
+			{
+				timeText = null;
+			}
+			
+			forceSubgraphRefresh();
+		}
+	}
+
+	
+	private void updateNodesWithinDKTimeframe()
+	{
+		synchronized( graph )
+		{
+			String timeStr;
+			
+			
+			for( DNVNode node : graph.getNodes( level ) )
+			{
+				/*System.out.println( "node minTime:" + node.getProperty( "minTime" ) );
+				System.out.println( "global minTime:" + allTimes.get(  minTime ) );
+				System.out.println( "node minTime:" + node.getProperty( "minTime" ) );
+				System.out.println( "global minTime:" + allTimes.get(  minTime ) );
+				System.out.println( "node minTime:" + node.getProperty( "minTime" ) );*/
+				
+				timeStr = node.getProperty( "minDKTime" );
+				if( timeStr != null )
+				{
+					if( Long.parseLong( timeStr ) < allDKTimes.get(  minDKTime ) )
+					{
+						node.setVisible( false );
+						continue;
+					}
+				}
+				timeStr = node.getProperty( "maxDKTime" );
+				if( timeStr != null )
+				{
+					if( Long.parseLong( timeStr ) > allDKTimes.get(  maxDKTime ) )
+					{
+						node.setVisible( false );
+						continue;
+					}
+				}
+				
+				timeStr = node.getProperty( "dktime" );
+				if( timeStr == null || timeStr.equals( "" )
+						|| ( Long.parseLong( timeStr ) >= allDKTimes.get( minDKTime ) && Long.parseLong( timeStr ) <= allDKTimes.get( maxDKTime ) ) )
+				{
+					node.setVisible( true );
+				}
+				else
+				{
+					node.setVisible( false );
+				}
+			}
+			
+			for( DNVEdge edge : graph.getEdges( level ) )
+			{
+				timeStr = edge.getProperty( "dktime" );
+				if( timeStr == null || timeStr.equals( "" )
+						|| ( Long.parseLong( timeStr ) >= allDKTimes.get( minDKTime ) && Long.parseLong( timeStr ) <= allDKTimes.get( maxDKTime ) ) )
+				{
+					edge.setVisible( true );
+					edge.getFrom().setVisible( true );
+					edge.getTo().setVisible( true );
+				}
+				else
+				{
+					edge.setVisible( false );
+				}
+			}
+	
+			
+			
+			if( allDKTimes.size() > 0 )
+			{
+				timeText = new Text( getMinDKTimeValue() + " - " + getMaxDKTimeValue(), new Vector2D( width / 2, 12 ), new Vector3D(1,1,1), new Vector3D(0,0,0), 18, true, true, false, false, false, false, true );
 			}
 			else
 			{
@@ -5375,11 +5666,37 @@ public class PaintBean
 		return "";
 	}
 	
+
 	public String getMaxTimeValue()
 	{
 		if( allTimes.size() > minTime )
 		{
 			return "" + allTimes.get( maxTime );
+		}
+		
+		return "";
+	}
+	
+	public String getMaxDKTimeValue()
+	{
+		if( allDKTimes.size() > minDKTime )
+		{
+			return "" + allDKTimes.get( maxDKTime );
+		}
+		
+		return "";
+	}
+	
+	public int getMinDKTime()
+	{
+		return minDKTime;
+	}
+	
+	public String getMinDKTimeValue()
+	{
+		if( allDKTimes.size() > minDKTime )
+		{
+			return "" + allDKTimes.get( minDKTime );
 		}
 		
 		return "";
@@ -5399,6 +5716,21 @@ public class PaintBean
 			updateNodesWithinTimeframe();
 		}
 	}
+	
+	/**
+	 * Sets the max dk time.
+	 * 
+	 * @param maxTime
+	 *            the new max time
+	 */
+	public void setMaxDKTime( int maxTime )
+	{
+		if( this.maxDKTime != maxTime )
+		{
+			this.maxDKTime = maxTime;
+			updateNodesWithinDKTimeframe();
+		}
+	}
 
 	/**
 	 * Gets the max time.
@@ -5408,6 +5740,16 @@ public class PaintBean
 	public int getMaxTime()
 	{
 		return maxTime;
+	}
+	
+	/**
+	 * Gets the max time.
+	 * 
+	 * @return the max time
+	 */
+	public int getMaxDKTime()
+	{
+		return maxDKTime;
 	}
 
 	
@@ -5421,6 +5763,16 @@ public class PaintBean
 		setMaxTime( Math.min( minTime + window - 1, allTimes.size() - 1 ) );
 	}
 	
+	public int getDKTimeWindow()
+	{
+		return maxDKTime - minDKTime + 1;
+	}
+	
+	public void setDKTimeWindow( int window )
+	{
+		setMaxDKTime( Math.min( minDKTime + window - 1, allDKTimes.size() - 1 ) );
+	}
+	
 	/**
 	 * Gets the all times size.
 	 * 
@@ -5429,6 +5781,11 @@ public class PaintBean
 	public int getAllTimesSize()
 	{
 		return allTimes.size();
+	}
+	
+	public int getAllDKTimesSize()
+	{
+		return allDKTimes.size();
 	}
 
 	public void playTime()
@@ -5449,11 +5806,94 @@ public class PaintBean
 		stopPlayTime = false;
 	}
 	
+	private void playThroughUpdate()
+	{
+		synchronized( graph )
+		{
+			String timeStr;
+			
+			
+			for( DNVNode node : graph.getNodes( level ) )
+			{
+				if(node.isVisible()){
+					continue;
+				}
+				
+				timeStr = node.getProperty( "dktime" );
+				if( timeStr == null || timeStr.equals( "" )
+						|| Long.parseLong( timeStr ) <= allDKTimes.get( maxDKTime ) ) 
+				{
+					node.setVisible( true );
+				}
+				else
+				{
+					node.setVisible( false );
+				}
+			}
+			
+			for( DNVEdge edge : graph.getEdges( level ) )
+			{
+				if(edge.getTo().isVisible() && edge.getFrom().isVisible()){
+					edge.setVisible(true);
+				}
+				else
+				{
+					edge.setVisible( false );
+				}
+			}
+	
+			
+			
+			if( allDKTimes.size() > 0 )
+			{
+				timeText = new Text( getMinDKTimeValue() + " - " + getMaxDKTimeValue(), new Vector2D( width / 2, 12 ), new Vector3D(1,1,1), new Vector3D(0,0,0), 18, true, true, false, false, false, false, true );
+			}
+			else
+			{
+				timeText = null;
+			}
+			
+			forceSubgraphRefresh();
+			
+		}
+	}
+
+	public void playThroughTime()
+	{	
+		HashSet<DNVNode> traveledNodes = new HashSet<DNVNode>();
+		//HashSet<DNVEdge> traveledEdges = new HashSet<DNVEdge>();
+		int i = 1;
+		while( !stopPlayDKTime && maxDKTime < allDKTimes.size() - 1 )
+		{
+			maxDKTime += 1;
+			playThroughUpdate();		
+			/*if(i % 5 == 0){
+				saveSnapShot();
+			}
+			i++;*/
+			try
+			{
+				Thread.sleep(300);
+			}
+			catch( InterruptedException e ){}
+		}
+		
+//		System.out.println( "Stopping at " + minTime + " - " + maxTime );
+		stopPlayDKTime = false;
+	}
 	private boolean stopPlayTime = false;
+	private boolean stopPlayDKTime = false;
+	
 	public void stopPlayTime()
 	{
 //		System.out.println( "Stop pressed at " + minTime + " - " + maxTime );
 		stopPlayTime = true;
+	}
+	
+	public void stopPlayDKTime()
+	{
+//		System.out.println( "Stop pressed at " + minTime + " - " + maxTime );
+		stopPlayDKTime = true;
 	}
 	
 	/**
@@ -5947,4 +6387,39 @@ public class PaintBean
 		this.neighborHighlightColor = neighborHighlightColor;
 	}
 	
+	
+	
+	/**
+	 * Terrorism Analysis
+	 */
+	public boolean isShowTerrorism(){
+		String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
+		
+		if(fname.equals("terrorism")){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	public void setTerrorismExpanded(boolean val){
+		this.terrorismExpanded = val;
+	}
+	public boolean isTerrorismExpanded()
+	{
+		return terrorismExpanded;
+	}
+	/**
+	 * Expand terrorism.
+	 */
+	public void expandTerrorism()
+	{
+		setTerrorismExpanded( true );
+	}
+	/**
+	 * collapse terrorism
+	 */
+	public void collapseTerrorism()
+	{
+		setTerrorismExpanded(false);
+	}
 }
