@@ -448,7 +448,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jgrapht-jdk1.6.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jgrapht-jdk1.6.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
 		</attributes>

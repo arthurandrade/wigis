@@ -1147,8 +1147,11 @@ public class ImageRenderer
 						SELECTED_HIGHLIGHT_COLOR.getZ() );
 				for( DNVEdge tempEdge : selectedEdges )
 				{
+					boolean selected = tempEdge.isSelected();
+					tempEdge.setSelected( true );
 					drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, selectedEdgeColor,
 							tempEdge, true, outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
+					tempEdge.setSelected( selected );
 				}
 			//}
 		}
