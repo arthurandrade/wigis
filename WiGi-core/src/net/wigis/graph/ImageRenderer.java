@@ -1136,8 +1136,11 @@ public class ImageRenderer
 						}
 						else
 						{
-							drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, standardColor,
-									tempEdge, drawLabels, outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
+							if( tempEdge.getAlpha() > 0 )
+							{
+								drawEdge( g2d, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, minX, maxX, minY, maxY, standardColor,
+										tempEdge, drawLabels, outlinedLabels, (int)labelSize, overview, nodeWidth, edgeThickness, boldLabels );
+							}
 						}
 					}
 				}
