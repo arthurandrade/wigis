@@ -501,6 +501,8 @@ public class PaintBean
 		}
 	}
 
+	private Timer framerateTimer = new Timer( Timer.MILLISECONDS );
+	private boolean printFramerate = true;
 	/**
 	 * Paint.
 	 * 
@@ -519,6 +521,15 @@ public class PaintBean
 	 */
 	public void paint( Graphics2D g2d, int width, int height, boolean overview, boolean sortNodes ) throws IOException
 	{
+		if( printFramerate )
+		{
+			framerateTimer.setEnd();
+			float time = framerateTimer.getLastSegment( Timer.SECONDS );
+			float fps = 1.0f / time;
+			System.out.println( "last frame time: " + time );
+			System.out.println( "fps: " + fps );
+			framerateTimer.setStart();
+		}
 		long startTime = System.currentTimeMillis();
 		synchronized( graph )
 		{
