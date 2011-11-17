@@ -6433,4 +6433,9 @@ public class PaintBean
 	{
 		this.hideEdgeLabels = hideEdgeLabels;
 	}
+	
+	public void toggleHideEdgeLabels()
+	{
+		setHideEdgeLabels( !isHideEdgeLabels() );
+	}
 }
