@@ -34,7 +34,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -199,6 +198,8 @@ public class PaintBean
 
 	/** The show labels. */
 	private boolean showLabels = Settings.DEFAULT_SHOW_LABELS;
+	
+	private boolean hideEdgeLabels = false;
 
 	/** The curved labels. */
 	private boolean curvedLabels = false;
@@ -586,7 +587,7 @@ public class PaintBean
 							sortNodes, highlightNeighbors, highlightEdges, maxLabelLength, curvedLabelAngle, scaleLabels, hideConflictingLabels,
 							drawLabelBox, boldLabels, fadeFactor, maxNumberOfSelectedLabels, maxDistanceToHighlight, drawWatermark,
 							drawNeighborHighlight, drawNumberOfNodesInBox, drawNeighborHighlightAsBoxes, drawAllNeighborsHighlight,
-							alignBoxInfoRelativeToBox, timeText, drawAxis, neighborHighlightColor );
+							alignBoxInfoRelativeToBox, timeText, drawAxis, neighborHighlightColor, hideEdgeLabels );
 					drawTimer.setEnd();
 					if( Settings.DEBUG && !overview )
 					{
@@ -6421,5 +6422,15 @@ public class PaintBean
 	public void collapseTerrorism()
 	{
 		setTerrorismExpanded(false);
+	}
+
+	public boolean isHideEdgeLabels()
+	{
+		return hideEdgeLabels;
+	}
+
+	public void setHideEdgeLabels( boolean hideEdgeLabels )
+	{
+		this.hideEdgeLabels = hideEdgeLabels;
 	}
 }

@@ -202,7 +202,7 @@ public class ImageRenderer
 			boolean hideConflictingLabels, boolean drawLabelBox, boolean boldLabels, float fadeFactor, int maxNumberOfSelectedLabels,
 			int maxDistanceToHighlight, boolean drawWatermark, boolean drawNeighborArea, boolean drawNumberOfNodesInBox,
 			boolean drawNeighborHighlightAsBoxes, boolean drawAllNeighborsHighlight, boolean alignBoxInfoRelativeToBox, Text timeText,
-			boolean drawAxis, Vector3D neighborHighlightColor ) throws IOException
+			boolean drawAxis, Vector3D neighborHighlightColor, boolean hideEdgeLabels ) throws IOException
 	{
 		g2d.setColor( Color.white );
 		g2d.fillRect( 0, 0, width, height );
@@ -299,7 +299,7 @@ public class ImageRenderer
 			// ------------------------------
 			Timer edgesTimer = new Timer( Timer.MILLISECONDS );
 			edgesTimer.setStart();
-			drawEdges( subgraph, g2d, nodeSize, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, edgeThickness, drawLabels,
+			drawEdges( subgraph, g2d, nodeSize, width, height, minXPercent, minYPercent, maxXPercent, maxYPercent, ratio, edgeThickness, drawLabels && !hideEdgeLabels,
 					outlinedLabels, labelSize, minX, maxX, minY, maxY, overview, scaleNodesOnZoom, highlightNeighbors || highlightEdges,
 					standardColor, g2d, boldLabels, nodeWidth );
 			edgesTimer.setEnd();

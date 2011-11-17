@@ -410,6 +410,7 @@ public class WiGiGUIHandler
 	private boolean hoveredNodeWasHighlighted = false;
 	private Vector3D hoveredNodeOldColor = null;
 	private DNVNode lastHoveredNode = null;
+	private boolean hoveredNodeWasMustDrawLabel = false;
 	public DNVNode getLastHoveredNode()
 	{
 		return lastHoveredNode;
@@ -471,16 +472,20 @@ public class WiGiGUIHandler
 	{
 		hoveredNodeWasHighlighted = hoveredNode.isHighlighted();
 		hoveredNodeOldColor = hoveredNode.getHighlightColor();
+		hoveredNodeWasMustDrawLabel = hoveredNode.isForceLabel();
 		hoveredNode.setHighlighted( true );
 		hoveredNode.setHighlightColor( hoveredNode.getColor() );
+		hoveredNode.setForceLabel( true );
 	}
 
 	private void restoreHoveredNode()
 	{
 		hoveredNode.setHighlighted( hoveredNodeWasHighlighted );
 		hoveredNode.setHighlightColor( hoveredNodeOldColor );
+		hoveredNode.setForceLabel( hoveredNodeWasMustDrawLabel );
 		lastHoveredNode = hoveredNode;
 		hoveredNode = null;
+		hoveredNodeWasMustDrawLabel = false;
 	}
 
 }

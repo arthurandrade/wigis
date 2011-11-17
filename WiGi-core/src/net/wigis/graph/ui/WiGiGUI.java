@@ -462,6 +462,10 @@ public class WiGiGUI extends GLJPanel implements KeyListener, MouseListener, Mou
 		{
 			pb.setShowLabels( !pb.isShowLabels() );
 		}
+		else if( e.getKeyCode() == KeyEvent.VK_E )
+		{
+			pb.setHideEdgeLabels( !pb.isHideEdgeLabels() );
+		}
 	}
 
 	/*
