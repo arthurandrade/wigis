@@ -1597,7 +1597,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		if( line.contains( checkString ) )
 		{
 			tempLine = line.substring( line.indexOf( checkString ) + checkString.length() );
-			label = tempLine.substring( 0, tempLine.indexOf( "\"" ) );
+			if( tempLine.indexOf( "\"" ) == -1)
+				label = tempLine.substring( 0 );
+			else
+				label = tempLine.substring( 0, tempLine.indexOf( "\"" ) );
 		}
 		checkString = " Mass=\"";
 		if( line.contains( checkString ) )
@@ -1631,7 +1634,10 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 		if( line.contains( checkString ) )
 		{
 			tempLine = line.substring( line.indexOf( checkString ) + checkString.length() );
-			bbId = tempLine.substring( 0, tempLine.indexOf( "\"" ) );
+			if( tempLine.indexOf( "\"" ) == -1)
+				bbId = tempLine.substring( 0 );
+			else
+				bbId = tempLine.substring( 0, tempLine.indexOf( "\"" ) );
 		}
 		checkString = " ForceLabel=\"";
 		if( line.contains( checkString ) )
