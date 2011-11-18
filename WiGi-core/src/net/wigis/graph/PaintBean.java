@@ -502,7 +502,7 @@ public class PaintBean
 	}
 
 	private Timer framerateTimer = new Timer( Timer.MILLISECONDS );
-	private boolean printFramerate = true;
+	private boolean printFramerate = false;
 	/**
 	 * Paint.
 	 * 
