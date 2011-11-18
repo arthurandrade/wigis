@@ -464,7 +464,7 @@ public class FruchtermanReingold implements SpaceRestrictedLayoutInterface
 	}
 
 	/** The Constant FRUCHTERMAN_REINGOLD_LAYOUT. */
-	public static final String LABEL = "Fructerman-Reingold";
+	public static final String LABEL = "Fruchterman-Reingold";
 
 	@Override
 	public String getLabel()

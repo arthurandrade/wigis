@@ -13,7 +13,7 @@ import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.Timer;
-import net.wigis.graph.dnv.utilities.hashTableSort;
+import net.wigis.yun.hashTableSort;
 
 public class Dk1Calc {
 	private Hashtable<Integer, ArrayList<DNVNode>> degreeNodeTableDK1;
@@ -51,8 +51,8 @@ public class Dk1Calc {
 				degreeOccurTableDK1.put(degree, 1);
 			}
 		}
-		occurOrderedListDK1 = hashTableSort.sortByValue(degreeOccurTableDK1);
-		degreeOrderedListDK1 = hashTableSort.sortByKey(degreeNodeTableDK1);	
+		occurOrderedListDK1 = hashTableSort.sortByValueDesc(degreeOccurTableDK1);
+		degreeOrderedListDK1 = hashTableSort.sortByKeyDesc(degreeNodeTableDK1);	
 		timer.setEnd();
 		System.out.println("	computing dk1 took " + timer.getLastSegment(Timer.SECONDS) + " seconds");
 	}

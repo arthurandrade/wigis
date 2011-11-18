@@ -46,8 +46,8 @@ public class StatsBean {
 	private int previousId0 = -1;
 	private int previousId1 = -1;
 
-	PaintBean pb;
-	DNVGraph graph;
+	//PaintBean pb;
+	//DNVGraph PaintBean.getCurrentInstance().getGraph();
 
 	/**
 	 * Yun's variables
@@ -64,8 +64,8 @@ public class StatsBean {
 
 	// end Yun's variables
 	public List<SelectItem> getGraphPropertyList() {
-		synchronized (graph) {
-			String properties = graph.getProperty("propertyList");
+		synchronized (PaintBean.getCurrentInstance().getGraph()) {
+			String properties = PaintBean.getCurrentInstance().getGraph().getProperty("propertyList");
 			String[] propertiesArr = properties.split("\t");
 			graphPropertyList.clear();
 			SelectItem propertyItem;
@@ -79,13 +79,13 @@ public class StatsBean {
 	}
 
 	public List<SelectItem> getFilterPropertyList() {
-		synchronized (graph) {
-			String properties = graph.getProperty("propertyList");
+		synchronized (PaintBean.getCurrentInstance().getGraph()) {
+			String properties = PaintBean.getCurrentInstance().getGraph().getProperty("propertyList");
 			String[] propertiesArr = properties.split("\t");
 			filterPropertyList.clear();
 			SelectItem propertyItem;
 			for (int i = 0; i < propertiesArr.length; i++) {
-				if (graph.getProperty(propertiesArr[i]) != null) {
+				if (PaintBean.getCurrentInstance().getGraph().getProperty(propertiesArr[i]) != null) {
 					propertyItem = new SelectItem(propertiesArr[i],
 							propertiesArr[i]);
 					filterPropertyList.add(propertyItem);
@@ -96,13 +96,13 @@ public class StatsBean {
 	}
 
 	public List<SelectItem> getFilterPropertyValueList() {
-		synchronized (graph) {
+		synchronized (PaintBean.getCurrentInstance().getGraph()) {
 			if (filterProperty == null) {
-				String properties = graph.getProperty("propertyList");
+				String properties = PaintBean.getCurrentInstance().getGraph().getProperty("propertyList");
 				String[] propertiesArr = properties.split("\t");
 				filterProperty = propertiesArr[0];
 			}
-			String values = graph.getProperty(filterProperty);
+			String values = PaintBean.getCurrentInstance().getGraph().getProperty(filterProperty);
 			String[] valuesArr = values.split("\t");
 			filterPropertyValueList.clear();
 			SelectItem valueItem;
@@ -142,25 +142,25 @@ public class StatsBean {
 	}
 
 	public void buildEdgesForSameProperty() {
-		graph.buildEdgesForSameProperty(buildingEdgeProperty);
+		PaintBean.getCurrentInstance().getGraph().buildEdgesForSameProperty(buildingEdgeProperty);
 	}
 
 	public void deleteEdgesForSameProperty() {
-		graph.deleteEdgesForSameProperty(buildingEdgeProperty);
+		PaintBean.getCurrentInstance().getGraph().deleteEdgesForSameProperty(buildingEdgeProperty);
 	}
 
 	public void addFilter() {
-		graph.showEdgesWithProperty(filterProperty, filterPropertyValue);
+		PaintBean.getCurrentInstance().getGraph().showEdgesWithProperty(filterProperty, filterPropertyValue);
 	}
 
 	public void removeFilter() {
-		graph.hideEdgesWithProperty(filterProperty, filterPropertyValue);
+		PaintBean.getCurrentInstance().getGraph().hideEdgesWithProperty(filterProperty, filterPropertyValue);
 	}
 
 	private String filterStr = "Current Filters:\n";
 
 	public String getFilterStr() {
-		HashMap<String, String> filterHash = graph.getFilters();
+		HashMap<String, String> filterHash = PaintBean.getCurrentInstance().getGraph().getFilters();
 		filterStr = "Current Filters:\n";
 		for (String key : filterHash.keySet()) {
 			filterStr += ">> " + key + " (" + filterHash.get(key) + ")\n";
@@ -170,47 +170,47 @@ public class StatsBean {
 
 	/*
 	 * public void setFilterStr(){ HashMap<String, String> filterHash =
-	 * graph.getFilters(); filterStr = "Current Filters:\t"; for(String key :
+	 * PaintBean.getCurrentInstance().getGraph().getFilters(); filterStr = "Current Filters:\t"; for(String key :
 	 * filterHash.keySet()){ filterStr += ">> " + key + " (" +
 	 * filterHash.get(key) + ")\t"; } }
 	 */
 
 	public static String STYLE_STATS_FONT = "statsFont";
 
-	/** Average path length => for the whole graph */
+	/** Average path length => for the whole PaintBean.getCurrentInstance().getGraph() */
 	String averagePathLength = DEFAULT_STATS_MESSAGE;
 
-	/** Average degree distribution => for the whole graph */
+	/** Average degree distribution => for the whole PaintBean.getCurrentInstance().getGraph() */
 	String averageDegreeDistribution = DEFAULT_STATS_MESSAGE;
 
-	/** Average path length => for the sub graph */
+	/** Average path length => for the sub PaintBean.getCurrentInstance().getGraph() */
 	String subGraphAveragePathLength = DEFAULT_STATS_MESSAGE;
 
-	/** Average degree distribution => for the sub graph */
+	/** Average degree distribution => for the sub PaintBean.getCurrentInstance().getGraph() */
 	String subGraphAverageDegreeDistribution = DEFAULT_STATS_MESSAGE;
 
-	/** ShortestPath => pair graph */
+	/** ShortestPath => pair PaintBean.getCurrentInstance().getGraph() */
 	String shortestPath = "";
 
-	/** ShortestPath => pair graph */
+	/** ShortestPath => pair PaintBean.getCurrentInstance().getGraph() */
 	String shortestPathPath = "";
 
 	/** ShortestPath sentence */
 	String shortestPathSentence = "";
 
-	/** Average degree Centrality => graph */
+	/** Average degree Centrality => PaintBean.getCurrentInstance().getGraph() */
 	String averageDegreeCentrality = "";
 
-	/** Average degree Centrality => subgraph */
+	/** Average degree Centrality => subPaintBean.getCurrentInstance().getGraph() */
 	String subGraphAverageDegreeCentrality = "";
 
-	/** Average in-degree => graph */
+	/** Average in-degree => PaintBean.getCurrentInstance().getGraph() */
 	String averageInDegree = DEFAULT_STATS_MESSAGE;
 
-	/** Average out-degree => graph */
+	/** Average out-degree => PaintBean.getCurrentInstance().getGraph() */
 	String averageOutDegree = DEFAULT_STATS_MESSAGE;
 
-	/** true if the graph is directed => graph */
+	/** true if the PaintBean.getCurrentInstance().getGraph() is directed => PaintBean.getCurrentInstance().getGraph() */
 	boolean isDirected = false;
 
 	/** True if the node panel has to be rendered */
@@ -222,10 +222,10 @@ public class StatsBean {
 	/** True if the subGraph panel has to be rendered */
 	boolean subGraphPanelRendered;
 
-	/** Node types - tested with the graph :jod-pubs */
+	/** Node types - tested with the PaintBean.getCurrentInstance().getGraph() :jod-pubs */
 	int MAX_NODE_TYPES_SHOWN = 7;
 
-	/** Node types - tested with the graph :jod-pubs */
+	/** Node types - tested with the PaintBean.getCurrentInstance().getGraph() :jod-pubs */
 	int MAX_NODE_TYPES_FOR_VERTICAL_DISPLAY = 3;
 
 	/** Onload variable */
@@ -262,7 +262,7 @@ public class StatsBean {
 	public boolean isNodePanelRendered() {
 		getGraph();
 
-		return graph.getSelectedNodes(0).size() > 0;
+		return PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0).size() > 0;
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class StatsBean {
 	 */
 	public boolean isPairPanelRendered() {
 		getGraph();
-		if (graph.getSelectedNodes(0).size() == 2) {
+		if (PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0).size() == 2) {
 			return true;
 		} else {
 			return false;
@@ -302,7 +302,7 @@ public class StatsBean {
 	 */
 	public boolean isSubGraphPanelRendered() {
 		getGraph();
-		if (graph.getSelectedNodes(0).size() >= 2) {
+		if (PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0).size() >= 2) {
 			return true;
 		} else {
 			return false;
@@ -326,17 +326,17 @@ public class StatsBean {
 	public String getConnectedComponents() {
 		getGraph();
 
-		String s = Integer.toString(graph.getNumConnectedComponents());
+		String s = Integer.toString(PaintBean.getCurrentInstance().getGraph().getNumConnectedComponents());
 
-		if (graph.getNumConnectedComponents() > 1) {
+		if (PaintBean.getCurrentInstance().getGraph().getNumConnectedComponents() > 1) {
 			s += " (sizes: ";
 
-			for (ArrayList<DNVNode> a : graph.getConnectedComponents()) {
+			for (ArrayList<DNVNode> a : PaintBean.getCurrentInstance().getGraph().getConnectedComponents()) {
 				int size = a.size();
 
-				if (graph.getConnectedComponents().indexOf(a) >= MAX_CONNECTED_COMPONENTS_SHOWN) {
+				if (PaintBean.getCurrentInstance().getGraph().getConnectedComponents().indexOf(a) >= MAX_CONNECTED_COMPONENTS_SHOWN) {
 					s += " and "
-							+ (graph.getConnectedComponents().size() - graph
+							+ (PaintBean.getCurrentInstance().getGraph().getConnectedComponents().size() - PaintBean.getCurrentInstance().getGraph()
 									.getConnectedComponents().indexOf(a))
 							+ " more";
 
@@ -344,10 +344,10 @@ public class StatsBean {
 				}
 
 				s += __jsf.getHtml_forHyperlink_toCall_JavaBean(size + "",
-						"selectComponentForm", "BSelectComponent", graph
+						"selectComponentForm", "BSelectComponent", PaintBean.getCurrentInstance().getGraph()
 								.getConnectedComponents().indexOf(a) + "");
 
-				if (graph.getConnectedComponents().indexOf(a) != graph.numConnectedComponents - 1)
+				if (PaintBean.getCurrentInstance().getGraph().getConnectedComponents().indexOf(a) != PaintBean.getCurrentInstance().getGraph().numConnectedComponents - 1)
 					s += ", ";
 			}
 
@@ -375,7 +375,7 @@ public class StatsBean {
 		ArrayList<Vector3D> colors = new ArrayList<Vector3D>();
 		ArrayList<Integer> frequencies = new ArrayList<Integer>();
 
-		for (DNVNode n : graph.getVisibleNodes(0).values()) {
+		for (DNVNode n : PaintBean.getCurrentInstance().getGraph().getVisibleNodes(0).values()) {
 			int colorContainsIndex = colors_contains_color(colors, n.getColor());
 
 			if (colorContainsIndex == -1) {
@@ -427,21 +427,21 @@ public class StatsBean {
 	}
 
 	/**
-	 * Getter for the graphSize variable
+	 * Getter for the PaintBean.getCurrentInstance().getGraph()Size variable
 	 * */
 	public String getGraphSize() {
 		getGraph();
 
-		graphSize = graph.getVisibleNodes(0).size() + " nodes, "
-				+ graph.getVisibleEdges(0).size() + " edges";
+		graphSize = PaintBean.getCurrentInstance().getGraph().getVisibleNodes(0).size() + " nodes, "
+				+ PaintBean.getCurrentInstance().getGraph().getVisibleEdges(0).size() + " edges";
 
 		return graphSize;
 	}
 
 	/**
-	 * Setter for the graphSize variable
+	 * Setter for the PaintBean.getCurrentInstance().getGraph()Size variable
 	 * 
-	 * @param graphSize
+	 * @param PaintBean.getCurrentInstance().getGraph()Size
 	 */
 	public void setGraphSize(String graphSize) {
 		this.graphSize = graphSize;
@@ -470,12 +470,12 @@ public class StatsBean {
 	 * */
 	public String getAverageDegreeCentrality() {
 
-		String temp = graph.getProperty("averageDegreeCentrality");
+		String temp = PaintBean.getCurrentInstance().getGraph().getProperty("averageDegreeCentrality");
 		if (temp == null) {
-			String res = GraphStatistics.computeAverageDegreeCentrality(graph);
+			String res = GraphStatistics.computeAverageDegreeCentrality(PaintBean.getCurrentInstance().getGraph());
 
 			averageDegreeCentrality = res;
-			graph.setProperty("averageDegreeCentrality", res);
+			PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeCentrality", res);
 		} else {
 			averageDegreeCentrality = temp;
 		}
@@ -566,18 +566,18 @@ public class StatsBean {
 	 */
 	public boolean getIsDirected() {
 
-		String temp = graph.getProperty("isDirected");
+		String temp = PaintBean.getCurrentInstance().getGraph().getProperty("isDirected");
 
 		if (temp == null) {
 			Boolean directed = false;
-			ArrayList<DNVEdge> list = new ArrayList<DNVEdge>(graph
+			ArrayList<DNVEdge> list = new ArrayList<DNVEdge>(PaintBean.getCurrentInstance().getGraph()
 					.getVisibleEdges(0).values());
 			for (int i = 0; i < list.size(); i++) {
 				if (list.get(i).isDirectional()) {
 					directed = true;
 				}
 			}
-			graph.setProperty("isDirected", directed.toString());
+			PaintBean.getCurrentInstance().getGraph().setProperty("isDirected", directed.toString());
 			isDirected = directed;
 		}
 
@@ -595,18 +595,18 @@ public class StatsBean {
 	 */
 	public String getAverageInDegree() {
 
-		String temp = graph.getProperty("inDegree");
-		String temp2 = graph.getProperty("outDegree");
+		String temp = PaintBean.getCurrentInstance().getGraph().getProperty("inDegree");
+		String temp2 = PaintBean.getCurrentInstance().getGraph().getProperty("outDegree");
 
 		if (temp == null || temp2 == null) {
-			String res = GraphStatistics.computeInOutDegree(graph);
+			String res = GraphStatistics.computeInOutDegree(PaintBean.getCurrentInstance().getGraph());
 
 			int index = res.indexOf("?");
 			averageInDegree = res.substring(0, index);
 			averageOutDegree = res.substring(index + 1, res.length());
 
-			graph.setProperty("inDegree", averageInDegree);
-			graph.setProperty("outDegree", averageOutDegree);
+			PaintBean.getCurrentInstance().getGraph().setProperty("inDegree", averageInDegree);
+			PaintBean.getCurrentInstance().getGraph().setProperty("outDegree", averageOutDegree);
 		} else {
 			averageInDegree = temp;
 			averageOutDegree = temp2;
@@ -622,18 +622,18 @@ public class StatsBean {
 	 */
 	public String getAverageOutDegree() {
 
-		String temp = graph.getProperty("inDegree");
-		String temp2 = graph.getProperty("outDegree");
+		String temp = PaintBean.getCurrentInstance().getGraph().getProperty("inDegree");
+		String temp2 = PaintBean.getCurrentInstance().getGraph().getProperty("outDegree");
 
 		if (temp == null || temp2 == null) {
-			String res = GraphStatistics.computeInOutDegree(graph);
+			String res = GraphStatistics.computeInOutDegree(PaintBean.getCurrentInstance().getGraph());
 
 			int index = res.indexOf("?");
 			averageInDegree = res.substring(0, index);
 			averageOutDegree = res.substring(index + 1, res.length());
 
-			graph.setProperty("inDegree", averageInDegree);
-			graph.setProperty("outDegree", averageOutDegree);
+			PaintBean.getCurrentInstance().getGraph().setProperty("inDegree", averageInDegree);
+			PaintBean.getCurrentInstance().getGraph().setProperty("outDegree", averageOutDegree);
 		} else {
 			averageInDegree = temp;
 			averageOutDegree = temp2;
@@ -649,7 +649,7 @@ public class StatsBean {
 	 */
 	public String getSubGraphAverageDegreeCentrality() {
 		subGraphAverageDegreeCentrality = SubGraphStatistics
-				.computeAverageDegreeCentrality(graph);
+				.computeAverageDegreeCentrality(PaintBean.getCurrentInstance().getGraph());
 		return subGraphAverageDegreeCentrality;
 	}
 
@@ -682,10 +682,10 @@ public class StatsBean {
 		String temp = "";
 
 		// APL & ADD init
-		temp = graph.getProperty("averagePathLength");
+		temp = PaintBean.getCurrentInstance().getGraph().getProperty("averagePathLength");
 		if ((temp == null) || (temp.compareToIgnoreCase("Refresh please") == 0)) {
 
-			String res = GraphStatistics.computeAveragePathLength(graph);
+			String res = GraphStatistics.computeAveragePathLength(PaintBean.getCurrentInstance().getGraph());
 			int index = res.indexOf("?");
 
 			String APL = res.substring(0, index);
@@ -694,11 +694,11 @@ public class StatsBean {
 			averagePathLength = APL;
 			averageDegreeDistribution = ADD;
 
-			graph.setProperty("averagePathLength", APL);
-			graph.setProperty("averageDegreeDistribution", ADD);
+			PaintBean.getCurrentInstance().getGraph().setProperty("averagePathLength", APL);
+			PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeDistribution", ADD);
 		} else {
 			averagePathLength = temp;
-			averageDegreeDistribution = graph
+			averageDegreeDistribution = PaintBean.getCurrentInstance().getGraph()
 					.getProperty("averageDegreeDistribution");
 		}
 
@@ -715,10 +715,10 @@ public class StatsBean {
 		String temp = "";
 
 		// APL & ADD init
-		temp = graph.getProperty("averagePathLength");
+		temp = PaintBean.getCurrentInstance().getGraph().getProperty("averagePathLength");
 		if ((temp == null) || (temp.compareToIgnoreCase("Refresh please") == 0)) {
 
-			String res = GraphStatistics.computeAveragePathLength(graph);
+			String res = GraphStatistics.computeAveragePathLength(PaintBean.getCurrentInstance().getGraph());
 			int index = res.indexOf("?");
 
 			String APL = res.substring(0, index);
@@ -727,11 +727,11 @@ public class StatsBean {
 			averagePathLength = APL;
 			averageDegreeDistribution = ADD;
 
-			graph.setProperty("averagePathLength", APL);
-			graph.setProperty("averageDegreeDistribution", ADD);
+			PaintBean.getCurrentInstance().getGraph().setProperty("averagePathLength", APL);
+			PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeDistribution", ADD);
 		} else {
 			averagePathLength = temp;
-			averageDegreeDistribution = graph
+			averageDegreeDistribution = PaintBean.getCurrentInstance().getGraph()
 					.getProperty("averageDegreeDistribution");
 		}
 
@@ -745,7 +745,7 @@ public class StatsBean {
 	 */
 	public String getSubGraphAveragePathLength() {
 
-		Map<Integer, DNVNode> nodesMap = graph.getSelectedNodes(0);
+		Map<Integer, DNVNode> nodesMap = PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0);
 		Collection<DNVNode> c = nodesMap.values();
 		List<DNVNode> nodesList = new ArrayList<DNVNode>(c);
 
@@ -807,33 +807,33 @@ public class StatsBean {
 	}
 
 	/**
-	 * Getter of the graph variable
+	 * Getter of the PaintBean.getCurrentInstance().getGraph() variable
 	 * 
 	 * @return
 	 */
 	public DNVGraph getGraph() {
-		if (pb == null)
-			pb = getPaintBean();
+		//if (pb == null)
+//			pb = getPaintBean();
+//
+//		PaintBean.getCurrentInstance().getGraph() = pb.getGraph();
 
-		graph = pb.getGraph();
-
-		if (numGraphNodes != graph.getVisibleNodes(0).size())
+		if (numGraphNodes != PaintBean.getCurrentInstance().getGraph().getVisibleNodes(0).size())
 			invalidateData();
 
-		numGraphNodes = graph.getVisibleNodes(0).size(); // to track changes in
-															// graph
+		numGraphNodes = PaintBean.getCurrentInstance().getGraph().getVisibleNodes(0).size(); // to track changes in
+															// PaintBean.getCurrentInstance().getGraph()
 
-		return graph;
+		return PaintBean.getCurrentInstance().getGraph();
 	}
 
 	/**
 	 * Setter of the Graph variable
 	 * 
-	 * @param graph
+	 * @param PaintBean.getCurrentInstance().getGraph()
 	 */
-	public void setGraph(DNVGraph graph) {
-		this.graph = graph;
-	}
+//	public void setGraph(DNVGraph graph) {
+//		this.PaintBean.getCurrentInstance().getGraph() = PaintBean.getCurrentInstance().getGraph();
+//	}
 
 	/**
 	 * Getter of the onLoad variable
@@ -858,14 +858,14 @@ public class StatsBean {
 	 * in the DNVGraph object
 	 */
 	public boolean isRenderDK1Button() {
-
-		String temp1 = graph.getProperty("dk1");
+		
+		String temp1 = PaintBean.getCurrentInstance().getGraph().getProperty("dk1");
 		if (temp1 == null) {
 			dk1 = null;
 			return true;
 		} else {
 			// Hashtable<Integer, ArrayList<Integer>> table = new
-			// Hashtable<Integer, ArrayList<Integer>>(graph.getDk1Layout());
+			// Hashtable<Integer, ArrayList<Integer>>(PaintBean.getCurrentInstance().getGraph().getDk1Layout());
 			// editDk1Layout(table);
 			dk1 = temp1;
 			return false;
@@ -874,7 +874,7 @@ public class StatsBean {
 	}
 
 	public boolean isRenderDK2Button() {
-		String temp2 = graph.getProperty("dk2");
+		String temp2 = PaintBean.getCurrentInstance().getGraph().getProperty("dk2");
 		if (temp2 == null) {
 			dk2 = null;
 			return true;
@@ -882,9 +882,9 @@ public class StatsBean {
 			/*
 			 * Hashtable<Integer, ArrayList<Integer>> tableNodes = new
 			 * Hashtable<Integer, ArrayList<Integer>>(
-			 * graph.getDk2LayoutNodes()); Hashtable<Integer,
+			 * PaintBean.getCurrentInstance().getGraph().getDk2LayoutNodes()); Hashtable<Integer,
 			 * ArrayList<Integer>> tableEdges = new Hashtable<Integer,
-			 * ArrayList<Integer>>( graph.getDk2LayoutEdges());
+			 * ArrayList<Integer>>( PaintBean.getCurrentInstance().getGraph().getDk2LayoutEdges());
 			 * editDk2OrDk3Layout(tableNodes, tableEdges, "dk2Results");
 			 */
 			dk2 = temp2;
@@ -893,7 +893,7 @@ public class StatsBean {
 	}
 
 	public boolean isRenderDK3Button() {
-		String temp3 = graph.getProperty("dk3");
+		String temp3 = PaintBean.getCurrentInstance().getGraph().getProperty("dk3");
 		if (temp3 == null) {
 			dk3 = null;
 			return true;
@@ -901,9 +901,9 @@ public class StatsBean {
 			/*
 			 * Hashtable<Integer, ArrayList<Integer>> tableNodes = new
 			 * Hashtable<Integer, ArrayList<Integer>>(
-			 * graph.getDk3LayoutNodes()); Hashtable<Integer,
+			 * PaintBean.getCurrentInstance().getGraph().getDk3LayoutNodes()); Hashtable<Integer,
 			 * ArrayList<Integer>> tableEdges = new Hashtable<Integer,
-			 * ArrayList<Integer>>( graph.getDk3LayoutEdges());
+			 * ArrayList<Integer>>( PaintBean.getCurrentInstance().getGraph().getDk3LayoutEdges());
 			 * editDk2OrDk3Layout(tableNodes, tableEdges, "dk3Results");
 			 */
 			dk3 = temp3;
@@ -917,30 +917,31 @@ public class StatsBean {
 	 */
 
 	public void computeDk1() {
-		// synchronized(graph){
+		// synchronized(PaintBean.getCurrentInstance().getGraph()){
 		System.out.println("In compute dk1");
-		dk1Calc = new Dk1Calc(graph);
+		dk1Calc = new Dk1Calc(PaintBean.getCurrentInstance().getGraph());
 		dk1 = dk1Calc.toStringDk1Linked();
-		graph.setProperty("dk1", dk1);
+		//String temp1 = PaintBean.getCurrentInstance().getGraph().getProperty("dk1");
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk1", dk1);
 		// }
 
 	}
 
 	public void computeDk2() {
-		// synchronized(graph){
+		// synchronized(PaintBean.getCurrentInstance().getGraph()){
 		System.out.println("In compute dk2");
-		dk2Calc = new Dk2Calc(graph);
+		dk2Calc = new Dk2Calc(PaintBean.getCurrentInstance().getGraph());
 		dk2 = dk2Calc.toStringDk2Linked();
-		graph.setProperty("dk2", dk2);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk2", dk2);
 		// }
 	}
 
 	public void computeDk3() {
-		// synchronized(graph){
+		// synchronized(PaintBean.getCurrentInstance().getGraph()){
 		System.out.println("In compute dk3");
-		dk3Calc = new Dk3Calc(graph);
+		dk3Calc = new Dk3Calc(PaintBean.getCurrentInstance().getGraph());
 		dk3 = dk3Calc.toStringDk3Linked();
-		graph.setProperty("dk3", dk3);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk3", dk3);
 		// }
 		// pb.saveGraph();
 	}
@@ -1005,9 +1006,9 @@ public class StatsBean {
 	 * Onload function
 	 */
 	public void onload() {
-		// get graph
-		pb = getPaintBean();
-		graph = pb.getGraph();
+		// get PaintBean.getCurrentInstance().getGraph()
+//		pb = getPaintBean();
+//		PaintBean.getCurrentInstance().getGraph() = pb.getGraph();
 
 	}
 
@@ -1019,10 +1020,10 @@ public class StatsBean {
 	// String temp = "";
 	//
 	// //APL & ADD init
-	// temp = graph.getProperty("averagePathLength");
+	// temp = PaintBean.getCurrentInstance().getGraph().getProperty("averagePathLength");
 	// if(temp == null){
 	//
-	// String res = GraphStatistics.computeAveragePathLength(graph);
+	// String res = GraphStatistics.computeAveragePathLength(PaintBean.getCurrentInstance().getGraph());
 	// int index = res.indexOf("?");
 	//
 	// String APL = res.substring(0,index);
@@ -1031,39 +1032,39 @@ public class StatsBean {
 	// averagePathLength = APL;
 	// averageDegreeDistribution = ADD;
 	//
-	// graph.setProperty("averagePathLength", APL);
-	// graph.setProperty("averageDegreeDistribution", ADD);
+	// PaintBean.getCurrentInstance().getGraph().setProperty("averagePathLength", APL);
+	// PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeDistribution", ADD);
 	// }else{
 	// averagePathLength = temp;
 	// averageDegreeDistribution =
-	// graph.getProperty("averageDegreeDistribution");
+	// PaintBean.getCurrentInstance().getGraph().getProperty("averageDegreeDistribution");
 	// }
 	//
 	// //ADC init
-	// temp = graph.getProperty("averageDegreeCentrality");
+	// temp = PaintBean.getCurrentInstance().getGraph().getProperty("averageDegreeCentrality");
 	// if(temp == null){
-	// String res = GraphStatistics.computeAverageDegreeCentrality(graph);
+	// String res = GraphStatistics.computeAverageDegreeCentrality(PaintBean.getCurrentInstance().getGraph());
 	//
 	// averageDegreeCentrality = res;
-	// graph.setProperty("averageDegreeCentrality", res);
+	// PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeCentrality", res);
 	// }else{
 	// averageDegreeCentrality = temp;
 	// }
 	//
 	//
 	// //check if the property isDirected is stored, otherwise it is computed
-	// temp = graph.getProperty("isDirected");
+	// temp = PaintBean.getCurrentInstance().getGraph().getProperty("isDirected");
 	//
 	// if(temp == null){
 	// Boolean directed = false;
 	// ArrayList<DNVEdge> list = new
-	// ArrayList<DNVEdge>(graph.getVisibleEdges(0).values());
+	// ArrayList<DNVEdge>(PaintBean.getCurrentInstance().getGraph().getVisibleEdges(0).values());
 	// for(int i=0;i<list.size();i++){
 	// if(list.get(i).isDirectional()){
 	// directed = true;
 	// }
 	// }
-	// graph.setProperty("isDirected",directed.toString());
+	// PaintBean.getCurrentInstance().getGraph().setProperty("isDirected",directed.toString());
 	// }
 	//
 	// else{
@@ -1072,25 +1073,25 @@ public class StatsBean {
 	//
 	//
 	// //Check if the in-out-degree are stored, otherwise it is computed
-	// temp = graph.getProperty("inDegree");
-	// String temp2 = graph.getProperty("outDegree");
+	// temp = PaintBean.getCurrentInstance().getGraph().getProperty("inDegree");
+	// String temp2 = PaintBean.getCurrentInstance().getGraph().getProperty("outDegree");
 	//
 	// if(temp == null || temp2 == null){
-	// String res = GraphStatistics.computeInOutDegree(graph);
+	// String res = GraphStatistics.computeInOutDegree(PaintBean.getCurrentInstance().getGraph());
 	//
 	// int index = res.indexOf("?");
 	// averageInDegree = res.substring(0,index);
 	// averageOutDegree = res.substring(index+1,res.length());
 	//
-	// graph.setProperty("inDegree",averageInDegree);
-	// graph.setProperty("outDegree",averageOutDegree);
+	// PaintBean.getCurrentInstance().getGraph().setProperty("inDegree",averageInDegree);
+	// PaintBean.getCurrentInstance().getGraph().setProperty("outDegree",averageOutDegree);
 	// }
 	// else {
 	// averageInDegree = temp;
 	// averageOutDegree = temp2;
 	// }
 	//
-	// //statistics regarding a subgraph
+	// //statistics regarding a subPaintBean.getCurrentInstance().getGraph()
 	// if(isSubGraphPanelRendered()){
 	//
 	// }
@@ -1114,9 +1115,9 @@ public class StatsBean {
 	public void selectComponent() {
 		String param = __jsf.getParam();
 
-		graph.unsellectAllNodes();
+		PaintBean.getCurrentInstance().getGraph().unsellectAllNodes();
 
-		for (DNVNode n : graph.getConnectedComponents().get(
+		for (DNVNode n : PaintBean.getCurrentInstance().getGraph().getConnectedComponents().get(
 				Integer.parseInt(param)))
 			n.setSelected(true);
 	}
@@ -1125,7 +1126,7 @@ public class StatsBean {
 	// invalidate data
 	// --------------------------------
 	public void invalidateData() {
-		graph.setNumConnectedComponents(0);
+		PaintBean.getCurrentInstance().getGraph().setNumConnectedComponents(0);
 	}
 
 	// --------------------------------
@@ -1134,9 +1135,9 @@ public class StatsBean {
 	public void selectNode() {
 		int index = Integer.parseInt(__jsf.getParam());
 
-		DNVNode n = graph.getNodes(0).get(index);
+		DNVNode n = PaintBean.getCurrentInstance().getGraph().getNodes(0).get(index);
 
-		graph.unsellectAllNodes();
+		PaintBean.getCurrentInstance().getGraph().unsellectAllNodes();
 
 		n.setSelected(true);
 	}
@@ -1153,7 +1154,7 @@ public class StatsBean {
 	}
 
 	/**
-	 * Create a buffered image of the degree distribution graph
+	 * Create a buffered image of the degree distribution PaintBean.getCurrentInstance().getGraph()
 	 * 
 	 * @params OutputStream out the output
 	 * 
@@ -1164,7 +1165,7 @@ public class StatsBean {
 
 		ArrayList<Double> points = new ArrayList<Double>();
 
-		List<DNVNode> nodes = new ArrayList<DNVNode>(graph.getVisibleNodes(0)
+		List<DNVNode> nodes = new ArrayList<DNVNode>(PaintBean.getCurrentInstance().getGraph().getVisibleNodes(0)
 				.values());
 
 		Collections.sort(nodes, new Comparator<DNVNode>() {
@@ -1177,7 +1178,7 @@ public class StatsBean {
 		ArrayList<Integer> selectedIndexes = getSelectedIndexes(points, nodes);
 
 		// Call to the line LineChart function to create the dataset, create the
-		// graph and save it.
+		// PaintBean.getCurrentInstance().getGraph() and save it.
 
 		BufferedImage chart = GraphStatistics.LineChart(chartH, chartW, points,
 				selectedIndexes);
@@ -1193,7 +1194,7 @@ public class StatsBean {
 
 		ArrayList<Double> points = new ArrayList<Double>();
 
-		Map<Integer, DNVNode> nodesMap = graph.getSelectedNodes(0);
+		Map<Integer, DNVNode> nodesMap = PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0);
 		Collection<DNVNode> c = nodesMap.values();
 		List<DNVNode> nodes = new ArrayList<DNVNode>(c);
 
@@ -1209,7 +1210,7 @@ public class StatsBean {
 		}
 
 		// Call to the line LineChart function to create the dataset, create the
-		// graph and save it.
+		// PaintBean.getCurrentInstance().getGraph() and save it.
 
 		BufferedImage Chart = SubGraphStatistics.LineChart(chartH, chartW,
 				points);
@@ -1230,7 +1231,7 @@ public class StatsBean {
 			iStep = 1;
 
 		for (int i = 0; i < nodes.size(); i++) {
-			if (graph.getSelectedNodes(0).containsValue(nodes.get(i)))
+			if (PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0).containsValue(nodes.get(i)))
 				selectedIndexes.add(i / iStep);
 
 			if (i % iStep == 0)
@@ -1240,7 +1241,7 @@ public class StatsBean {
 	}
 
 	public String getReRenderScript() {
-		Map<Integer, DNVNode> nodesMap = graph.getSelectedNodes(0);
+		Map<Integer, DNVNode> nodesMap = PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0);
 		Collection<DNVNode> c = nodesMap.values();
 		List<DNVNode> nodesList = new ArrayList<DNVNode>(c);
 
@@ -1265,14 +1266,14 @@ public class StatsBean {
 		deHighLightPanelRendered = false;
 
 		// Get a list of all nodes and dehighlight them
-		ArrayList<DNVNode> nodeList = new ArrayList<DNVNode>(graph.getNodes(0));
+		ArrayList<DNVNode> nodeList = new ArrayList<DNVNode>(PaintBean.getCurrentInstance().getGraph().getNodes(0));
 
 		for (int i = 0; i < nodeList.size(); i++) {
 			nodeList.get(i).setHighlighted(false);
 			nodeList.get(i).setSelected(false);
 		}
 
-		ArrayList<DNVEdge> edgeList = new ArrayList<DNVEdge>(graph.getEdges(0));
+		ArrayList<DNVEdge> edgeList = new ArrayList<DNVEdge>(PaintBean.getCurrentInstance().getGraph().getEdges(0));
 		for (int i = 0; i < edgeList.size(); i++) {
 			edgeList.get(i).setHighlighted(false);
 			edgeList.get(i).setSelected(false);
@@ -1286,12 +1287,12 @@ public class StatsBean {
 	 * @return
 	 */
 	public String computeShortestPath() {
-		Map<Integer, DNVNode> nodesMap = graph.getSelectedNodes(0);
+		Map<Integer, DNVNode> nodesMap = PaintBean.getCurrentInstance().getGraph().getSelectedNodes(0);
 		Collection<DNVNode> c = nodesMap.values();
 		List<DNVNode> nodesList = new ArrayList<DNVNode>(c);
 
 		if (nodesList.size() == 2) {
-			shortestPath = PairStatistics.computeShortestPath(graph,
+			shortestPath = PairStatistics.computeShortestPath(PaintBean.getCurrentInstance().getGraph(),
 					nodesList.get(0), nodesList.get(1));
 			shortestPathSentence = "Shortest path distance";
 			if (shortestPath
@@ -1308,14 +1309,14 @@ public class StatsBean {
 	 */
 	public void highlightDk1Results() {
 		ArrayList<Integer> nodes = dk1Calc.getNodesDk1();
-		ArrayList<DNVNode> nodesList = new ArrayList<DNVNode>(graph
+		ArrayList<DNVNode> nodesList = new ArrayList<DNVNode>(PaintBean.getCurrentInstance().getGraph()
 				.getVisibleNodes(0).values());
 
 		dehighlightAndDeSelectNodesAndEdges();
 
 		// highlight nodes
 		for (int x = 0; x < nodes.size(); x++) {
-			DNVNode toFind = (DNVNode) graph.getNodeById(nodes.get(x));
+			DNVNode toFind = (DNVNode) PaintBean.getCurrentInstance().getGraph().getNodeById(nodes.get(x));
 			int index = nodesList.indexOf(toFind);
 			DNVNode node = nodesList.get(index);
 			node.setSelected(true);
@@ -1328,16 +1329,16 @@ public class StatsBean {
 	public void highlightDk2Results() {
 		ArrayList<Integer> nodes = dk2Calc.getNodesDk2();
 		ArrayList<Integer> edges = dk2Calc.getEdgesDk2();
-		ArrayList<DNVNode> nodesList = new ArrayList<DNVNode>(graph
+		ArrayList<DNVNode> nodesList = new ArrayList<DNVNode>(PaintBean.getCurrentInstance().getGraph()
 				.getVisibleNodes(0).values());
-		ArrayList<DNVEdge> edgesList = new ArrayList<DNVEdge>(graph
+		ArrayList<DNVEdge> edgesList = new ArrayList<DNVEdge>(PaintBean.getCurrentInstance().getGraph()
 				.getVisibleEdges(0).values());
 
 		dehighlightAndDeSelectNodesAndEdges();
 
 		// highlight nodes
 		for (int x = 0; x < nodes.size(); x++) {
-			DNVNode toFind = (DNVNode) graph.getNodeById(nodes.get(x));
+			DNVNode toFind = (DNVNode) PaintBean.getCurrentInstance().getGraph().getNodeById(nodes.get(x));
 			int index = nodesList.indexOf(toFind);
 			DNVNode node = nodesList.get(index);
 			node.setSelected(true);
@@ -1361,16 +1362,16 @@ public class StatsBean {
 	public void highlightDk3Results() {
 		ArrayList<Integer> nodes = dk3Calc.getNodesDk3();
 		ArrayList<Integer> edges = dk3Calc.getEdgesDk3();
-		ArrayList<DNVNode> nodesList = new ArrayList<DNVNode>(graph
+		ArrayList<DNVNode> nodesList = new ArrayList<DNVNode>(PaintBean.getCurrentInstance().getGraph()
 				.getVisibleNodes(0).values());
-		ArrayList<DNVEdge> edgesList = new ArrayList<DNVEdge>(graph
+		ArrayList<DNVEdge> edgesList = new ArrayList<DNVEdge>(PaintBean.getCurrentInstance().getGraph()
 				.getVisibleEdges(0).values());
 
 		dehighlightAndDeSelectNodesAndEdges();
 
 		// highlight nodes
 		for (int x = 0; x < nodes.size(); x++) {
-			DNVNode toFind = (DNVNode) graph.getNodeById(nodes.get(x));
+			DNVNode toFind = (DNVNode) PaintBean.getCurrentInstance().getGraph().getNodeById(nodes.get(x));
 			int index = nodesList.indexOf(toFind);
 			DNVNode node = nodesList.get(index);
 			node.setSelected(true);
@@ -1392,20 +1393,20 @@ public class StatsBean {
 	 * Reset all statistics value to null.
 	 */
 	public void emptyStatsProperties() {
-		graph.setProperty("dk1", null);
-		graph.setProperty("dk2", null);
-		graph.setProperty("dk3", null);
-		graph.setProperty("dk1Layout", null);
-		graph.setProperty("dk2Layout", null);
-		graph.setProperty("dk3Layout", null);
-		graph.setProperty("averagePathLength", null);
-		graph.setProperty("averageDegreeDistribution", null);
-		graph.setProperty("averageDegreeCentrality", null);
-		if (graph.getProperty("isDirected").compareToIgnoreCase("") != 0) {
-			graph.setProperty("inDegreeSentence", null);
-			graph.setProperty("outDegreeSentence", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk1", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk2", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk3", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk1Layout", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk2Layout", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("dk3Layout", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("averagePathLength", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeDistribution", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("averageDegreeCentrality", null);
+		if (PaintBean.getCurrentInstance().getGraph().getProperty("isDirected").compareToIgnoreCase("") != 0) {
+			PaintBean.getCurrentInstance().getGraph().setProperty("inDegreeSentence", null);
+			PaintBean.getCurrentInstance().getGraph().setProperty("outDegreeSentence", null);
 		}
-		graph.setProperty("isDirected", null);
+		PaintBean.getCurrentInstance().getGraph().setProperty("isDirected", null);
 	}
 
 	public void editDk1Layout(Hashtable<Integer, ArrayList<Integer>> table) {
@@ -1422,12 +1423,12 @@ public class StatsBean {
 			ArrayList<DNVNode> DNVNodeList = new ArrayList<DNVNode>();
 
 			for (int x = 0; x < nodesList.size(); x++) {
-				DNVNodeList.add((DNVNode) graph.getNodeById(nodesList.get(x)));
+				DNVNodeList.add((DNVNode) PaintBean.getCurrentInstance().getGraph().getNodeById(nodesList.get(x)));
 			}
 			res.put(key, DNVNodeList);
 		}
 
-		graph.setAttribute("Dk1Results", res);
+		PaintBean.getCurrentInstance().getGraph().setAttribute("Dk1Results", res);
 	}
 
 	public void editDk2OrDk3Layout(
@@ -1447,7 +1448,7 @@ public class StatsBean {
 			ArrayList<DNVNode> DNVNodeList = new ArrayList<DNVNode>();
 
 			for (int x = 0; x < nodesList.size(); x++) {
-				DNVNodeList.add((DNVNode) graph.getNodeById(nodesList.get(x)));
+				DNVNodeList.add((DNVNode) PaintBean.getCurrentInstance().getGraph().getNodeById(nodesList.get(x)));
 			}
 
 			if (resNodes.containsKey(key)) {
@@ -1471,7 +1472,7 @@ public class StatsBean {
 					tableEdges.get(key));
 			ArrayList<DNVEdge> DNVEdgeList = new ArrayList<DNVEdge>();
 			List<DNVEdge> graphEdgesList = new ArrayList<DNVEdge>(
-					graph.getEdges());
+					PaintBean.getCurrentInstance().getGraph().getEdges());
 			for (int x = 0; x < edgesList.size(); x++) {
 				for (DNVEdge e : graphEdgesList) {
 					if (e.getId().toString()
@@ -1495,11 +1496,11 @@ public class StatsBean {
 		}
 
 		if (type.compareToIgnoreCase("dk2Results") == 0) {
-			graph.setAttribute("Dk2ResultsNodes", resNodes);
-			graph.setAttribute("Dk2ResultsEdges", resEdges);
+			PaintBean.getCurrentInstance().getGraph().setAttribute("Dk2ResultsNodes", resNodes);
+			PaintBean.getCurrentInstance().getGraph().setAttribute("Dk2ResultsEdges", resEdges);
 		} else if (type.compareToIgnoreCase("dk3Results") == 0) {
-			graph.setAttribute("Dk3ResultsNodes", resNodes);
-			graph.setAttribute("Dk3ResultsEdges", resEdges);
+			PaintBean.getCurrentInstance().getGraph().setAttribute("Dk3ResultsNodes", resNodes);
+			PaintBean.getCurrentInstance().getGraph().setAttribute("Dk3ResultsEdges", resEdges);
 		}
 	}
 

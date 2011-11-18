@@ -12,11 +12,11 @@ import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
-import net.wigis.graph.dnv.utilities.Pair;
 import net.wigis.graph.dnv.utilities.Timer;
-import net.wigis.graph.dnv.utilities.Tuple;
-import net.wigis.graph.dnv.utilities.hashTableSort;
 import net.wigis.stats.Dk2Calc;
+import net.wigis.yun.Pair;
+import net.wigis.yun.Tuple;
+import net.wigis.yun.hashTableSort;
 
 public class Dk2Layout implements SimpleLayoutInterface{
 	/** The Constant FRUCHTERMAN_REINGOLD_LAYOUT. */

@@ -3423,4 +3423,33 @@ public class DNVNode extends DNVEntity implements Serializable, Comparable<Objec
 			neighbors.put( toEdge.getFrom().getId(), toEdge.getFrom() );
 		}
 	}
+	
+	/*
+	 * get all the nodes that are connected with this node, same with getNeighbors for undirected graph
+	 * by Yun Teng, 11/13/2011
+	 */
+	public ArrayList<DNVNode> getAllNeighbors(){
+		ArrayList<DNVNode> nodes = new ArrayList<DNVNode>();
+		for(DNVEdge edge : this.getFromEdges()){
+			nodes.add(edge.getTo());
+		}
+		for(DNVEdge edge : this.getToEdges()){
+			nodes.add(edge.getFrom());
+		}
+		return nodes;
+	}
+	/*
+	 * see if two nodes have neighbors in common
+	 * by Yun Teng, 11/13/2011
+	 */
+	
+	public boolean shareNeighbors(DNVNode other){
+		ArrayList<DNVNode> myNeighbors = getAllNeighbors();
+		for(DNVNode node : myNeighbors){
+			if(node.getAllNeighbors().contains(other)){
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -500,9 +500,33 @@ public class PaintBean
 			System.out.println( "Writing image took  " + writeImageTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
 		}
 	}
-
+	private boolean loggingExpanded = false;
+	public boolean isLoggingExpanded(){
+		return loggingExpanded;
+	}
+	public void setLoggingExpanded(boolean val){
+		loggingExpanded = val;
+	}
+	public void expandLogging(){
+		setLoggingExpanded(true);
+	}
+	public void collapseLogging(){
+		setLoggingExpanded(false);
+	}
 	private Timer framerateTimer = new Timer( Timer.MILLISECONDS );
 	private boolean printFramerate = false;
+	public boolean isPrintFramerate(){
+		return printFramerate;
+	}
+	public void setPrintFramerate(boolean val){
+		printFramerate = val;
+	}
+	public void startFramerateLog(){
+		setPrintFramerate(true);
+	}
+	public void stopFramerateLog(){
+		setPrintFramerate(false);
+	}
 	/**
 	 * Paint.
 	 * 
@@ -519,6 +543,7 @@ public class PaintBean
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
+	
 	public void paint( Graphics2D g2d, int width, int height, boolean overview, boolean sortNodes ) throws IOException
 	{
 		if( printFramerate )
@@ -666,6 +691,7 @@ public class PaintBean
 			Timer loadTimer = new Timer( Timer.MILLISECONDS );
 			loadTimer.setStart();
 			graph = new DNVGraph( getSelectedFile() );
+			graph.setFilename(getSelectedFile());
 			graph.setPaintBean( this );
 			loadTimer.setEnd();
 			System.out.println( "Loading '" + selectedFile + "' took " + loadTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
@@ -2291,8 +2317,8 @@ public class PaintBean
 		
 		try {
 			String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
-			new File("/Users/scarlettteng/dev/" + fname).mkdir();
-			File file = new File("/Users/scarlettteng/dev/" + fname + "/" + "time.txt");
+			new File(Settings.GRAPHS_PATH + fname).mkdir();
+			File file = new File(Settings.GRAPHS_PATH + fname + "/" + "time.txt");
 			if(!file.exists()){
 				file.createNewFile();
 			}
@@ -2313,7 +2339,7 @@ public class PaintBean
 
 				forceSubgraphRefresh();
 				
-				saveImg("/Users/scarlettteng/dev/" + fname + "/" + layout.getLabel() + ".jpg");
+				saveImg(Settings.GRAPHS_PATH + fname + "/" + layout.getLabel() + ".jpg");
 				layoutRunning = false;
 			}
 			outputWriter.flush();
@@ -2350,11 +2376,11 @@ public class PaintBean
 	public void saveSnapShot(){
 		try {
 			String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
-			File dir = new File("/Users/scarlettteng/dev/" + fname);
+			File dir = new File(Settings.GRAPHS_PATH + fname);
 			if(!dir.isDirectory()){
 				dir.mkdir();
 			}
-			String filename = "/Users/scarlettteng/dev/" + fname + "/" + System.currentTimeMillis() + ".jpg";
+			String filename = Settings.GRAPHS_PATH + fname + "/" + System.currentTimeMillis() + ".jpg";
 			int rendering = BufferedImage.TYPE_INT_RGB;
 			BufferedImage img = new BufferedImage( width, height, rendering );
 			Graphics2D graphics2D = img.createGraphics();
@@ -2363,6 +2389,7 @@ public class PaintBean
 			if(!file.exists()){
 				file.createNewFile();
 			}
+			System.out.println("saved snapshot " + filename);
 			ImageIO.write(img, "jpg", file);		
 		}catch(IOException e){
 			System.out.println("	saveImg : ImageIOException");
@@ -2371,7 +2398,7 @@ public class PaintBean
 
 
     private void save(BufferedImage image, String ext) {
-        String fileName = "/Users/scarlettteng/savingAnImage";
+        String fileName = Settings.GRAPHS_PATH + "savingAnImage";
         File file = new File(fileName + "." + ext);
         try {
             ImageIO.write(image, ext, file);  // ignore returned boolean
@@ -5817,8 +5844,58 @@ public class PaintBean
 //		System.out.println( "Stopping at " + minTime + " - " + maxTime );
 		stopPlayTime = false;
 	}
-	
 	private void playThroughUpdate()
+	{
+		synchronized( graph )
+		{
+			String timeStr;
+			
+			
+			for( DNVNode node : graph.getNodes( level ) )
+			{
+				if(node.isVisible()){
+					continue;
+				}
+				
+				timeStr = node.getProperty( "time" );
+				if( timeStr == null || timeStr.equals( "" )
+						|| Long.parseLong( timeStr ) <= allTimes.get( maxTime ) ) 
+				{
+					node.setVisible( true );
+				}
+				else
+				{
+					node.setVisible( false );
+				}
+			}
+			
+			for( DNVEdge edge : graph.getEdges( level ) )
+			{
+				if(edge.getTo().isVisible() && edge.getFrom().isVisible()){
+					edge.setVisible(true);
+				}
+				else
+				{
+					edge.setVisible( false );
+				}
+			}
+	
+			
+			
+			if( allTimes.size() > 0 )
+			{
+				timeText = new Text( getMinTimeValue() + " - " + getMaxTimeValue(), new Vector2D( width / 2, 12 ), new Vector3D(1,1,1), new Vector3D(0,0,0), 18, true, true, false, false, false, false, true );
+			}
+			else
+			{
+				timeText = null;
+			}
+			
+			forceSubgraphRefresh();
+			
+		}
+	}
+	private void playThroughDKUpdate()
 	{
 		synchronized( graph )
 		{
@@ -5869,8 +5946,36 @@ public class PaintBean
 			
 		}
 	}
-
 	public void playThroughTime()
+	{	
+		while( !stopPlayTime && maxTime < allTimes.size() - 1 )
+		{
+			maxTime += 1;
+			updateNodesWithinTimeframe();
+			try
+			{
+				Thread.sleep(300);
+			}
+			catch( InterruptedException e ){}
+		}
+		
+//		System.out.println( "Stopping at " + minTime + " - " + maxTime );
+		stopPlayTime = false;
+/*		while( !stopPlayTime && maxTime < allTimes.size() - 1 )
+		{
+			maxTime += 1;
+			playThroughUpdate();
+			try
+			{
+				Thread.sleep(300);
+			}
+			catch( InterruptedException e ){}
+		}
+		
+//		System.out.println( "Stopping at " + minTime + " - " + maxTime );
+		stopPlayTime = false;*/
+	}
+	public void playThroughDKTime()
 	{	
 		HashSet<DNVNode> traveledNodes = new HashSet<DNVNode>();
 		//HashSet<DNVEdge> traveledEdges = new HashSet<DNVEdge>();
@@ -5878,7 +5983,7 @@ public class PaintBean
 		while( !stopPlayDKTime && maxDKTime < allDKTimes.size() - 1 )
 		{
 			maxDKTime += 1;
-			playThroughUpdate();		
+			playThroughDKUpdate();		
 			/*if(i % 5 == 0){
 				saveSnapShot();
 			}
@@ -6405,12 +6510,14 @@ public class PaintBean
 	 * Terrorism Analysis
 	 */
 	public boolean isShowTerrorism(){
-		String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
 		
-		if(fname.equals("terrorism")){
-			return true;
-		}else{
-			return false;
+//		/String fname = selectedFile.substring(selectedFile.lastIndexOf("/") + 1, selectedFile.lastIndexOf("."));
+		synchronized(graph){
+			if(graph.getFilename().equals(Settings.GRAPHS_PATH + "terrorism.dnv")){
+				return true;
+			}else{
+				return false;
+			}
 		}
 	}
 	public void setTerrorismExpanded(boolean val){

@@ -397,6 +397,7 @@ public class DNVGraph implements Serializable
 		{
 			String line;
 			FileReader fr;
+			//int lineCnt=0;
 			try
 			{
 				fr = new FileReader( file );
@@ -404,6 +405,7 @@ public class DNVGraph implements Serializable
 				line = br.readLine();
 				while( line != null )
 				{
+					//System.out.println("reading line " + lineCnt++);
 					handleLine( line );
 					line = br.readLine();
 					

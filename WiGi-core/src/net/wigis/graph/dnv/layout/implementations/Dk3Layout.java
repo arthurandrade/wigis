@@ -13,8 +13,8 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.layout.interfaces.SimpleLayoutInterface;
 import net.wigis.graph.dnv.utilities.Timer;
-import net.wigis.graph.dnv.utilities.hashTableSort;
 import net.wigis.stats.Dk3Calc;
+import net.wigis.yun.hashTableSort;
 
 public class Dk3Layout implements SimpleLayoutInterface {
 	/** The Constant FRUCHTERMAN_REINGOLD_LAYOUT. */
@@ -51,7 +51,7 @@ public class Dk3Layout implements SimpleLayoutInterface {
 		
 		Hashtable<Integer, HashSet<DNVNode>> tableNodes = dk3Calc.getTableNodes();
 		Hashtable<Integer, HashSet<DNVEdge>> tableEdges = dk3Calc.getTableEdges();
-		List degreeOrderedListDK3 = hashTableSort.sortByKey(tableNodes);
+		List degreeOrderedListDK3 = hashTableSort.sortByKeyDesc(tableNodes);
 		
 		Timer timer = new Timer( Timer.MILLISECONDS );
 		timer.setStart();

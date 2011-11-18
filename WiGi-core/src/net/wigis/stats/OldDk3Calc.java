@@ -13,27 +13,27 @@ import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.utilities.Timer;
-import net.wigis.yun.*;
+import net.wigis.yun.Pair;
+import net.wigis.yun.Tuple;
+import net.wigis.yun.hashTableSort;
 
-public class Dk3Calc {
-	//private Hashtable<Tuple<Integer,Integer,Integer>, ArrayList<Pair<DNVEdge, DNVEdge>>> degreeEdgeTableDK3;
+public class OldDk3Calc {
+	private Hashtable<Tuple<Integer,Integer,Integer>, ArrayList<Pair<DNVEdge, DNVEdge>>> degreeEdgeTableDK3;
 	private Hashtable<Tuple<Integer,Integer,Integer>, HashSet<DNVEdge>> degreeUniqueEdgeTableDK3;
 	private Hashtable<Tuple<Integer,Integer,Integer>, HashSet<DNVNode>> degreeUniqueNodeTableDK3;
-	private HashSet<Triangle> triangles;
-	private HashSet<Line> lines;
 	
 	private Hashtable<Tuple<Integer,Integer,Integer>, Integer> degreeOccurTableDK3;
 	private List occurOrderedListDK3;
 	private List degreeOrderedListDK3;
 	private DNVGraph mGraph;
 	private int level;
-	public Dk3Calc(DNVGraph graph){
+	public OldDk3Calc(DNVGraph graph){
 		mGraph = graph;
 		level = 0;
 		prepairDK3Table(graph);
 	}
 	
-	public Dk3Calc(DNVGraph graph, int level){
+	public OldDk3Calc(DNVGraph graph, int level){
 		mGraph = graph;
 		this.level = level;
 		prepairDK3Table(graph);
@@ -44,27 +44,21 @@ public class Dk3Calc {
 		timer.setStart();
 		
 		Dk2Calc dk2Calc = new Dk2Calc(graph, level);
-		//degreeEdgeTableDK3 = new Hashtable<Tuple<Integer,Integer,Integer>, ArrayList<Pair<DNVEdge, DNVEdge>>>();
+		degreeEdgeTableDK3 = new Hashtable<Tuple<Integer,Integer,Integer>, ArrayList<Pair<DNVEdge, DNVEdge>>>();
 		degreeUniqueEdgeTableDK3 = new Hashtable<Tuple<Integer,Integer,Integer>, HashSet<DNVEdge>>();
 		degreeUniqueNodeTableDK3 = new Hashtable<Tuple<Integer,Integer,Integer>, HashSet<DNVNode>>();
 		degreeOccurTableDK3 = new Hashtable<Tuple<Integer,Integer,Integer>, Integer>();		
-		triangles = new HashSet<Triangle>();
-		lines = new HashSet<Line>();
 		
 		int cnt = 0;
-		int triangleCnt = 0;
-		int lineCnt = 0;
 		HashSet<Integer> traveledNodesId = new HashSet<Integer>();
 		for(Object key : dk2Calc.getDegreeOrderedListDK2()){
 			Pair<Integer, Integer> degreePair = (Pair<Integer, Integer>)key;
 			Integer highDegree = degreePair.getFirst();
 			Integer lowDegree = degreePair.getSecond();
-
 			ArrayList<Tuple<Integer, Integer, DNVEdge>> dk2EdgeTuple = dk2Calc.getDegreeNodeEdgeIndexTableDK2().get(degreePair);
 			for(Tuple<Integer, Integer, DNVEdge> tuple : dk2EdgeTuple){
 				Integer highDegreeNodeId = tuple.getLeft();
 				Integer lowDegreeNodeId = tuple.getMiddle();
-				
 				//first add all the tuple nodes with the higher degree node in the center, no redundancy
 				if(!traveledNodesId.contains(highDegreeNodeId)){
 					traveledNodesId.add(highDegreeNodeId);
@@ -89,47 +83,32 @@ public class Dk3Calc {
 							Integer degree1 = neighbors.get(i).getConnectivity();
 							Integer degree2 = neighbors.get(j).getConnectivity();							
 							Integer leftNodeId, rightNodeId;
-							DNVNode leftNode, rightNode;
-							DNVEdge leftEdge, rightEdge, middleEdge;
 							Tuple<Integer, Integer, Integer> degreeTuple; 
 							//for each node tuple, the left node degree should be no smaller than the right one
 							if(degree1 >= degree2){
-								leftNode = neighbors.get(i);
-								rightNode = neighbors.get(j);							
+								leftNodeId = neighbors.get(i).getId();
+								rightNodeId = neighbors.get(j).getId();
 								degreeTuple = new Tuple<Integer, Integer, Integer>(degree1, highDegree,degree2);
 							}else{
-								leftNode = neighbors.get(j);
-								rightNode = neighbors.get(i);
+								leftNodeId = neighbors.get(j).getId();
+								rightNodeId = neighbors.get(i).getId();
 								degreeTuple = new Tuple<Integer, Integer, Integer>(degree2, highDegree,degree1);
 							}
-							leftNodeId = leftNode.getId();
-							rightNodeId = rightNode.getId();
-							leftEdge = middlenode.getEdgeToNeighbor(leftNodeId);
-							rightEdge = middlenode.getEdgeToNeighbor(rightNodeId);
 							
-							if(!degreeOccurTableDK3.containsKey(degreeTuple)){
+							if(!degreeEdgeTableDK3.containsKey(degreeTuple)){
+								degreeEdgeTableDK3.put(degreeTuple, new ArrayList<Pair<DNVEdge, DNVEdge>>());
 								degreeOccurTableDK3.put(degreeTuple, 0);	
 								degreeUniqueEdgeTableDK3.put(degreeTuple, new HashSet<DNVEdge>());
 								degreeUniqueNodeTableDK3.put(degreeTuple, new HashSet<DNVNode>());
-							}					
-							degreeOccurTableDK3.put(degreeTuple, degreeOccurTableDK3.get(degreeTuple) + 1);
-							degreeUniqueEdgeTableDK3.get(degreeTuple).add(leftEdge);
-							degreeUniqueEdgeTableDK3.get(degreeTuple).add(rightEdge);
-							degreeUniqueNodeTableDK3.get(degreeTuple).add(middlenode);
-							degreeUniqueNodeTableDK3.get(degreeTuple).add(leftNode);
-							degreeUniqueNodeTableDK3.get(degreeTuple).add(rightNode);
-							
-							if(leftNode.getNeighbors().contains(rightNode) || rightNode.getNeighbors().contains(leftNode)){
-								middleEdge = leftNode.getEdgeToNeighbor(rightNodeId);
-								Triangle triangle = new Triangle(leftNode, middlenode, rightNode, leftEdge, middleEdge, rightEdge);
-								triangles.add(triangle);
-								degreeUniqueEdgeTableDK3.get(degreeTuple).add(middleEdge);
-								triangleCnt++;
-							}else{
-								Line line = new Line(leftNode, middlenode, rightNode, leftEdge, rightEdge);
-								lines.add(line);
-								lineCnt++;
 							}
+							degreeEdgeTableDK3.get(degreeTuple).add(new Pair<DNVEdge,DNVEdge>(middlenode.getEdgeToNeighbor(leftNodeId),middlenode.getEdgeToNeighbor(rightNodeId)));
+							degreeOccurTableDK3.put(degreeTuple, degreeOccurTableDK3.get(degreeTuple) + 1);
+							
+							degreeUniqueEdgeTableDK3.get(degreeTuple).add(middlenode.getEdgeToNeighbor(leftNodeId));
+							degreeUniqueEdgeTableDK3.get(degreeTuple).add(middlenode.getEdgeToNeighbor(rightNodeId));
+							degreeUniqueNodeTableDK3.get(degreeTuple).add(middlenode);
+							degreeUniqueNodeTableDK3.get(degreeTuple).add(neighbors.get(i));
+							degreeUniqueNodeTableDK3.get(degreeTuple).add(neighbors.get(j));
 							cnt++;
 						}
 					}
@@ -140,9 +119,7 @@ public class Dk3Calc {
 				}
 				//next get all the tuple nodes with the lower degree node in the center and the higher degree node at one end
 				DNVNode middlenode = graph.getNode(level, lowDegreeNodeId);
-				DNVNode leftNode = graph.getNode(level, highDegreeNodeId);
-				DNVEdge leftEdge = tuple.getRight();
-				DNVEdge rightEdge, middleEdge;
+				
 				//get all the neighbors of the lower degree node which haven't been traveled
 				ArrayList<DNVNode> neighbors = new ArrayList<DNVNode>();
 				for(DNVEdge edge : middlenode.getFromEdges()){
@@ -158,35 +135,22 @@ public class Dk3Calc {
 				for(DNVNode neighbor : neighbors){
 					Integer neighborId = neighbor.getId();
 					Integer neighborDegree = neighbor.getConnectivity();
-					rightEdge = middlenode.getEdgeToNeighbor(neighborId);
+					//if(neighborDegree <= highDegree){
 					Tuple<Integer, Integer, Integer> degreeTuple = new Tuple<Integer, Integer, Integer>(highDegree, lowDegree, neighborDegree);
-					if(!degreeOccurTableDK3.containsKey(degreeTuple)){
-						//degreeEdgeTableDK3.put(degreeTuple, new ArrayList<Pair<DNVEdge, DNVEdge>>());
+					if(!degreeEdgeTableDK3.containsKey(degreeTuple)){
+						degreeEdgeTableDK3.put(degreeTuple, new ArrayList<Pair<DNVEdge, DNVEdge>>());
 						degreeOccurTableDK3.put(degreeTuple, 0);	
 						degreeUniqueEdgeTableDK3.put(degreeTuple, new HashSet<DNVEdge>());
 						degreeUniqueNodeTableDK3.put(degreeTuple, new HashSet<DNVNode>());
 					}
-					//degreeEdgeTableDK3.get(degreeTuple).add(new Pair<DNVEdge,DNVEdge>(tuple.getRight(),middlenode.getEdgeToNeighbor(neighborId)));
+					degreeEdgeTableDK3.get(degreeTuple).add(new Pair<DNVEdge,DNVEdge>(tuple.getRight(),middlenode.getEdgeToNeighbor(neighborId)));
 					degreeOccurTableDK3.put(degreeTuple, degreeOccurTableDK3.get(degreeTuple) + 1);
 
-					degreeUniqueEdgeTableDK3.get(degreeTuple).add(leftEdge);
-					degreeUniqueEdgeTableDK3.get(degreeTuple).add(rightEdge);
+					degreeUniqueEdgeTableDK3.get(degreeTuple).add(tuple.getRight());
+					degreeUniqueEdgeTableDK3.get(degreeTuple).add(middlenode.getEdgeToNeighbor(neighborId));
 					degreeUniqueNodeTableDK3.get(degreeTuple).add(middlenode);
-					degreeUniqueNodeTableDK3.get(degreeTuple).add(leftNode);
+					degreeUniqueNodeTableDK3.get(degreeTuple).add(graph.getNode(level, highDegreeNodeId));
 					degreeUniqueNodeTableDK3.get(degreeTuple).add(neighbor);
-					
-					
-					if(leftNode.getNeighbors().contains(neighbor) || neighbor.getNeighbors().contains(leftNode)){
-						middleEdge = leftNode.getEdgeToNeighbor(neighborId);
-						Triangle triangle = new Triangle(leftNode, middlenode, neighbor, leftEdge, middleEdge, rightEdge);
-						triangles.add(triangle);
-						degreeUniqueEdgeTableDK3.get(degreeTuple).add(middleEdge);
-						triangleCnt++;
-					}else{
-						Line line = new Line(leftNode, middlenode, neighbor, leftEdge, rightEdge);
-						lines.add(line);
-						lineCnt++;
-					}
 					cnt++;
 				}
 			}
@@ -195,14 +159,11 @@ public class Dk3Calc {
 		degreeOrderedListDK3 = hashTableSort.sortByKeyDesc(degreeOccurTableDK3);
 		
 		timer.setEnd();
-		System.out.println("	computing dk3 took " + timer.getLastSegment(Timer.SECONDS) + " seconds number of tuples " + cnt + " triangles " + triangleCnt + " lineCnt " + lineCnt);
+		System.out.println("	computing dk3 took " + timer.getLastSegment(Timer.SECONDS) + " seconds number of tuples " + cnt);
 	}
 	
-	public HashSet<Triangle> getTriangles(){
-		return triangles;
-	}
-	public HashSet<Line> getLines(){
-		return lines;
+	public Hashtable<Tuple<Integer,Integer,Integer>, ArrayList<Pair<DNVEdge, DNVEdge>>> getDegreeEdgeTableDK3(){
+		return degreeEdgeTableDK3;
 	}
 	public Hashtable<Tuple<Integer,Integer,Integer>, HashSet<DNVEdge>> getDegreeUniqueEdgeTableDK3(){
 		return degreeUniqueEdgeTableDK3;

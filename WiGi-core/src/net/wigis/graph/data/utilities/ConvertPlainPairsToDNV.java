@@ -13,8 +13,8 @@ import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.utilities.Pair;
 import net.wigis.settings.Settings;
+import net.wigis.yun.Pair;
 
 public class ConvertPlainPairsToDNV {
 	private static String path;
@@ -82,10 +82,11 @@ public class ConvertPlainPairsToDNV {
 		GraphsPathFilter.init();
 		path = Settings.GRAPHS_PATH + "topos/";
 		File directory = new File(path);
-		String[] files = directory.list();
+		convert("hot500.rescaled.topo");
+		/*String[] files = directory.list();
 		for( String file : files )
 		{
-			convert(file);
-		}
+			convert("hot.2k.rescaled.topo");
+		}*/
 	}
 }

@@ -12,8 +12,8 @@ import java.util.HashSet;
 
 import net.wigis.graph.GraphsPathFilter;
 import net.wigis.graph.dnv.*;
-import net.wigis.graph.dnv.utilities.Pair;
 import net.wigis.settings.Settings;
+import net.wigis.yun.Pair;
 public class ConvertMtxToDNV {
 	private static String path;
 	public static void convert(String filename){

@@ -12,10 +12,10 @@ import net.wigis.graph.PaintBean;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
-import net.wigis.graph.dnv.utilities.Pair;
 import net.wigis.graph.dnv.utilities.Timer;
-import net.wigis.graph.dnv.utilities.Tuple;
-import net.wigis.graph.dnv.utilities.hashTableSort;
+import net.wigis.yun.Pair;
+import net.wigis.yun.Tuple;
+import net.wigis.yun.hashTableSort;
 
 public class Dk2Calc {
 	private Hashtable<Pair<Integer,Integer>, ArrayList<Tuple<Integer, Integer, DNVEdge>>> degreeNodeEdgeIndexTableDK2;
@@ -122,8 +122,8 @@ public class Dk2Calc {
 				}
 			}
 		}*/
-		occurOrderedListDK2 = hashTableSort.sortByValue(degreeOccurTableDK2);
-		degreeOrderedListDK2 = hashTableSort.sortByKey(degreeNodeIndexTableDK2);
+		occurOrderedListDK2 = hashTableSort.sortByValueDesc(degreeOccurTableDK2);
+		degreeOrderedListDK2 = hashTableSort.sortByKeyDesc(degreeNodeIndexTableDK2);
 		timer.setEnd();
 		System.out.println("	computing dk2 took " + timer.getLastSegment(Timer.SECONDS) + " seconds");
 	}

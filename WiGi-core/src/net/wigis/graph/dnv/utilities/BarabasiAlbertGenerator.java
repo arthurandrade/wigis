@@ -8,6 +8,7 @@ import java.util.Random;
 import net.wigis.graph.dnv.DNVEdge;
 import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
+import net.wigis.yun.Pair;
 
 public class BarabasiAlbertGenerator {
 	private DNVGraph mGraph = null;
