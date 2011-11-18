@@ -100,7 +100,7 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mouseClicked( MouseEvent arg0 )
 	{
-		if( callback != null && callback.isMouseEnabled() )
+		if( callback == null || callback.isMouseEnabled() )
 		{
 			if( arg0.getClickCount() == 2 )
 			{
@@ -137,7 +137,7 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mousePressed( MouseEvent arg0 )
 	{
-		if( callback != null && callback.isMouseEnabled() )
+		if( callback == null || callback.isMouseEnabled() )
 		{
 			int x = arg0.getX();
 			int y = arg0.getY();
@@ -183,7 +183,7 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mouseReleased( MouseEvent arg0 )
 	{
-		if( callback != null && callback.isMouseEnabled() )
+		if( callback == null || callback.isMouseEnabled() )
 		{
 			draggingZoom = false;
 			draggingSECorner = false;
@@ -200,7 +200,7 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mouseDragged( MouseEvent arg0 )
 	{
-		if( callback != null && callback.isMouseEnabled() )
+		if( callback == null || callback.isMouseEnabled() )
 		{
 			int x = arg0.getX();
 			int y = arg0.getY();
@@ -272,7 +272,7 @@ public class WiGiOverviewPanel extends JPanel implements MouseListener, MouseMot
 	@Override
 	public void mouseMoved( MouseEvent arg0 )
 	{
-		if( callback != null && callback.isMouseEnabled() )
+		if( callback == null || callback.isMouseEnabled() )
 		{
 			int x = arg0.getX();
 			int y = arg0.getY();
