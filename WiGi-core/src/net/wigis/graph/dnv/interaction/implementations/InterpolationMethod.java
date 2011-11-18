@@ -1,30 +1,34 @@
 /******************************************************************************************************
- * Copyright (c) 2010, University of California, Santa Barbara
- * All rights reserved.
+ * Copyright (c) 2010, University of California, Santa Barbara All rights
+ * reserved.
  * 
- * Redistribution and use in source and binary forms, with or without modification, are 
- * permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  * 
- *    * Redistributions of source code must retain the above copyright notice, this list of
- *      conditions and the following disclaimer.
- *    * Redistributions in binary form must reproduce the above copyright notice, this list of
- *      conditions and the following disclaimer in the documentation and/or other materials 
- *      provided with the distribution.
+ * * Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer. * Redistributions in binary
+ * form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided
+ * with the distribution.
  * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
- * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
- * IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
- * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  * 
  *****************************************************************************************************/
 
 package net.wigis.graph.dnv.interaction.implementations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +40,7 @@ import net.wigis.graph.dnv.DNVGraph;
 import net.wigis.graph.dnv.DNVNode;
 import net.wigis.graph.dnv.interaction.helpers.InteractionFunctions;
 import net.wigis.graph.dnv.interaction.interfaces.SimpleInteractionInterface;
+import net.wigis.graph.dnv.utilities.GraphFunctions;
 import net.wigis.graph.dnv.utilities.Timer;
 import net.wigis.graph.dnv.utilities.Vector2D;
 import net.wigis.settings.Settings;
@@ -291,8 +296,7 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 	 * @param selectedNode
 	 *            the selected node
 	 */
-	public static void setWeights( DNVGraph graph, Integer level, float maxDistance, float sCurveLowEnd, float sCurveHighEnd,
-			boolean useActualDistance, DNVNode selectedNode )
+	public static void setWeights( DNVGraph graph, Integer level, float maxDistance, float sCurveLowEnd, float sCurveHighEnd, boolean useActualDistance, DNVNode selectedNode )
 	{
 		setWeights( graph, level, maxDistance, scalar1, scalar2, sCurveLowEnd, sCurveHighEnd, useActualDistance, selectedNode );
 	}
@@ -319,8 +323,8 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 	 * @param selectedNode
 	 *            the selected node
 	 */
-	public static void setWeights( DNVGraph graph, Integer level, float maxDistance, float scalar1, float scalar2, float sCurveLowEnd,
-			float sCurveHighEnd, boolean useActualDistance, DNVNode selectedNode )
+	public static void setWeights( DNVGraph graph, Integer level, float maxDistance, float scalar1, float scalar2, float sCurveLowEnd, float sCurveHighEnd,
+			boolean useActualDistance, DNVNode selectedNode )
 	{
 		Timer weightsTimer = new Timer( Timer.MILLISECONDS );
 		DNVNode tempNode;
@@ -339,17 +343,17 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 			if( tempDistance != Integer.MAX_VALUE )
 			{
 				graph.addInterpolationNode( tempNode, level );
-				tempWeight = 1.0f - ( (tempDistance) / (maxDistance) );
-//				tempWeight =  1.0f / (tempDistance + 1);
+				tempWeight = 1.0f - ( ( tempDistance ) / ( maxDistance ) );
+				// tempWeight = 1.0f / (tempDistance + 1);
 				// System.out.println( "1.0 - (" +
 				// tempNode.getDistanceFromSelectedNode() + " / " + maxDistance
 				// + ") = " + tempWeight );
 				if( tempWeight > sCurveLowEnd )
 				{
-//					tempWeight = ( tempWeight - sCurveLowEnd ) / (
-//					sCurveHighEnd - sCurveLowEnd );
-//					tempWeight = scalar1 * tempWeight * tempWeight - scalar2
-//					* tempWeight * tempWeight * tempWeight;
+					// tempWeight = ( tempWeight - sCurveLowEnd ) / (
+					// sCurveHighEnd - sCurveLowEnd );
+					// tempWeight = scalar1 * tempWeight * tempWeight - scalar2
+					// * tempWeight * tempWeight * tempWeight;
 					tempNode.setInterpolationWeight( selectedNode.getId(), tempWeight );
 				}
 			}
@@ -403,77 +407,158 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 					{
 						tempMove.dotProduct( tempNode.getInterpolationWeight( selectedNode.getId() ) );
 					}
-	
-					// System.out.println( tempNode.getDistanceFromSelectedNode() +
-					// " : " + tempNode.getInterpolationWeight() + " : " + tempMove
+
+					// System.out.println(
+					// tempNode.getDistanceFromSelectedNode() +
+					// " : " + tempNode.getInterpolationWeight() + " : " +
+					// tempMove
 					// + " : " + tempMove.length() );
 					moveTimer.setStart();
 					tempNode.move( tempMove, true, false );
 					moveTimer.setEnd();
 				}
 			}
-	
-			// if( pb != null )
-			// {
-			// DNVNode selectedNode = pb.getSelectedNode();
-			// if( selectedNode != null )
-			// {
-			// Vector2D difference = new Vector2D();
-			// float length;
-			// for( int distance : selectedNode.getDistances() )
-			// {
-			// Map<Integer,DNVNode> nodesAtDistance =
-			// selectedNode.getNodesAtDistance( distance );
-			// List<DNVNode> theNodes = new
-			// ArrayList<DNVNode>(nodesAtDistance.values());
-			// for( int i = 0; i < theNodes.size(); i++ )
-			// {
-			// DNVNode node1 = theNodes.get( i );
-			// node1.getForce().set( 0, 0 );
-			// for( int j = i+1; j < theNodes.size(); j++ )
-			// {
-			// DNVNode node2 = theNodes.get( j );
-			// if( !node1.equals( node2 ) )
-			// {
-			// float overlap = pb.getOverlap( node1, node2 );
-			// if( overlap > 0 )
-			// {
-			// System.out.println( "overlap is " + overlap );
-			// difference.set( node1.getPosition() );
-			// difference.subtract( node2.getPosition() );
-			// difference.normalize();
-			// difference.dotProduct( overlap );
-			// node1.addForce( difference );
-			// }
-			// }
-			// }
-			// }
-			//					
-			// for( int id : nodesAtDistance.keySet() )
-			// {
-			// DNVNode node1 = nodesAtDistance.get( id );
-			// difference.set( node1.getForce() );
-			// Vector2D move = new Vector2D( movement );
-			// move.normalize();
-			// length = difference.length();
-			// difference.normalize();
-			// move.dotProduct( difference.dotProduct( move ) / move.length() /
-			// move.length() );
-			// difference.set( move.getY(), move.getX() );
-			// difference.dotProduct( Math.min( length, temperature ) );
-			// node1.move( difference, true, false );
-			// }
-			// }
-			// }
-			// }
+
+			if( pb.isAvoidNodeOverlap() )
+			{
+//				int count = 0;
+				float xRatio = (float)( pb.getWidth() / GraphFunctions.getGraphWidth( nodes, true ) );
+				float yRatio = (float)( pb.getHeight() / GraphFunctions.getGraphHeight( nodes, true ) );
+				// System.out.println( "cursors " + activeCursors.size() );
+				// double nodeSize = 36;
+				double nodeSize = ImageRenderer.getNodeWidth( pb.getNodeSize(), pb.getMinX(), pb.getMaxX(), 1 ) * 2;
+				// System.out.println( "nodeSize" + nodeSize );
+				Vector2D lastMove = movement;
+
+				if( selectedNode != null && lastMove.length() > 0 )
+				{
+					// System.out.println( "distances " +
+					// selectedNode.getDistances().size() );
+					for( Integer distance : selectedNode.getDistances() )
+					{
+						Map<Integer, DNVNode> nodesAtDistance = selectedNode.getNodesAtDistance( distance );
+
+						if( nodesAtDistance.size() > 0 )
+						{
+							Map<String, List<DNVNode>> nodesAtPosition = new HashMap<String, List<DNVNode>>();
+
+							for( DNVNode node : nodesAtDistance.values() )
+							{
+								String key = getKey( node, nodeSize, pb );
+								List<DNVNode> theNodes = nodesAtPosition.get( key );
+								if( theNodes == null )
+								{
+									theNodes = new ArrayList<DNVNode>();
+									nodesAtPosition.put( key, theNodes );
+								}
+								theNodes.add( node );
+							}
+
+							for( DNVNode node : nodesAtDistance.values() )
+							{
+								if( node != selectedNode )
+								{
+									for( DNVNode node2 : nodesAtPosition.get( getKey( node, nodeSize, pb ) ) )
+									{
+										if( node2 != node )
+										{
+//											count++;
+
+											int nodeWidth = ImageRenderer.getNodeWidth( pb.getNodeSize(), pb.getMinX(), pb.getMaxX(), 1 );
+											Vector2D difference = pb.getScreenPosDifference( node, node2 );
+											float randomSign = getRandomSign();
+											Vector2D lastMoveRotated = new Vector2D( randomSign * -1 * lastMove.getY(), randomSign * lastMove.getX() );
+											if( difference.length() == 0 )
+											{
+												difference.set( lastMoveRotated );
+												difference.normalize();
+											}
+											float overlap = pb.getOverlapAmount( node, node2, nodeWidth, difference );
+											if( overlap > 0 )
+											{
+												difference.normalize();
+												Vector2D direction = difference.dotProduct( overlap ).dotProduct( 0.1f );
+
+												float dotProduct = direction.dotProduct( lastMoveRotated ) / lastMoveRotated.length();
+
+												Vector2D projection = lastMoveRotated.normalize().dotProduct( dotProduct );
+
+												projection.setX( projection.getX() / xRatio );
+												projection.setY( projection.getY() / yRatio );
+
+												if( node.hasAttribute( "align_movement" ) )
+												{
+													Vector2D previousMovement = (Vector2D)node.getAttribute( "align_movement" );
+													if( previousMovement != null )
+													{
+														projection.add( previousMovement );
+													}
+												}
+												node.setAttribute( "align_movement", projection );
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				// System.out.println( "graph size:" + graph.getNodes( level
+				// ).size() );
+				// System.out.println( "iterations:" + count );
+				for( DNVNode node : graph.getNodes( level ) )
+				{
+					node.removeAttribute( "screenPosition" );
+					if( node.hasAttribute( "align_movement" ) )
+					{
+						movement = (Vector2D)node.getAttribute( "align_movement" );
+						// movement = ImageRenderer.transformScreenToWorld(
+						// movement, pb );
+						node.move( movement, false, false );
+						node.removeAttribute( "align_movement" );
+					}
+				}
+			}
 		}
-		
+
 		applyTimer.setEnd();
 		if( Settings.DEBUG )
 		{
 			System.out.println( "Interpolation apply function took " + applyTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
 			System.out.println( "Interpolation move node took " + moveTimer.getTotalTime( Timer.SECONDS ) + " seconds." );
 		}
+	}
+
+	private static String getKey( DNVNode node, double nodeSize, PaintBean pb )
+	{
+		Vector2D screenPosition = getScreenPosition( node, pb );
+
+		return "" + (int)Math.round( screenPosition.getX() / nodeSize ) + "," + (int)Math.round( screenPosition.getY() / nodeSize );
+	}
+
+	private static Vector2D getScreenPosition( DNVNode node, PaintBean pb )
+	{
+		Vector2D screenPos;
+		if( node.hasAttribute( "screenPosition" ) )
+		{
+			screenPos = (Vector2D)node.getAttribute( "screenPosition" );
+		}
+		else
+		{
+			screenPos = ImageRenderer.transformPosition( pb, node.getPosition() );
+			node.setAttribute( "screenPosition", screenPos );
+		}
+
+		return screenPos;
+	}
+
+	private static float getRandomSign()
+	{
+		if( Math.random() < 0.5 )
+			return -1;
+
+		return 1;
 	}
 
 	/**
@@ -617,14 +702,11 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 		Map<Integer, DNVNode> selectedNodes = graph.getSelectedNodes( level );
 
 		// transform mouseUp from screen to world (new x = 0)
-		Vector2D mouseUpWorld = ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY,
-				globalMaxY, width, height );
+		Vector2D mouseUpWorld = ImageRenderer.transformScreenToWorld( mouseUpX, mouseUpY, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY, width, height );
 
-		Vector2D zeroPixels = ImageRenderer.transformScreenToWorld( 0, 0, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
-				width, height );
+		Vector2D zeroPixels = ImageRenderer.transformScreenToWorld( 0, 0, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY, width, height );
 
-		Vector2D fivePixels = ImageRenderer.transformScreenToWorld( 5, 5, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY,
-				width, height );
+		Vector2D fivePixels = ImageRenderer.transformScreenToWorld( 5, 5, minX, maxX, minY, maxY, globalMinX, globalMaxX, globalMinY, globalMaxY, width, height );
 
 		fivePixels.subtract( zeroPixels );
 
@@ -673,11 +755,11 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 		if( Settings.DEBUG )
 		{
 			System.out.println( "Interpolation took " + interpolationTimer.getLastSegment( Timer.SECONDS ) + " seconds." );
-		}		
-		
+		}
+
 		return movement;
 	}
-	
+
 	/**
 	 * Select node.
 	 * 
@@ -717,8 +799,7 @@ public final class InterpolationMethod implements SimpleInteractionInterface
 			}
 		}
 
-		InterpolationMethod.setWeights( graph, level, maxDepth, (float)pb.getCurveMin(), (float)pb.getCurveMax(), pb
-				.isInterpolationMethodUseActualEdgeDistance(), node );
+		InterpolationMethod.setWeights( graph, level, maxDepth, (float)pb.getCurveMin(), (float)pb.getCurveMax(), pb.isInterpolationMethodUseActualEdgeDistance(), node );
 	}
 
 	public static final String LABEL = "Interpolation Method";

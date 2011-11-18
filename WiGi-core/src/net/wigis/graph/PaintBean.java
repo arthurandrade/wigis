@@ -527,6 +527,7 @@ public class PaintBean
 	public void stopFramerateLog(){
 		setPrintFramerate(false);
 	}
+
 	/**
 	 * Paint.
 	 * 
