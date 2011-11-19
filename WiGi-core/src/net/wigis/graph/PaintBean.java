@@ -6459,6 +6459,11 @@ public class PaintBean
 		this.avoidNodeOverlap = avoidNodeOverlap;
 	}
 
+	public void toggleAvoidNodeOverlap()
+	{
+		setAvoidNodeOverlap( !isAvoidNodeOverlap() );
+	}
+	
 	/**
 	 * @return the drawAxis
 	 */
