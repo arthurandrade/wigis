@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss 5.1 Runtime"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v5.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="#system#;jst.utility"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry exported="true" kind="lib" path="lib/activation-1.1.jar">
 		<attributes>
@@ -443,11 +447,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/jgrapht-jdk1.6.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
@@ -459,5 +458,10 @@
 	<classpathentry kind="lib" path="lib/xmlbeans-2.3.0.jar"/>
 	<classpathentry kind="lib" path="lib/poi-3.7-20101029.jar"/>
 	<classpathentry kind="lib" path="lib/poi-scratchpad-3.7-20101029.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.launching.macosx.MacOSXType/JVM Contents (MacOS X Default)">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

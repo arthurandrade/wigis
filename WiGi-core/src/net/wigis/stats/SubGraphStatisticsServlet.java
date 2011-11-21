@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.wigis.graph.PaintBean;
 import net.wigis.web.ContextLookup;
 
 /**
@@ -96,7 +97,8 @@ public class SubGraphStatisticsServlet extends HttpServlet
 			System.out.println( "statsBean is null" );
 			return;
 		}
-		sb.bufferedImageSubGraphChart(response.getOutputStream());
+		PaintBean pb = (PaintBean)ContextLookup.lookup("paintBean", request);
+		sb.bufferedImageSubGraphChart(response.getOutputStream(), pb);
 		
 	}
 }

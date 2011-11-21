@@ -1374,6 +1374,8 @@ public class PaintBean
 		if( pb == null )
 		{
 			pb = new PaintBean();
+			System.out.println("CREATING NEW PAINTBEAN");
+			new Exception().printStackTrace();
 			ContextLookup.setBean( "paintBean", pb, FacesContext.getCurrentInstance() );
 		}
 		
