@@ -1375,7 +1375,6 @@ public class PaintBean
 		{
 			pb = new PaintBean();
 			System.out.println("CREATING NEW PAINTBEAN");
-			new Exception().printStackTrace();
 			ContextLookup.setBean( "paintBean", pb, FacesContext.getCurrentInstance() );
 		}
 		
