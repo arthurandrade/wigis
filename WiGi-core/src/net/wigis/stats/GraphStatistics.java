@@ -357,15 +357,20 @@ public class GraphStatistics {
     	
     	//get the average mean of each
     	ID = ID/nodesList.size();
-		OD = OD/nodesList.size();
+		//OD = OD/nodesList.size();
 		
 		String IDString = Double.toString(ID);
-		String ODString = Double.toString(OD);
+		//String ODString = Double.toString(OD);
 		index = IDString.indexOf(".");
-		IDString = IDString.substring(0,index+3);
-		ODString = ODString.substring(0,index+3);
+		if(IDString.compareTo("0.0")==0){
+			IDString = "None";
+			//ODString = "None";
+		}else{
+			IDString = IDString.substring(0,index+3);
+			//ODString = ODString.substring(0,index+3);
+		}
 		
-		res = IDString+"?"+ODString;
+		res = IDString;
 		
     	return res;
     }

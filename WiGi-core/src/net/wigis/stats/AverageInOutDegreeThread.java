@@ -20,9 +20,7 @@ public class AverageInOutDegreeThread extends Thread{
 
 		if (temp == null || temp2 == null) {
 			String res = GraphStatistics.computeInOutDegree(PaintBean.getCurrentInstance().getGraph());
-
-			int index = res.indexOf("?");
-			sb.averageInOutDegree = res.substring(0, index);
+			sb.averageInOutDegree = res;
 
 			pb.getGraph().setProperty("inDegree", sb.averageInOutDegree);
 		} else {
