@@ -1,0 +1,220 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>
+			<a4j:form id="labelsForm">
+				<a4j:outputPanel id="labelsPanel" ajaxRendered="true"
+					styleClass="settingsPanel">
+					<h:panelGroup>
+						<h:selectBooleanCheckbox id="showLabels"
+							value="#{paintBean.showLabels}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents},labelsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleShowLabels}" reRender="#{paintBean.ajaxComponents}" />
+		                        Show labels.
+                        </a4j:outputPanel>		
+                        <br />											
+						<h:panelGroup>
+			                        Max number of selected labels to show:
+			                <rich:inputNumberSlider id="maxNumberOfSelectedLabels"
+								showInput="true" showBoundaryValues="true"
+								showToolTip="true" value="#{paintBean.maxNumberOfSelectedLabels}"
+								step="1" minValue="0" maxValue="20">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}" />
+							</rich:inputNumberSlider>
+							<br />
+						</h:panelGroup>
+						<h:selectBooleanCheckbox id="scaleLabels"
+							value="#{paintBean.scaleLabels}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents},labelsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleScaleLabels}" reRender="#{paintBean.ajaxComponents}" />
+		                        Scale labels on zoom.
+                        </a4j:outputPanel>														
+		                <h:panelGroup rendered="#{paintBean.showLabels}">
+							<br />
+							<h:selectBooleanCheckbox id="interpolationLabels"
+								value="#{paintBean.interpolationLabels}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}" />
+							</h:selectBooleanCheckbox>
+		                        <a4j:outputPanel styleClass="hand">
+		                        	<a4j:support event="onclick" action="#{paintBean.toggleDistanceLabels}" reRender="#{paintBean.ajaxComponents}" />
+			                        Show distance labels.
+		                        </a4j:outputPanel>														
+			            </h:panelGroup>
+			            <h:panelGroup>
+							<br />
+							<h:selectBooleanCheckbox id="outlinedLabels"
+								value="#{paintBean.outlinedLabels}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}" />
+							</h:selectBooleanCheckbox>
+			                        <a4j:outputPanel styleClass="hand">
+			                        	<a4j:support event="onclick" action="#{paintBean.toggleOutlinedLabels}" reRender="#{paintBean.ajaxComponents}" />
+			                        Outlined labels.
+			                        </a4j:outputPanel>
+							<br />
+							<h:selectBooleanCheckbox id="boldLabels"
+								value="#{paintBean.boldLabels}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}" />
+							</h:selectBooleanCheckbox>
+			                        <a4j:outputPanel styleClass="hand">
+			                        	<a4j:support event="onclick" action="#{paintBean.toggleBoldLabels}" reRender="#{paintBean.ajaxComponents}" />
+			                        Bold labels.
+			                        </a4j:outputPanel>
+							<br />
+							<h:selectBooleanCheckbox id="highlightNeighbors"
+								value="#{paintBean.highlightNeighbors}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}" />
+							</h:selectBooleanCheckbox>
+	                        <a4j:outputPanel styleClass="hand">
+	                        	<a4j:support event="onclick" action="#{paintBean.toggleHighlightNeighbors}" reRender="#{paintBean.ajaxComponents},appearanceSettingsPanel" />
+			                        Highlight neighbors of selected nodes.
+	                        </a4j:outputPanel>	
+	                        <br />													
+							<h:selectBooleanCheckbox id="highlightEdges"
+								value="#{paintBean.highlightEdges}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}" />
+							</h:selectBooleanCheckbox>
+	                        <a4j:outputPanel styleClass="hand">
+	                        	<a4j:support event="onclick" action="#{paintBean.toggleHighlightEdges}" reRender="#{paintBean.ajaxComponents},appearanceSettingsPanel" />
+			                        Highlight edges connected to selected nodes.
+	                        </a4j:outputPanel>	
+	                        <br />													
+							<h:panelGroup>
+								<h:selectBooleanCheckbox id="hideConflictingLabels"
+									value="#{paintBean.hideConflictingLabels}">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}" />
+								</h:selectBooleanCheckbox>
+				                        <a4j:outputPanel styleClass="hand">
+				                        	<a4j:support event="onclick" action="#{paintBean.toggleHideConflictingLabels}" reRender="#{paintBean.ajaxComponents}" />
+				                        Hide conflicting labels.
+				                        </a4j:outputPanel>
+								<br />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{paintBean.hideConflictingLabels}">
+				                        Fade factor:
+				                <rich:inputNumberSlider id="fadeFactor"
+									showInput="true" showBoundaryValues="true"
+									showToolTip="true" value="#{paintBean.fadeFactor}"
+									step="1" minValue="1" maxValue="20">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}" />
+								</rich:inputNumberSlider>
+								<br />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{!paintBean.curvedLabels}">
+								<h:selectBooleanCheckbox id="boxLabels"
+									value="#{paintBean.drawLabelBox}">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}" />
+								</h:selectBooleanCheckbox>
+				                        <a4j:outputPanel styleClass="hand">
+				                        	<a4j:support event="onclick" action="#{paintBean.toggleDrawLabelBox}" reRender="#{paintBean.ajaxComponents}" />
+				                        Draw label background.
+				                        </a4j:outputPanel>
+								<br />
+							</h:panelGroup>
+							<h:selectBooleanCheckbox id="curvedLabels"
+								value="#{paintBean.curvedLabels}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents},labelsPanel" />
+							</h:selectBooleanCheckbox>
+			                        <a4j:outputPanel styleClass="hand">
+			                        	<a4j:support event="onclick" action="#{paintBean.toggleCurvedLabels}" reRender="#{paintBean.ajaxComponents}" />
+			                        Curved labels.
+			                        </a4j:outputPanel>														
+		                    <br />
+							<h:panelGroup>
+				                        Label size:
+				                    <rich:inputNumberSlider id="labelSize"
+									showInput="true" showBoundaryValues="true"
+									showToolTip="true" value="#{paintBean.labelSize}"
+									step="1" minValue="1" maxValue="24">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}" />
+								</rich:inputNumberSlider>
+							</h:panelGroup>
+							<h:panelGroup>
+				                        Max curved label length:
+				                    <rich:inputNumberSlider id="maxLabelLength"
+									showInput="true" showBoundaryValues="true"
+									showToolTip="true" value="#{paintBean.maxLabelLength}"
+									step="1" minValue="10" maxValue="40">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}" />
+								</rich:inputNumberSlider>
+							</h:panelGroup>
+							<h:panelGroup>
+				                        Curved label white space angle:
+				                    <rich:inputNumberSlider id="curvedLabelAngle"
+									showInput="true" showBoundaryValues="true"
+									showToolTip="true" value="#{paintBean.curvedLabelAngle}"
+									step="1" minValue="1" maxValue="200">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}" />
+								</rich:inputNumberSlider>
+							</h:panelGroup>
+						</h:panelGroup>
+					</h:panelGroup>	
+					<br />		
+					<h:panelGroup>
+						<h:selectBooleanCheckbox id="showIcons"
+							value="#{paintBean.showIcons}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents}" />
+						</h:selectBooleanCheckbox>
+	                        <a4j:outputPanel styleClass="hand">
+	                        	<a4j:support event="onclick" action="#{paintBean.toggleShowIcons}" reRender="#{paintBean.ajaxComponents}" />
+		                        Show node icons.													
+	                        </a4j:outputPanel>														
+					</h:panelGroup>
+				</a4j:outputPanel>
+			</a4j:form>
+		</ui:composition>
+	</f:view>
+</html>

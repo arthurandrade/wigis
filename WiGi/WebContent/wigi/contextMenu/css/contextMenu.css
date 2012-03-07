@@ -1,0 +1,41 @@
+div.ContextMenu_class 
+{
+	display: none;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	font-family: verdana;
+	font-size: 12px;
+	list-style-type: none;
+	border: 1px solid gray;
+	z-index: 300;
+}
+
+ul.ContextMenu_class 
+{
+	display: none;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	font-family: verdana;
+	font-size: 12px;
+	list-style-type: none;
+	border: 1px solid gray;
+	z-index: 300;
+}
+    ul.ContextMenu_class li
+    {
+	    display: block;
+	    width: 150px;
+	    padding: 5px 10px 5px 10px;
+	    text-decoration: none;
+	    color: black;
+	    background: white;
+    }
+
+    ul.ContextMenu_class li:hover 
+    {
+	    text-decoration: none;
+	    color: white;
+	    background: gray;
+    }

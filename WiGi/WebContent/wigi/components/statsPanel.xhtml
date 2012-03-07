@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>
+			
+			<!--============================-->
+			<!-- put all hidden stuff in one panel cuz hidden elements take space even with display:none -->
+			<!--============================-->
+			<rich:panel style="display:none;">
+			
+				<!--============================-->                                    
+				<!-- dummy -->
+				<!--============================-->
+				<h:outputText value="#{statsBean.onload}" style="display:none" />
+				
+				<!--============================-->
+				<!-- styles -->
+				<!--============================-->				
+				<style type="text/css">
+					.statsTd 
+				  	{
+				    	color: #666666;
+				    	padding-right: 10px;
+				    	vertical-align: top; 
+				   	}
+				   	
+				   	.statsFont
+				   	{
+				   		font-size: 11px;
+				   	}
+				</style>
+	
+				<!-- - - - - - - - - - - - -->
+				<!-- select component -->
+				<!-- - - - - - - - - - - - -->
+				<a4j:form id="selectComponentForm" style="display:none" >
+				
+					<!-- hidden button to call bean method -->						
+					<a4j:commandButton 
+						id="BSelectComponent"
+						action="#{statsBean.selectComponent}" 
+						reRender="#{paintBean.ajaxComponents}"
+						/>
+					
+					<!-- dummy button for the form to preserve its name -->
+					<button
+						onclick="document.getElementById('selectComponentForm:BSelectComponent').click();" 
+						/>
+	
+				</a4j:form>						
+				
+				<!-- - - - - - - - - - - - -->
+				<!-- select node -->
+				<!-- - - - - - - - - - - - -->
+				<a4j:form id="selectNodeForm" style="display:none" >
+				
+					<!-- hidden button to call bean method -->						
+					<a4j:commandButton 
+						id="BSelectNode"
+						action="#{statsBean.selectNode}" 
+						reRender="#{paintBean.ajaxComponents}"
+						/>
+					
+					<!-- dummy button for the form to preserve its name -->
+					<button
+						onclick="document.getElementById('selectNodeForm:BSelectNode').click();" 
+						/>
+	
+				</a4j:form>									
+				<!-- - - - - - - - - - - - -->
+			</rich:panel>	
+			
+			<rich:simpleTogglePanel label="Stats" switchType="client" styleClass="settingsPanel" width="#{paintBean.panelWidth}" opened="#{statsBean.statsExpanded}">
+				<a4j:support event="onexpand" reRender="statsPanel" action="#{statsBean.expandStats}" />
+				<a4j:support event="oncollapse" action="#{statsBean.collapseStats}" />
+			
+				<a4j:outputPanel id="statsPanel" ajaxRendered="true">
+					
+					<!--============================-->                                    
+					<!-- graph -->
+					<!--============================-->
+					<rich:simpleTogglePanel label="Graph" switchType="client">
+						
+						<table class="statsFont">
+							<tr>
+								<td class="statsTd">
+									Size
+								</td>
+								<td>
+									<h:outputLabel value="#{statsBean.graphSize}" />
+								</td>
+							</tr>
+							<tr>
+								<td class="statsTd">
+									Components
+								</td>
+								<td>
+									<h:outputLabel value="#{statsBean.connectedComponents}" escape="false" />
+								</td>
+							</tr>
+							<tr>
+								<td class="statsTd">
+									Node Types
+								</td>
+								<td>
+									<h:outputLabel value="#{statsBean.nodeTypes}" escape="false" />
+								</td>
+							</tr>
+						</table>
+					
+						<br/>
+					
+						<center><b>Degree Distribution</b></center>
+						
+						<a4j:outputPanel id="statsChartPanel" layout="block"
+							style="width: #{statsBean.chartW}px; height: #{statsBean.chartH}px; overflow: hidden; z-index: 1;">
+							<h:graphicImage id="statsChart" style="-moz-user-select: none; z-index: -1; align:center" value="#{statsBean.chartURL}" alt="Chart degree distribution" />
+						</a4j:outputPanel>
+						<!--
+						<img src="#{statsBean.chartURL}" alt="Chart degree distribution" />
+						-->
+					</rich:simpleTogglePanel>
+					
+					<!--============================-->                                    
+					<!-- node -->
+					<!--============================-->
+					<a4j:form id="statsForm">
+										
+						<rich:simpleTogglePanel 
+							label="Node" 
+							switchType="client"
+							rendered="#{statsBean.nodePanelRendered}">
+						
+							<rich:dataTable 
+								id="selectedNodeTable" 
+								var="node"
+								value="#{paintBean.selectedNodes}" 
+								rows="1" 
+								rowKeyVar="row"
+								style="border:none; width:100%; "
+								>
+								
+								<rich:column>
+									<h:outputLabel 
+										value="#{node.labelNonEmpty}" 
+										style="font-size: 14px; font-weight:bold;"/>
+									<br/>
+									<br/>
+									
+									<table class="statsFont">
+										<tr>
+											<td class="statsTd">
+												Degree
+											</td>
+											<td>
+												<h:outputLabel value="#{node.degree}" />
+											</td>
+										</tr>
+										<!-- 
+										<tr>
+											<td class="statsTd">
+												Degree Centrality
+											</td>
+											<td>
+												<h:outputLabel value="#{node.degreeCentrality}" />
+											</td>
+										</tr>
+										 -->
+										<tr>
+											<td class="statsTd">
+												Neighbors
+											</td>
+											<td>
+												<h:outputLabel value="#{node.neighborsHtmlList}" escape="false" />
+											</td>
+										</tr>
+									</table>
+									
+									<br/>
+					
+									<center>
+										<b>Properties</b>
+										<h:outputLabel value="#{node.propertiesHtml}" escape="false" />
+
+										<br/>
+										
+										<a4j:commandButton
+											value="Select Neighbors" 
+											styleClass="statsFont"
+											action="#{node.selectNeighbors}"
+											reRender="#{paintBean.ajaxComponents}"
+											/>
+										
+										<br/>
+										
+										<a4j:commandButton
+											value="Delete Node"
+											styleClass="statsFont"  
+											action="#{node.deleteNode}"
+											reRender="#{paintBean.ajaxComponents}, otherSettingsPanel"
+											/>
+										
+								</center>
+								
+								<br/>
+ 										
+								</rich:column>
+								
+							</rich:dataTable>
+							
+							<!-- paging -->
+							<rich:datascroller 
+								id="selectedNodeTableScroller" 
+								for="selectedNodeTable" 
+								renderIfSinglePage="false"
+								maxPages="5"
+								/>
+									
+						</rich:simpleTogglePanel>
+					</a4j:form>
+					
+				</a4j:outputPanel>
+				
+			</rich:simpleTogglePanel>
+				
+		</ui:composition>
+	</f:view>
+</html>

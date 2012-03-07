@@ -1,0 +1,92 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>
+			<rich:simpleTogglePanel label="Time" width="#{paintBean.panelWidth}" switchType="client" opened="#{paintBean.timeExpanded}">
+				<a4j:support event="onexpand" reRender="timeSettingsPanel, timePlayPanel" action="#{paintBean.expandTime}" />
+				<a4j:support event="oncollapse" action="#{paintBean.collapseTime}" />
+				<a4j:form id="timeSettingsForm">
+					<a4j:outputPanel id="timeSettingsPanel"
+						styleClass="settingsPanel">
+						<h:panelGroup
+							rendered="#{paintBean.showTimeSelector}">
+			                        Start time index: <h:outputLabel value="#{paintBean.minTimeValue}" />
+			                    <rich:inputNumberSlider
+								id="minTime" showInput="true"
+								showBoundaryValues="true" showToolTip="true"
+								value="#{paintBean.minTime}" step="1" minValue="0"
+								maxValue="#{paintBean.allTimesSize - 1}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents},timeSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+						<br />
+						<h:panelGroup
+							rendered="#{paintBean.showTimeSelector}">
+			                        Time window width:
+			                    <rich:inputNumberSlider
+								id="maxTime" showInput="true"
+								showBoundaryValues="true" showToolTip="true"
+								value="#{paintBean.timeWindow}" step="1" minValue="1"
+								maxValue="#{paintBean.allTimesSize - paintBean.minTime}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}, timeSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+					</a4j:outputPanel>
+				</a4j:form>
+				<a4j:form>
+					<a4j:outputPanel id="timePlayPanel">
+						<h:panelGroup
+							rendered="#{paintBean.showTimeSelector}">
+							<a4j:commandButton id="playTime"
+								value="Play"
+								action="#{paintBean.playTime}"
+								reRender="#{paintBean.ajaxComponents}, timeSettingsPanel, timePlayPanel"
+								onclick="this.disabled=true;startImageReload();"
+								oncomplete="stopImageReload()" />
+							<a4j:commandButton id="stopPlayTime"
+								value="Stop"
+								action="#{paintBean.stopPlayTime}"
+								onclick="stopImageReload();" />
+						</h:panelGroup>
+					</a4j:outputPanel>
+				</a4j:form>						
+			</rich:simpleTogglePanel>		
+		</ui:composition>
+	</f:view>
+</html>

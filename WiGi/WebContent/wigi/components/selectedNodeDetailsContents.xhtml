@@ -1,0 +1,121 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+<f:view>
+	<ui:composition>
+		<a4j:outputPanel id="selectedNodeDetailsPanel"
+			styleClass="settingsPanel">
+			<a4j:form id="selectedNodesDetailForm">
+				<h:panelGroup>
+				<!-- 
+					<a4j:commandButton id="refreshSelectedNodes" value="Refresh" action="paintBean.doNothing()" reRender="selectedNodesPanel" />
+				 -->
+					<a4j:outputPanel id="selectedNodesPanel">
+						<!-- results table -->
+						<rich:dataTable id="selectedNodeTable" var="node"
+							value="#{paintBean.selectedNodes}" rows="1" rowKeyVar="row"
+							style="width:210px; text-align:left;">
+							<rich:column>
+								<!-- result text -->
+								<rich:simpleTogglePanel label="#{node.label}"
+									switchType="client" opened="#{node.detailsExpanded}">
+									<a4j:support event="onexpand" action="#{node.expandDetails}" />
+									<a4j:support event="oncollapse"
+										action="#{node.collapseDetails}" />
+									<h:outputText value="#{node.label}" style="font-size:large;" />
+									<br />
+									<h:graphicImage value="#{node.imageUrl}" />
+									<br />
+									<a4j:region id="expansionRegion">
+										<a4j:commandButton rendered="#{node.expandable}"
+											action="#{node.expand}" value="Expand"
+											reRender="#{paintBean.ajaxComponents},selectedNodesPanel"
+											onclick="this.disabled=true;startImageReload();"
+											oncomplete="stopImageReload();" />
+									</a4j:region>
+								    <rich:modalPanel id="expansionModalPanel" width="350" height="100">
+								        <f:facet name="header">
+								            <h:panelGroup>
+								                <h:outputText value="Please Wait."></h:outputText>
+								            </h:panelGroup>
+								        </f:facet>
+								        <h:outputText value="WiGis is expanding the selected node."></h:outputText>
+								        <br/>
+								        <br/>
+								        <h:outputText value="This window will close automatically when done."></h:outputText>
+								    </rich:modalPanel>
+									<a4j:status id="ExpandStatus" for="expansionRegion" onstart="Richfaces.showModalPanel('expansionModalPanel')" onstop="Richfaces.hideModalPanel('expansionModalPanel')">
+									</a4j:status>
+									<br />
+									<h:outputText escape="false" value="#{node.details}" />
+									<br />
+									<a4j:commandButton rendered="#{node.facebookCanAdd}"
+										action="#{node.facebookAddToProfile}" value="I Like!"
+										reRender="#{paintBean.ajaxComponents},selectedNodesPanel"
+										onclick="this.disabled=true;startImageReload();Richfaces.showModalPanel('facebookModalPanel');"
+										oncomplete="stopImageReload();Richfaces.hideModalPanel('facebookModalPanel');" />
+									<br />
+									<a4j:commandButton action="#{node.selectNeighbors}"
+										reRender="#{paintBean.ajaxComponents},selectedNodesPanel"
+										value="Select all neighbors" />
+									<br />
+									<a4j:commandButton action="#{node.deleteNode}"
+										reRender="#{paintBean.ajaxComponents},selectedNodesPanel"
+										value="Delete" />
+									<br />
+									<a4j:outputPanel rendered="#{node.forceLabel}">
+										<a4j:commandButton action="#{node.removeForceLabel}" 
+										reRender="#{paintBean.ajaxComponents},selectedNodesPanel"
+										value="Don't force label" />
+									</a4j:outputPanel>
+									<a4j:outputPanel rendered="#{!node.forceLabel}">
+										<a4j:commandButton action="#{node.addForceLabel}" 
+										reRender="#{paintBean.ajaxComponents},selectedNodesPanel"
+										value="Force label" />
+									</a4j:outputPanel>
+								</rich:simpleTogglePanel>
+							</rich:column>
+						</rich:dataTable>
+						<!-- paging -->
+						<rich:datascroller id="selectedNodeTableScroller" align="left"
+							for="selectedNodeTable" style="width:210px;" />
+					</a4j:outputPanel>
+				</h:panelGroup>
+			</a4j:form>
+		</a4j:outputPanel>
+	</ui:composition>
+</f:view>
+</html>

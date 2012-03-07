@@ -1,0 +1,211 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+<f:view>
+	<ui:composition>
+		<!-- All the javascript code and stylesheets for WiGi -->
+		<ui:include src="/wigi/components/javascript.xhtml" />
+		
+		<a4j:loadScript src="resource://jquery.js"/>
+		<style>
+			#blackbookMenuForm {
+				display: none;
+				position: absolute;
+				padding: 10px;
+				background-color: #ddd;
+				border: 1px solid #000;
+			}
+		</style>
+		<script type="text/javascript">
+			jQuery(document).ready(function(){
+			    jQuery("#blackbookDetailsGrid").bind("contextmenu",function(e){
+			    	 jQuery('#blackbookMenuForm').css({
+			    	        top: e.pageY+'px',
+			    	        left: e.pageX+'px'
+			    	    }).show();
+			    	    dragObject=null;
+			        return false;
+			    });
+
+				//close after clicking the box or else where.
+			    jQuery('#blackbookMenuForm').click(function() {
+			    	jQuery('#blackbookMenuForm').hide();
+			    });
+			    jQuery(document).click(function() {
+			    	jQuery('#blackbookMenuForm').hide();
+			    });
+					    
+			});
+
+			//-----------------------------
+			// blackbook override of mouse up
+			//-----------------------------
+			function mouseUp(ev)
+			{   
+				//if left mouse click
+				if(ev.which == 1) {	
+				    //.. THIS WASNT NECESSARY BEFORE
+				    if(!dragObject) return;
+				    
+				    if (dragObject.type == 'node')
+				        mouseUp_node(ev);
+				    else if (dragObject.type == 'zoom_corner')
+				        mouseUp_zoomCorner(ev);
+				    else if (dragObject.type == 'zoom')
+				    	mouseUp_zoom(ev);
+				    else if (dragObject.type == 'viewDetailed')
+				    	mouseUp_viewDetailed(ev);
+				
+				
+					dragObject = null;
+				}
+				//right mouse click
+				else {
+					return false;
+				}
+			}
+		</script>
+		
+		<a4j:form id="blackbookMenuForm">
+			<a4j:outputPanel id="menu" layout="block">
+				<a4j:region id="blackbookOperationsRegion">
+					<h:panelGrid columns="1">
+						<a4j:commandLink action="#{paintBean.selectAllNodes}" value="Select All" onclick="dragObject=null;" oncomplete="this.disabled=false; mouseUp_zoom(event); " style="font-family:Tahoma;font-size:11px;font-weight:bold;font-style:normal;color:#3B5998"/>
+						<a4j:commandLink action="#{paintBean.removeSelectedNodes}" value="Remove Selected" reRender="#{paintBean.ajaxComponents}" onclick="this.disabled=true;" oncomplete="this.disabled=false; mouseUp_zoom(event); " style="font-family:Tahoma;font-size:11px;font-weight:bold;font-style:normal;color:#3B5998"/>
+						<a4j:commandLink action="#{blackbookBean.expandSelectedNodes}" value="Expand Selected" reRender="blackbookPagePoll,blackbookPaintPoll" onclick="this.disabled=true;" oncomplete="this.disabled=false; mouseUp_zoom(event); " style="font-family:Tahoma;font-size:11px;font-weight:bold;font-style:normal;color:#3B5998"/>
+						<a4j:commandLink action="#{blackbookBean.isolateSelectedNodes}" value="Isolate Selected" reRender="#{paintBean.ajaxComponents},interactionSettingsPanel" onclick="this.disabled=true;startImageReload();" oncomplete="stopImageReload()" style="font-family:Tahoma;font-size:11px;font-weight:bold;font-style:normal;color:#3B5998"/>
+						<a4j:commandLink action="#{paintBean.runLayout}" value="Run Layout" onclick="this.disabled=true;startImageReload();" oncomplete="stopImageReload()" style="font-family:Tahoma;font-size:11px;font-weight:bold;font-style:normal;color:#3B5998"/>
+						<a4j:commandLink action="#{blackbookBean.toggleNodeLabels}" value="Show Labels" disabled="paintBean.showLabels" reRender="#{paintBean.ajaxComponents},interactionSettingsPanel" onclick="this.disabled=true;startImageReload();" oncomplete="stopImageReload()" style="font-family:Tahoma;font-size:11px;font-weight:bold;font-style:normal;color:#3B5998"/>						
+					</h:panelGrid>
+				</a4j:region>
+			</a4j:outputPanel>
+		</a4j:form>
+		
+		<title><ui:insert name="title">WiGi - Web-based Interactive Graph Interface</ui:insert></title>
+		<h:inputHidden id="hidden1" value="#{blackbookBean.renewedBlackbook}" />
+		<h:panelGrid columns="1" width="100%" columnClasses="topAligned">
+			<rich:panel header="WiGi - Web-based Interactive Graph Interface" id="wigiPanel">
+			    <ui:include src="/wigi/components/blackbookOperations.xhtml" />
+				<h:panelGrid columns="2" columnClasses="topAligned,topAligned,topAligned">
+					<h:panelGroup styleClass="topAligned">
+						<h:panelGrid id="blackbookDetailsGrid" columns="1" columnClasses="topAligned">
+							<!--============================-->
+							<!-- DETAILED VIEW -->
+							<!--============================-->
+							<ui:include src="/wigi/components/detailedView.xhtml" />
+						</h:panelGrid>
+					</h:panelGroup>
+					<h:panelGroup id="rightPanelGroup" styleClass="topAligned">
+						<a4j:outputPanel id="rightPanel" layout="block">
+							<h:panelGrid columns="1" columnClasses="topAligned">
+								<h:panelGrid columns="1" columnClasses="topAligned">
+									<!--============================-->
+									<!-- OVERVIEW -->
+									<!--============================-->
+									<ui:include src="/wigi/components/overview.xhtml" />
+
+									<!--============================-->
+									<!-- SEARCH -->
+									<!--============================-->
+									<ui:include src="/wigi/components/search.xhtml" />
+
+									<!--============================-->
+									<!-- SELECTED NODE DETAILS -->
+									<!--============================-->
+									<ui:include src="/wigi/components/selectedNodeDetails.xhtml" />
+									
+								</h:panelGrid>
+							</h:panelGrid>
+							<!--============================-->
+							<!-- WEBPATH -->
+							<!--============================-->
+							<ui:include src="/wigi/components/webPath.xhtml" />
+						</a4j:outputPanel>
+						<!--============================-->
+						<!-- ZOOM STATUS -->
+						<!--============================-->
+						<ui:include src="/wigi/components/zoomStatus.xhtml" />
+						
+						<!--============================-->
+						<!-- MAIN JAVASCRIPT -->
+						<!--============================-->
+						<ui:include src="/wigi/components/mainJavascript.xhtml" />
+					</h:panelGroup>
+				</h:panelGrid>
+				
+				<a4j:region id="feedbackRegion">
+					<h:panelGrid id="feedbackGrid" columns="3">
+						<a4j:form>
+							<a4j:outputPanel id="processingPanel" ajaxRendered="true">
+								<h:graphicImage id="processingImage" url="/processing.gif" rendered="#{blackbookBean.blackbookPagePollingEnabled}" alt="processing notification" style="height:17;width:17"/>
+							</a4j:outputPanel>
+						</a4j:form>
+						<a4j:form>
+							<a4j:outputPanel id="errorPanel" ajaxRendered="true">
+								<h:outputText id="errorMessage" value="#{paintBean.errMsg}" style="color:#FF0000">
+									<rich:jQuery selector="#errorMessage" query="fadeOut(10000,function(){})"/>
+								</h:outputText>
+							</a4j:outputPanel>
+						</a4j:form>
+						<a4j:form>
+							<a4j:outputPanel id="statusPanel" ajaxRendered="true">
+								<h:outputText id="statusMessage" value="#{paintBean.statusMsg}" style="color:#3B5998">
+									<rich:jQuery selector="#statusMessage" query="fadeOut(10000,function(){})"/>
+								</h:outputText>
+							</a4j:outputPanel>
+						</a4j:form>
+					</h:panelGrid>
+				</a4j:region>
+				
+				<rich:simpleTogglePanel switchType="client" label="Configuration" opened="false" width="100%">
+					<h:panelGrid columns="5" columnClasses="topAligned,topAligned,topAligned,topAligned,topAligned">
+
+						<ui:include src="/wigi/components/appearanceSettings.xhtml" />
+		
+						<ui:include src="/wigi/components/labelSettings.xhtml" />
+						
+						<ui:include src="/wigi/components/blackbookPanel.xhtml" />
+						 									 
+						<ui:include src="/wigi/components/interactionSettings.xhtml" />
+						
+						<ui:include src="/wigi/components/facetedSearch.xhtml" />
+					</h:panelGrid>
+				</rich:simpleTogglePanel>
+			</rich:panel>
+		</h:panelGrid>
+	</ui:composition>
+</f:view>
+</html>

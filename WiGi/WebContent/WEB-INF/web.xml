@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+ <description>Web Interactive Graphical Interface</description>
+ <display-name>WiGi Viewer</display-name>
+ <!-- enable special debug output for development -->
+ <context-param>
+  <param-name>facelets.DEVELOPMENT</param-name>
+  <param-value>true</param-value>
+ </context-param>
+ <!-- load our Facelets taglibs (value must be semicolon-delimited) -->
+ <context-param>
+  <param-name>facelets.LIBRARIES</param-name>
+  <param-value>/WEB-INF/on.component.taglib.xml</param-value>
+ </context-param>
+ <context-param>
+  <param-name>facelets.REFRESH_PERIOD</param-name>
+  <param-value>2</param-value>
+ </context-param>
+ <context-param>
+  <param-name>facelets.SKIP_COMMENTS</param-name>
+  <param-value>true</param-value>
+ </context-param>
+ <context-param>
+  <param-name>javax.faces.CONFIG_FILES</param-name>
+  <param-value>/WEB-INF/faces-config.xml</param-value>
+ </context-param>
+ <context-param>
+  <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+  <param-value>.xhtml</param-value>
+ </context-param>
+ <context-param>
+  <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+  <param-value>client</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.ajax4jsf.COMPRESS_SCRIPT</param-name>
+  <param-value>false</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
+  <param-value>com.sun.facelets.FaceletViewHandler</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.ajax4jsf.xmlparser.ORDER</param-name>
+  <param-value>NONE,NEKO,TIDY</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
+  <param-value>true</param-value>
+ </context-param>
+ <!-- load all richfaces javascript upfront -->
+ <context-param>
+  <param-name>org.richfaces.LoadScriptStrategy</param-name>
+  <param-value>ALL</param-value>
+ </context-param>
+ <!-- load all richfaces css upfront -->
+ <context-param>
+  <param-name>org.richfaces.LoadStyleStrategy</param-name>
+  <param-value>ALL</param-value>
+ </context-param>
+ <context-param>
+  <param-name>org.richfaces.SKIN</param-name>
+  <param-value>facebook</param-value>
+ </context-param>
+ <filter>
+  <display-name>RichFaces Filter</display-name>
+  <filter-name>richfaces</filter-name>
+  <filter-class>org.ajax4jsf.Filter</filter-class>
+ </filter>
+ <!-- Graphs Path Filter -->
+ <filter>
+  <filter-name>GraphsPathFilter</filter-name>
+  <filter-class>net.wigis.graph.GraphsPathFilter</filter-class>
+ </filter>
+ <filter-mapping>
+  <filter-name>richfaces</filter-name>
+  <servlet-name>Faces Servlet</servlet-name>
+  <dispatcher>REQUEST</dispatcher>
+  <dispatcher>FORWARD</dispatcher>
+  <dispatcher>INCLUDE</dispatcher>
+ </filter-mapping>
+ <listener>
+  <listener-class>com.sun.faces.config.ConfigureListener</listener-class>
+ </listener>
+ <!-- Faces Servlet -->
+ <servlet>
+  <servlet-name>Faces Servlet</servlet-name>
+  <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+  <load-on-startup>1</load-on-startup>
+ </servlet>
+ <!-- WiGi Viewer Servlets -->
+ <servlet>
+  <description>Returns an image representing the current graph.</description>
+  <display-name>GraphServlet</display-name>
+  <servlet-name>GraphServlet</servlet-name>
+  <servlet-class>net.wigis.web.GraphServlet</servlet-class>
+ </servlet>
+ <servlet>
+  <description>Returns an image of a line chart.</description>
+  <display-name>LineChartServlet</display-name>
+  <servlet-name>LineChartServlet</servlet-name>
+  <servlet-class>net.wigis.stats.LineChartServlet</servlet-class>
+ </servlet>
+ <servlet>
+  <description>Draw the image for a single node.</description>
+  <display-name>NodeIconServlet</display-name>
+  <servlet-name>NodeIconServlet</servlet-name>
+  <servlet-class>net.wigis.web.NodeIconServlet</servlet-class>
+ </servlet>
+ <servlet>
+  <description>Update the position of nodes.</description>
+  <display-name>NodePosServlet</display-name>
+  <servlet-name>NodePosServlet</servlet-name>
+  <servlet-class>net.wigis.web.NodePosServlet</servlet-class>
+ </servlet>
+ <servlet-mapping>
+  <servlet-name>Faces Servlet</servlet-name>
+  <url-pattern>*.faces</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>GraphServlet</servlet-name>
+  <url-pattern>/wigi/GraphServlet</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>LineChartServlet</servlet-name>
+  <url-pattern>/wigi/LineChartServlet</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>NodeIconServlet</servlet-name>
+  <url-pattern>/wigi/NodeIconServlet</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>NodePosServlet</servlet-name>
+  <url-pattern>/wigi/NodePosServlet</url-pattern>
+ </servlet-mapping>
+ <session-config>
+  <session-timeout>1000</session-timeout>
+ </session-config>
+ <error-page>
+  <error-code>500</error-code>
+  <location>/error.html</location>
+ </error-page>
+ <welcome-file-list>
+    <welcome-file>default.faces</welcome-file>
+    <welcome-file>default.xhtml</welcome-file>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+ 
+</web-app>

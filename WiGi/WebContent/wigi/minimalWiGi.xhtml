@@ -1,0 +1,167 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+<f:view>
+	<ui:composition>
+		<!-- All the javascript code and stylesheets for WiGi -->
+		<ui:include src="/wigi/components/javascript.xhtml" />
+		
+		<title><ui:insert name="title">WiGi - Web-based Interactive Graph Interface</ui:insert></title>
+		<!-- 
+		<h:outputText value="#{paintBean.notBlackbook}" />
+		-->
+		<h:panelGrid columns="1" width="100%" columnClasses="topAligned">
+			<rich:panel header="WiGi - Web-based Interactive Graph Interface" id="wigiPanel">
+				<h:panelGrid columns="2" columnClasses="topAligned,topAligned">
+					<h:panelGroup styleClass="topAligned">
+						<h:panelGrid columns="1" columnClasses="topAligned">
+							<!--============================-->
+							<!-- DETAILED VIEW -->
+							<!--============================-->
+							<ui:include src="/wigi/components/detailedView.xhtml" />
+						</h:panelGrid>
+					</h:panelGroup>
+					<h:panelGroup id="rightPanelGroup" styleClass="topAligned">
+						<a4j:outputPanel id="rightPanel" layout="block">
+							<h:panelGrid columns="1" columnClasses="topAligned">
+								<h:panelGrid columns="1" columnClasses="topAligned">
+									<!--============================-->
+									<!-- OVERVIEW -->
+									<!--============================-->
+									<ui:include src="/wigi/components/overview.xhtml" />
+
+									<!--============================-->
+									<!-- SELECTED NODE DETAILS -->									
+									<!--============================-->									
+									<ui:include src="/wigi/components/selectedNodeDetails.xhtml" />
+															
+									<!--============================-->
+									<!-- SEARCH -->
+									<!--============================-->
+									<ui:include src="/wigi/components/specializedSearch.xhtml" />
+									
+									 
+									<!--============================-->
+									<!-- APPEARANCE -->
+									<!--============================-->
+									<a4j:outputPanel style="display:#{paintBean.displayAppearancePanel}">
+										<ui:include src="/wigi/components/appearanceSettings.xhtml" />
+									</a4j:outputPanel>
+									 
+									<!--============================-->
+									<!-- LABELS -->
+									<!--============================-->
+									<a4j:outputPanel style="display:#{paintBean.displayLabelsPanel}">
+										<ui:include src="/wigi/components/labelSettings.xhtml" />
+									</a4j:outputPanel>
+									 
+									<!--============================-->
+									<!-- DATA -->
+									<!--============================-->
+									<a4j:outputPanel style="display:#{paintBean.displayDataPanel}">
+										<ui:include src="/wigi/components/dataPanel.xhtml" />
+									</a4j:outputPanel>
+
+									<!--============================-->
+									<!-- CLIENT-SERVER -->
+									<!--============================-->
+									<c:if test="#{paintBean.defaultJsThreshold > 0}">
+										<ui:include src="/wigi/components/clientServerSwitch.xhtml" />
+									</c:if>
+																		 
+									<!--============================-->
+									<!-- CLIENT SIDE LAYOUT -->
+									<!--============================-->
+									<c:if test="#{paintBean.defaultJsThreshold > 0}">
+										<ui:include src="/wigi/components/clientSideLayout.xhtml" />
+									</c:if>
+																		 
+									<!--============================-->
+									<!-- SERVER SIDE LAYOUT -->
+									<!--============================-->
+									<a4j:outputPanel style="display:none">
+										<ui:include src="/wigi/components/serverSideLayout.xhtml" />
+									</a4j:outputPanel>
+									 
+									<!--============================-->
+									<!-- CLUSTERING -->
+									<!--============================-->
+									<a4j:outputPanel style="display:none">
+										<ui:include src="/wigi/components/clustering.xhtml" />
+									</a4j:outputPanel>								 
+									
+									<!--============================-->
+									<!-- INTERACTION -->
+									<!--============================-->	
+									<a4j:outputPanel style="display:none">
+										<ui:include src="/wigi/components/interactionSettings.xhtml" />
+									</a4j:outputPanel>
+									 
+									<!--============================-->
+									<!-- TIME -->
+									<!--============================-->	
+									<a4j:outputPanel style="display:none">
+										<ui:include src="/wigi/components/timeSettings.xhtml" />
+									</a4j:outputPanel>
+								</h:panelGrid>
+							</h:panelGrid>
+							
+							<!--============================-->
+							<!-- WEBPATH -->
+							<!--============================-->
+							<ui:include src="/wigi/components/webPath.xhtml" />
+							
+							<!--============================-->
+							<!-- DEBUG -->
+							<!--============================-->
+							<ui:include src="/wigi/components/debugFields.xhtml" />
+						</a4j:outputPanel>
+						
+						<!--============================-->
+						<!-- ZOOM STATUS -->
+						<!--============================-->
+						<ui:include src="/wigi/components/zoomStatus.xhtml" />
+					</h:panelGroup>
+				</h:panelGrid>
+			</rich:panel>			
+		</h:panelGrid>
+		<!--============================-->
+		<!-- MAIN JAVASCRIPT -->
+		<!--============================-->
+		<ui:include src="/wigi/components/mainJavascript.xhtml" />
+	</ui:composition>
+</f:view>
+</html>

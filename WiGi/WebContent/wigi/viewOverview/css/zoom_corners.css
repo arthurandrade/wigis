@@ -1,0 +1,40 @@
+
+.zoom_corners_nw	/* cursor north-west */
+{    
+	width: 8px; 
+	height: 8px;
+	position: absolute;
+	
+	font-size: 0px; /* IE fix*/
+	
+/*	border: 1px solid #5D7343;*/
+	border: 1px solid #4a75b5;
+	
+	cursor: nw-resize;
+	
+	-moz-user-select: none;
+	
+	z-index: 99;
+	
+	display: none;
+}
+
+.zoom_corners_ne	/* cursor north-east */
+{    
+	width: 8px; 
+	height: 8px;
+	position: absolute;
+	
+	font-size: 0px; /* IE fix*/
+	
+/*	border: 1px solid #5D7343;*/
+	border: 1px solid #4a75b5;
+	
+	cursor: ne-resize;
+	
+	-moz-user-select: none;
+	
+	z-index: 99;
+	
+	display: none;
+}

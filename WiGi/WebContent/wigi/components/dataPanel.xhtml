@@ -1,0 +1,217 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>
+			<rich:simpleTogglePanel label="Data" width="#{paintBean.panelWidth}" switchType="client" opened="#{paintBean.dataExpanded}">
+				<a4j:support event="onexpand"  reRender="otherSettingsPanel" action="#{paintBean.expandData}" />
+				<a4j:support event="oncollapse" action="#{paintBean.collapseData}" />
+				<a4j:form id="otherSettingsForm">
+					<a4j:outputPanel id="otherSettingsPanel"
+						styleClass="settingsPanel">
+						<br />
+						<h:panelGroup>
+									Select a graph to load:
+							<a4j:commandButton id="refreshFileListButton"
+								value="Refresh List" action="#{graphsBean.buildFileList}"
+								reRender="otherSettingsPanel" style="font-size:10px;"/>
+							<br />							
+							<a4j:region id="loadRegion">
+								<h:selectOneMenu value="#{paintBean.selectedFile}" style="width:200px;">
+									<a4j:support event="onchange"
+										reRender="#{paintBean.ajaxComponents}, interactionSettingsPanel, clusteringSettingsPanel, appearanceSettingsPanel, layoutSettingsPanel, saveAsModalPanel, timeSettingsPanel, otherSettingsPanel" />
+									<f:selectItems value="#{graphsBean.fileList}" />
+								</h:selectOneMenu>
+								<br />
+								<a4j:commandButton id="reloadGraphButton"
+									value="Reload Layout" action="#{paintBean.loadGraph}"
+									reRender="#{paintBean.ajaxComponents}, otherSettingsPanel"
+									onclick="this.disabled=true;" />
+							</a4j:region>
+						    <rich:modalPanel id="loadModalPanel" width="350" height="100">
+						        <f:facet name="header">
+						            <h:panelGroup>
+						                <h:outputText value="Please Wait."></h:outputText>
+						            </h:panelGroup>
+						        </f:facet>
+						        <h:outputText value="WiGis is loading a graph. Please be patient."></h:outputText>
+						        <br/>
+						        <br/>
+						        <h:outputText value="This window will close automatically when done."></h:outputText>
+						    </rich:modalPanel>
+							<a4j:status id="LoadStatus" for="loadRegion" onstart="Richfaces.showModalPanel('loadModalPanel')" onstop="Richfaces.hideModalPanel('loadModalPanel')">
+							</a4j:status>
+						</h:panelGroup>
+						<br />
+						<h:panelGroup>
+							<a4j:region id="saveRegion">
+								<a4j:commandButton id="saveLayoutButton"
+									value="Save Layout" action="#{paintBean.saveGraph}"
+									reRender="#{paintBean.ajaxComponents},saveLayoutButton"
+									onclick="this.disabled=true;" />
+							</a4j:region>
+							<a4j:commandButton id="saveAsLayoutButton"
+								value="Save Layout As"
+								reRender="#{paintBean.ajaxComponents},saveAsLayoutButton"
+								onclick="this.disabled=true;Richfaces.showModalPanel('saveAsModalPanel');" />
+						</h:panelGroup>
+						<br />
+					    <rich:modalPanel id="saveModalPanel" width="350" height="100">
+					        <f:facet name="header">
+					            <h:panelGroup>
+					                <h:outputText value="Please Wait."></h:outputText>
+					            </h:panelGroup>
+					        </f:facet>
+					        <h:outputText value="WiGis is saving the graph. Please be patient."></h:outputText>
+					        <br/>
+					        <br/>
+					        <h:outputText value="This window will close automatically when done."></h:outputText>
+					    </rich:modalPanel>
+						<a4j:status id="SaveStatus" for="saveRegion" onstart="Richfaces.showModalPanel('saveModalPanel')" onstop="Richfaces.hideModalPanel('saveModalPanel')">
+						</a4j:status>
+						<br />
+						<h:panelGroup>
+							<a4j:outputPanel id="removePanel">
+								<a4j:region id="removeRegion">
+									<a4j:commandButton id="removeIsolatedButton"
+										value="Remove Isolated Nodes"
+										action="#{paintBean.removeIsolatedNodes}"
+										reRender="#{paintBean.ajaxComponents}, removePanel"
+										onclick="this.disabled=true;" />
+									<br />
+									<a4j:commandButton id="removeSelectedButton"
+										value="Remove Selected Nodes"
+										action="#{paintBean.removeSelectedNodes}"
+										reRender="#{paintBean.ajaxComponents}, removePanel"
+										onclick="this.disabled=true;" />
+									<br />
+									<rich:panel bodyClass="rich-panel-no-header">
+										<a4j:commandButton id="removeUnselectedButton"
+											value="Remove Unselected Nodes"
+											action="#{paintBean.removeUnselectedNodes}"
+											reRender="#{paintBean.ajaxComponents}, removePanel"
+											onclick="this.disabled=true;" />
+										<br />
+										<h:selectBooleanCheckbox id="keepNeighbors"
+											value="#{paintBean.keepNeighborsOfSelectedNodes}">
+											<a4j:support event="onchange"
+												reRender="removePanel" />
+										</h:selectBooleanCheckbox>
+				                        <a4j:outputPanel styleClass="hand">
+				                        	<a4j:support event="onclick" action="#{paintBean.toggleKeepNeighborsOfSelectedNodes}" reRender="removePanel" />
+					                        Keep neighbor nodes.
+				                        </a4j:outputPanel>
+									</rich:panel>
+									<br />
+									<a4j:commandButton id="undo"
+										value="Undo" action="#{paintBean.undo}" rendered="#{paintBean.showUndo}"
+										reRender="#{paintBean.ajaxComponents}, removePanel" style="font-size:10px;"/>
+									<a4j:commandButton id="redo"
+										value="Redo" action="#{paintBean.redo}" rendered="#{paintBean.showRedo}"
+										reRender="#{paintBean.ajaxComponents}, removePanel" style="font-size:10px;"/>
+									<br />
+									<a4j:commandButton id="invertSelectionButton"
+										value="Invert Node Selection"
+										action="#{paintBean.invertSelection}"
+										reRender="#{paintBean.ajaxComponents}, removePanel"
+										onclick="this.disabled=true;" />
+	 								<br />
+									<a4j:commandButton id="expandNodeSelection"
+										value="Expand Node Selection" action="#{paintBean.expandSelection}"
+										reRender="#{paintBean.ajaxComponents}, removePanel" style="font-size:10px;"/>
+								</a4j:region>
+								<br />
+							    <rich:modalPanel id="removeModalPanel" width="350" height="100">
+							        <f:facet name="header">
+							            <h:panelGroup>
+							                <h:outputText value="Please Wait."></h:outputText>
+							            </h:panelGroup>
+							        </f:facet>
+							        <h:outputText value="WiGis is updating the graph. Please be patient."></h:outputText>
+							        <br/>
+							        <br/>
+							        <h:outputText value="This window will close automatically when done."></h:outputText>
+							    </rich:modalPanel>
+								<a4j:status id="removeStatus" for="removeRegion" onstart="Richfaces.showModalPanel('removeModalPanel')" onstop="Richfaces.hideModalPanel('removeModalPanel')">
+								</a4j:status>
+								<br />
+							</a4j:outputPanel>
+						</h:panelGroup>
+						<a4j:outputPanel id="interpolationTestPanel" rendered="#{paintBean.interpolationTest}">
+							<f:verbatim>
+								<div class="hand" onclick="performInterpolationTest();">Start Interpolation Test</div>
+							</f:verbatim>
+						</a4j:outputPanel>
+						<a4j:outputPanel id="imageMovingTestPanel" rendered="#{paintBean.imageMovingTest}">
+							<f:verbatim>
+								<div class="hand" onclick="performImageMovingTest();">Start Image Moving Test</div>
+							</f:verbatim>
+						</a4j:outputPanel>
+						<a4j:outputPanel id="clientSideTestPanel" rendered="#{paintBean.clientSideTest}">
+							<f:verbatim>
+								<div class="hand" onclick="performClientSideTest();">Start Client Side Test</div>
+							</f:verbatim>
+						</a4j:outputPanel>
+						<a4j:outputPanel id="serverSideTestPanel" rendered="#{paintBean.serverSideTest}">
+							<f:verbatim>
+								<div class="hand" onclick="performServerSideTest();">Start Server Side Test</div>
+							</f:verbatim>
+						</a4j:outputPanel>
+					</a4j:outputPanel>
+				</a4j:form>
+				<a4j:form>
+					<a4j:region id="saveAsRegion">
+					    <rich:modalPanel id="saveAsModalPanel" width="350" height="100">
+					        <f:facet name="header">
+					            <h:panelGroup>
+					                <h:outputText value="Input File Name."></h:outputText>
+					            </h:panelGroup>
+					        </f:facet>
+					        <h:inputText value="#{paintBean.selectedFile}" />
+					        <br/>
+							<a4j:commandButton id="saveLayoutButton2"
+								value="Save Layout" action="#{paintBean.saveGraph}"
+								reRender="#{paintBean.ajaxComponents},otherSettingsPanel"
+								onclick="Richfaces.hideModalPanel('saveAsModalPanel');" />
+					    </rich:modalPanel>
+					</a4j:region>
+					<a4j:status id="SaveAsStatus" for="saveAsRegion" onstart="Richfaces.showModalPanel('saveModalPanel')" onstop="Richfaces.hideModalPanel('saveModalPanel')">
+					</a4j:status>
+				</a4j:form>
+			</rich:simpleTogglePanel>
+		</ui:composition>
+	</f:view>
+</html>
