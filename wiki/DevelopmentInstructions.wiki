@@ -47,7 +47,7 @@ This phase will explain how to configure the WiGi-core project.
   # Select the 'WiGi-core' project into your 'Package Explorer', right click on it and select 'Properties'.
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image6.png" alt="Tutorial-Image6"/>
 
-  # Select 'Targeted Runtimes' on the right tab and make sure that the 'Targeted Runtime' that is selected is your JBoss server. _If you don't see your JBoss server in the list, your might have done something wrong during the JBoss import to Eclipse._
+  # Select 'Targeted Runtimes' on the left column and make sure that the 'Targeted Runtime' that is selected is your JBoss server. _If you don't see your JBoss server in the list, your might have done something wrong during the JBoss import to Eclipse._
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image7.png" alt="Tutorial-Image7"/>
 
   # According to your OS, you might have to precise which JRE system to use. For this, go on the 'Java Build Path' link on the left column and click on the 'Libraries' tab at the top of the window. You might have a list of libraries used by the project plus one called 'JRE System Library'.
