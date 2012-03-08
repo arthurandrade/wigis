@@ -1,19 +1,19 @@
 #labels Phase-Deploy
 = Download and Setup Instructions - For developers =
-The following steps explain the development environment setup, including prerequisites that are required to run WiGi, and the import process for Eclipse IDE.
+The following steps explain the development environment setup, including prerequisites to run WiGi, and the import process for Eclipse IDE.
 
 =Prerequisites=
 ==Java JDK 1.6.x==
-In order to run the WiGi project, you will need to have Java JDK version 1.6.x installed on your computer. Java JDK is available at http://www.oracle.com/technetwork/java/javase/downloads/index.html.
+In order to run the WiGi toolkit, you will need to have Java JDK version 1.6.x installed on your computer.  Java JDK is available at http://www.oracle.com/technetwork/java/javase/downloads/index.html.
 
 ==Eclipse IDE==
-Eclipse will be needed to edit code and run a JBoss server. It is available at http://www.eclipse.org/downloads/.
+The dev team suggest using Eclipse to edit code and manage an integrated JBoss server. It is available at http://www.eclipse.org/downloads/.  Of course, other IDEs or the command line will also work.
 
 ==JBoss 5.1==
-The WiGi project need to be run on a JBoss server using version 5.1. JBoss is available at http://www.jboss.org/jbossas/downloads/.
+The WiGi project need to be run on a JBoss server using version 5.1. JBoss is available at http://www.jboss.org/jbossas/downloads/.   Please be careful to select the appropriate download for your platform (Win / Mac / Linux) and the appropriate processor version (32/64 bit).
 
 ==Jboss Tools==
-You will also need to instal JBoss Tools to Eclipse. You can download it at  http://www.jboss.org/tools/download.
+You will also need to install JBoss Tools into Eclipse. You can download it at  http://www.jboss.org/tools/download.  You can also point Eclipse IDE at this link by navigating to Help > Install New Software in the Eclipse horizontal menu bar.
 
 =Setup Instructions=
 For those of you who are not familiar with Eclipse and JBoss you'll find more informations on how to add a JBoss server into Eclipse here : http://ist.berkeley.edu/as-ag/tools/howto/jboss-eclipse.html.
