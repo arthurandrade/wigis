@@ -24,16 +24,16 @@ WiGi and WiGi-core are two Eclipse Java Web projects. Instructions for checking 
 Now that you got WiGi projects and all softwares installed, we will explain you how to add both projects to Eclipse and also how to run the application.
 
 ==Add WiGi and WiGi-core to Eclipse==
-# In Eclipse, go to 'File'>'Import'
+  # In Eclipse, go to 'File'>'Import'
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image1.png" alt="Tutorial-Image1"/>
 
-# Open the 'General' tab and select 'Existing Projects into Workspace'
+  # Open the 'General' tab and select 'Existing Projects into Workspace'
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image2.png" alt="Tutorial-Image2"/>
 
-# Hit the 'Next button' and a new windows will appear (see below). Click on the 'Browse' button in the upper right corner.
+  # Hit the 'Next button' and a new windows will appear (see below). Click on the 'Browse' button in the upper right corner.
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image3.png" alt="Tutorial-Image3"/>
 
-# This window will ask you to select the directory containing both projects, so locate it, select it and press 'Open'. You might come back to the previous windows and find the following.
+  # This window will ask you to select the directory containing both projects, so locate it, select it and press 'Open'. You might come back to the previous windows and find the following.
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image4.png" alt="Tutorial-Image4"/>
 
 # Before pressing the 'Finish' button, make sure that both WiGi et WiGi-core projects are checked and finally hit the 'Finish' button. You'll now find both both projects into your Eclipse Package Explorer as follow.
@@ -82,3 +82,7 @@ This tutorial has been realized on a Mac and automatically found the good JRE bu
 
 # A new window will pop up, all projects on the left size are the available projects on Eclipse and the ones on the right are the ones on the server. You therefore want to add WiGi onto the server, for this select WiGi on the left column and click the 'Add' button. The project might now move from the left to the right as following.
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image12.png" alt="Tutorial-Image12"/>
+
+==Start the server and access the application==
+Last step is to start the JBoss server. For so, right clic on the server and click on the 'Start' option.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image13.png" alt="Tutorial-Image13"/>
