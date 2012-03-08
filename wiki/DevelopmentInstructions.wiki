@@ -86,3 +86,5 @@ This tutorial has been realized on a Mac and automatically found the good JRE bu
 ==Start the server and access the application==
 Last step is to start the JBoss server. For so, right clic on the server and click on the 'Start' option.
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image13.png" alt="Tutorial-Image13"/>
+
+Once the server started, you can access the application via the following link : http://localhost:8080/WiGi/wigi/WiGiViewerPanel.faces.
