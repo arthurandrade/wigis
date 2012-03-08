@@ -24,10 +24,10 @@ WiGi and WiGi-core are two Eclipse Java Web projects. Instructions for checking 
 Now that you got WiGi projects and all softwares installed, we will explain you how to add both projects to Eclipse and also how to run the application.
 
 ==Add WiGi and WiGi-core to Eclipse==
-  #In Eclipse, go to 'File'>'Import'
+#  In Eclipse, go to 'File'>'Import'
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image1.png" alt="Tutorial-Image1"/>
 
-  #Open the 'General' tab and select 'Existing Projects into Workspace'
+#  Open the 'General' tab and select 'Existing Projects into Workspace'
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image2.png" alt="Tutorial-Image2"/>
 
   # Hit the 'Next button' and a new windows will appear (see below). Click on the 'Browse' button in the upper right corner.
