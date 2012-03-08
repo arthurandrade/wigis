@@ -38,6 +38,7 @@ Now that you got WiGi projects and all softwares installed, we will explain you 
 
   # Before pressing the 'Finish' button, make sure that both WiGi et WiGi-core projects are checked and finally hit the 'Finish' button. You'll now find both both projects into your Eclipse Package Explorer as follow.
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image5.png" alt="Tutorial-Image5"/>
+
 _You might get errors (symbolized by a red cross on the project) but these errors will be solved in the next section._
 
 ==Configure WiGi-core==
@@ -56,7 +57,7 @@ This tutorial has been realized on a Mac and automatically found the good JRE bu
 
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image10.png" alt="Tutorial-Image10"/>
 
-# In this new window, you will specify your JRE and click the 'Finish' button. Now WiGi-core is correctly configured.
+  # In this new window, you will specify your JRE and click the 'Finish' button. Now WiGi-core is correctly configured.
 
 ==Configure WiGi==
 Now that WiGi-core is configured, let's have a look at the WiGi project configuration.
