@@ -4,7 +4,7 @@ For those of you who just want to install and run the project, here are the step
 
 =Prerequisites=
 ==JBoss 5.1==
-The WiGi project need to be run on a JBoss server using version 5.1. JBoss is available at http://www.jboss.org/jbossas/downloads/.
+The WiGi project need to be run on a JBoss Server using version 5.1. JBoss is available at http://www.jboss.org/jbossas/downloads/.
 For more informations on how to install a JBoss Server, please have a look at the following explanation : http://docs.jboss.org/jbossas/admindevel326/html/ch01.html.
 
 =Setup Instructions=
