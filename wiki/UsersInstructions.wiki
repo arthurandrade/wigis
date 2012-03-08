@@ -1,20 +1,22 @@
 #labels Phase-Deploy
 = Download and Setup Instructions - For users =
-For those of you who just want to install and run the project, here are the steps.
+For those who just want to install and run the project, here are the steps:
 
 =Prerequisites=
 ==JBoss 5.1==
-The WiGi project need to be run on a JBoss Server using version 5.1. JBoss is available at http://www.jboss.org/jbossas/downloads/.
-For more informations on how to install a JBoss Server, please have a look at the following explanation : http://docs.jboss.org/jbossas/admindevel326/html/ch01.html.
+The WiGi project runs on a JBoss Server (we are currently using version 5.1.)  JBoss is available at http://www.jboss.org/jbossas/downloads/.
+For more information on how to install a JBoss Server, please have a look at the following resource: http://docs.jboss.org/jbossas/admindevel326/html/ch01.html.
 
 =Setup Instructions=
-Now that you have installed a JBoss Server on you machine, we'll explain you the few steps to do in order to run the application on your local machine.
+Once JBoss is installed, follow the remaining instructions here to install WiGi. 
 
 ==Download WiGi==
-Please visit our SVN repository ('Source' tab on the top left corner of that page) to download the project as a .war file.
+Use the following link to download the project as a .war file.
+
+<place link here!>
 
 ==Deploy the Application==
-To run the application, you need to move the WiGi.war file into your server to a specific location. For so, locate where you installed your JBoss Server, and go to the following location : JBOSS_HOME/server/default/deploy/ and paste or move the WiGi.war file (you may need to restart the server).
+To run the application, you need to move the WiGi.war file into your server to a specific location. To do this, locate your JBoss Server home directory, and go to the following location : JBOSS_HOME/server/default/deploy/ copy the WiGi.war file and start the JBoss server instance.
 
 ==Access the Application==
 Now that you have restarted the server, the WiGi.war file might be deployed and you might be able to access it at the following URL : http://localhost:8080/WiGi/wigi/WiGiViewerPanel.faces.
