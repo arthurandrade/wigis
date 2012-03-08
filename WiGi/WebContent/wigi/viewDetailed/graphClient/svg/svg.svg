@@ -1,0 +1,36 @@
+
+<svg 
+    id="svgArea"
+    style="-moz-user-select: none;" 
+	  xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+	  onload="start_SVG(evt)"
+>
+
+    <script>
+    <![CDATA[
+
+    var svgDocument;
+
+    var nLines = 2000;
+
+    function start_SVG(evt)
+    {
+        svgDocument = evt.target.ownerDocument;
+
+        // lines
+        for (var i=0;i<nLines;i++)
+        {
+            var shape = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            shape.setAttribute("id", "line" + i);
+            shape.setAttribute("style", "stroke:rgb(99,99,99); stroke-width:2");
+//            shape.setAttribute("shape-rendering", "optimizeSpeed" );
+            document.getElementById("svgArea").appendChild(shape);
+        }
+    }
+    
+    //]]>
+    </script>
+  
+</svg>
+

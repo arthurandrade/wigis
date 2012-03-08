@@ -1,0 +1,192 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>		
+			<a4j:form id="layoutSettingsForm">
+				<a4j:outputPanel id="layoutSettingsPanel"
+					styleClass="settingsPanel">
+					<h:panelGroup>
+								Select Layout Method:<br />
+						<h:selectOneMenu value="#{paintBean.layoutMethodLabel}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents},layoutSettingsPanel" />
+							<f:selectItems value="#{paintBean.layoutMethodList}"/>
+						</h:selectOneMenu>
+					</h:panelGroup>
+					<br />
+					<h:panelGroup rendered="#{paintBean.circularLayoutSelected}">
+								Select how to sort nodes on circle:<br />
+						<h:selectOneMenu value="#{paintBean.circularLayoutSort}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents},layoutSettingsPanel" />
+							<f:selectItems value="#{paintBean.circularLayoutSortList}" />
+						</h:selectOneMenu>
+						<br />
+					</h:panelGroup>
+					<h:panelGroup>
+		                        Time given for smooth animation (seconds):
+		               <rich:inputNumberSlider id="animationTime"
+							showInput="true" showBoundaryValues="true"
+							showToolTip="true" value="#{paintBean.secondsPerAnimation}"
+							step="1" minValue="1" maxValue="30">
+							<a4j:support event="onchange" reRender="animationTime" />
+						</rich:inputNumberSlider>
+					</h:panelGroup>
+					<br />
+					<h:panelGroup rendered="#{paintBean.showMaxLayoutTime}">
+		                        Approximate Time Given For layout (seconds):
+		                    <rich:inputNumberSlider id="maxLayoutTime"
+							showInput="true" showBoundaryValues="true"
+							showToolTip="true" value="#{paintBean.maxLayoutTime}"
+							step="1" minValue="1" maxValue="30">
+							<a4j:support event="onchange" reRender="maxLayoutTime" />
+						</rich:inputNumberSlider>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{paintBean.showCircularLayoutBuffer}">
+		                        Deformation buffer:
+		            	<rich:inputNumberSlider id="circularLayoutBuffer"
+							showInput="true" showBoundaryValues="true"
+							showToolTip="true" value="#{paintBean.circularLayoutBuffer}"
+							step="0.05" minValue="0" maxValue="1">
+							<a4j:support event="onchange" reRender="circularLayoutBuffer" />
+						</rich:inputNumberSlider>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{paintBean.showCoolingFactor}">
+		                        Cooling factor:
+		                    <rich:inputNumberSlider id="coolingFactor"
+							showInput="true" showBoundaryValues="true"
+							showToolTip="true" value="#{paintBean.coolingFactor}"
+							step="0.1" minValue="0.1" maxValue="0.9">
+							<a4j:support event="onchange" reRender="coolingFactor" />
+						</rich:inputNumberSlider>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{paintBean.showCoolingFactor}">
+						<h:selectBooleanCheckbox id="frUseRestingDistance"
+							value="#{paintBean.frUseEdgeRestingDistance}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents},layoutSettingsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleFrUseEdgeRestingDistance}" reRender="layoutSettingsPanel" />
+	                        Use edge resting distance.
+                        </a4j:outputPanel>	
+                        <br />													
+					</h:panelGroup>
+					<h:panelGroup rendered="#{paintBean.showCoolingFactor}">
+						<h:selectBooleanCheckbox id="frUseNodeSize"
+							value="#{paintBean.frUseNodeSize}">
+							<a4j:support event="onchange"
+								reRender="#{paintBean.ajaxComponents},layoutSettingsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleFrUseNodeSize}" reRender="layoutSettingsPanel" />
+	                        Use node size.
+                        </a4j:outputPanel>	
+                        <br />													
+					</h:panelGroup>
+					<h:panelGroup rendered="#{paintBean.showRecommendationCircle}">
+						<h:selectBooleanCheckbox id="recommendationCircle"
+							value="#{paintBean.recommendationCircle}">
+							<a4j:support event="onchange"
+								reRender="layoutSettingsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleRecommendationCircle}" reRender="layoutSettingsPanel" />
+	                        Use circular layout.
+                        </a4j:outputPanel>	
+                        <br />													
+					</h:panelGroup>
+					<h:panelGroup>
+						<h:selectBooleanCheckbox id="layoutAllLevels"
+							value="#{paintBean.layoutAllLevels}">
+							<a4j:support event="onchange"
+								reRender="layoutSettingsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleLayoutAllLevels}" reRender="layoutSettingsPanel" />
+	                        Layout all levels.
+                        </a4j:outputPanel>	
+                        <br />													
+						<h:selectBooleanCheckbox id="clusterBeforeLayout"
+							value="#{paintBean.clusterBeforeLayout}" rendered="#{paintBean.layoutAllLevels}">
+							<a4j:support event="onchange"
+								reRender="layoutSettingsPanel" />
+						</h:selectBooleanCheckbox>
+                        <a4j:outputPanel styleClass="hand" rendered="#{paintBean.layoutAllLevels}">
+                        	<a4j:support event="onclick" action="#{paintBean.toggleClusterBeforeLayout}" reRender="layoutSettingsPanel" />
+	                        Cluster before layout.
+                        </a4j:outputPanel>
+                        <br />
+					</h:panelGroup>
+					<h:panelGroup>
+						<a4j:region id="layoutRegion">
+							<a4j:commandButton id="runLayoutButton"
+								eventsQueue="layoutQueue"
+								value="Run Layout"
+								action="#{paintBean.runLayout}"
+								reRender="#{paintBean.ajaxComponents},layoutSettingsPanel"
+								onclick="this.disabled=true;startImageReload();"
+								oncomplete="stopImageReload()" />
+							<br />
+							<a4j:commandButton id="randomize"
+								value="Randomize Positions"
+								action="#{paintBean.randomizePositions}"
+								reRender="#{paintBean.ajaxComponents},layoutSettingsPanel"
+								onclick="this.disabled=true;startImageReload();"
+								oncomplete="stopImageReload()" />
+						</a4j:region>
+					</h:panelGroup>
+					<br />
+				    <rich:modalPanel id="layoutModalPanel" width="350" height="100">
+				        <f:facet name="header">
+				            <h:panelGroup>
+				                <h:outputText value="Please Wait."></h:outputText>
+				            </h:panelGroup>
+				        </f:facet>
+				        <h:outputText value="WiGi is running a layout algorithm. Please be patient."></h:outputText>
+				        <br/>
+				        <br/>
+				        <h:outputText value="This window will close automatically when done."></h:outputText>
+				    </rich:modalPanel>
+					<a4j:status id="LayoutStatus" for="layoutRegion" onstart="Richfaces.showModalPanel('layoutModalPanel')" onstop="Richfaces.hideModalPanel('layoutModalPanel')">
+					</a4j:status>
+					<br />
+				</a4j:outputPanel>
+			</a4j:form>
+		</ui:composition>
+	</f:view>
+</html>

@@ -1,0 +1,107 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>
+			<rich:simpleTogglePanel label="Clustering" width="#{paintBean.panelWidth}" switchType="client" opened="#{paintBean.clusteringExpanded}">
+				<a4j:support event="onexpand" reRender="clusteringSettingsPanel" action="#{paintBean.expandClustering}" />
+				<a4j:support event="oncollapse" action="#{paintBean.collapseClustering}" />
+				<a4j:form id="clusteringSettingsForm">
+					<a4j:outputPanel id="clusteringSettingsPanel"
+						styleClass="settingsPanel">
+						<h:panelGroup>
+									Select Clustering Method:<br />
+							<h:selectOneMenu value="#{paintBean.clusteringMethod}">
+								<a4j:support event="onchange"
+									reRender="clusteringSettingsPanel" />
+								<f:selectItems value="#{paintBean.clusteringMethodList}" />
+							</h:selectOneMenu>
+						</h:panelGroup>
+						<br />
+						<br />
+						<h:panelGroup rendered="#{paintBean.needNumberOfClusters}">
+									Number of clusters:
+			                    <rich:inputNumberSlider
+								id="numberOfClustersSlider" showInput="true"
+								showBoundaryValues="true" showToolTip="true"
+								value="#{paintBean.numberOfClusters}" step="1"
+								minValue="0" maxValue="#{paintBean.numberOfNodes}">
+								<a4j:support event="onchange"
+									reRender="clusteringSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+						<h:panelGroup>
+							<a4j:region id="clusteringRegion">
+								<a4j:commandButton id="runClusteringButton"
+									value="Run Clustering"
+									action="#{paintBean.runClustering}"
+									reRender="#{paintBean.ajaxComponents},clusteringSettingsPanel,otherSettingsPanel"
+									onclick="this.disabled=true;" 
+									status="ClusteringStatus" />
+							</a4j:region>
+						</h:panelGroup>
+						<br />
+					    <rich:modalPanel id="clusteringModalPanel" width="350" height="100">
+					        <f:facet name="header">
+					            <h:panelGroup>
+					                <h:outputText value="Please Wait."></h:outputText>
+					            </h:panelGroup>
+					        </f:facet>
+					        <h:outputText value="WiGis is running a clustering algorithm. Please be patient."></h:outputText>
+					        <br/>
+					        <br/>
+					        <h:outputText value="This window will close automatically when done."></h:outputText>
+					    </rich:modalPanel>
+						<a4j:status id="ClusteringStatus" forceId="true" onstart="Richfaces.showModalPanel('clusteringModalPanel')" onstop="Richfaces.hideModalPanel('clusteringModalPanel')">
+						</a4j:status>
+						<br />
+						<br />
+						<h:panelGroup>
+			                        Level of Detail:
+			                    <rich:inputNumberSlider id="level"
+								showInput="true" showBoundaryValues="true"
+								showToolTip="true" value="#{paintBean.level}" step="1"
+								minValue="0" maxValue="#{paintBean.maxLevel}">
+								<a4j:support event="onchange"
+									reRender="#{paintBean.ajaxComponents}, interactionSettingsPanel, clusteringSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+					</a4j:outputPanel>
+				</a4j:form>
+			</rich:simpleTogglePanel>
+		</ui:composition>
+	</f:view>
+</html>

@@ -1,0 +1,95 @@
+.settingsPanel {
+	width: 230;
+	MozUserSelect: none;
+}
+
+.topAligned {
+	vertical-align: top;
+}
+
+.centerAligned {
+	vertical-align: super;
+}
+
+.topCenterAligned {
+	vertical-align: top;
+	margin: 0px auto -1px auto;
+	border: 0;
+}
+
+.topAlignedSmallFont {
+	vertical-align: top;
+	font-size: small;
+}
+
+.topAlignedWithBorder {
+	vertical-align: top;
+	font-size: small;
+	border: 1px solid;
+}
+
+.smallFont {
+	font-size: small;
+}
+
+.SearchPaneText {
+	vertical-align: top;
+	font-size: 0.6em;
+	font-style: normal;
+}
+
+.SearchPaneWarningText {
+	vertical-align: top;
+	font-size: 0.7em;
+	font-style: normal;
+}
+
+.SearchTitleText {
+	vertical-align: top;
+	font-size: 1em;
+	font-style: normal;
+}
+
+.helpTitle {
+	vertical-align: top;
+	font-size: 1em;
+	text-align: center;
+	font-weight: bold;
+}
+
+.helpBody {
+	font-size: 3em;
+	text-align: left;
+	width: 350px;
+	height: 140px;
+	cursor: pointer;
+	cursor: hand;
+	border-width: 2px;
+	text-align: left;
+}
+
+initialTTStyle {
+	display: none;
+}
+
+.tooltip {
+	background-color: #{ richSkin . generalBackgroundColor };
+}
+
+.tooltip-text {
+	width: 350px;
+	height: 170px;
+	cursor: arrow;
+	border-width: 2px;
+	text-align: left;
+	font-size: small;
+}
+
+.tooltipData {
+	font-weight: bold;
+}
+
+.hand {
+	cursor: pointer;
+	cursor: hand;
+}

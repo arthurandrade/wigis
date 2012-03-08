@@ -1,0 +1,22 @@
+
+.viewDetailed
+{	
+	/*
+	width: 600px; 
+	height: 600px;
+	*/
+	overflow: hidden;		/* for continuous zoom */
+	
+	z-index: 1; 
+	
+	border: 2px solid #eee;
+}
+
+.viewDetailed_img
+{
+	position: relative; 
+	
+	-moz-user-select: none; 
+	
+	z-index: -1; 
+}

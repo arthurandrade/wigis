@@ -1,0 +1,238 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+<f:loadBundle basename="blackbook" var="bundle" />
+<f:view>
+	<ui:composition>
+	    <script src="#{paintBean.webPath}_external/js/googleAnalytics.js" type="text/javascript">//Need this comment for Firefox</script>
+		<link href="#{paintBean.webPath}foureyes.css" rel="stylesheet" />
+		<f:verbatim>
+			<script language="javascript">
+			document.onload = function()
+			{
+				alert("onload called");
+				document.getElementById( "searchForm:visualButton" ).disabled = false;
+			}	
+
+			function onChangeSelect(t){
+				document.getElementById( "tt1" ).style.display = "block";
+				}
+							 
+			</script>
+		</f:verbatim>
+
+		<a4j:form id="searchForm" target="_blank">
+			<link href="#{paintBean.webPath}foureyes.css" rel="stylesheet" />
+
+			<rich:panel header="WiGiSearch:  Visualizse A Research Topic  ">
+
+				<h:panelGrid columns="1" width="40%"
+					columnClasses="topAlignedSmallFont" class="blueSky">
+
+					<h:panelGroup>
+						<h:outputText styleClass="SearchTitleText"
+							value="Query / Filter Text:" />
+						<h:inputText id="text2" label="text1"
+							value="#{searchBean.searchQuery}" styleClass="SearchTitleText" />
+					</h:panelGroup>
+				</h:panelGrid>
+				<rich:spacer width="" height="20" title="Here is a spacer..." />
+				<h:panelGrid columns="12" width="40%" columnClasses="topAligned">
+					<h:panelGroup>
+
+						<rich:panel>
+							<f:facet name="header">
+						        Search For:
+						        </f:facet>
+
+							<rich:toolTip id="tt1" styleClass="initialTTStyle">
+								<span style="white-space: nowrap"> Specify where you want to search. <br /> You can search in articles, authors or both. </span>
+							</rich:toolTip>
+
+							<h:panelGrid columns="12" width="%" columnClasses="topAligned">
+								<h:panelGroup>
+									<h:outputText styleClass="SearchPaneText" value="Articles" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:selectBooleanCheckbox value="#{searchBean.articleCheckBox}" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText styleClass="SearchPaneText" value="Authors" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:selectBooleanCheckbox value="#{searchBean.authorCheckBox}" />
+								</h:panelGroup>
+							</h:panelGrid>
+							<h:outputText styleClass="SearchPaneWarningText"
+								value="(Select one or Both)" />
+						</rich:panel>
+					</h:panelGroup>
+
+
+
+
+					<h:panelGroup>
+
+						<rich:panel>
+							<f:facet name="header">
+						        Degrees of Separation
+						        </f:facet>
+						        <rich:toolTip>
+								<span style="white-space: nowrap"> How many degrees of separation.  <br />
+								Remember: 6 Degrees will return almost all of the Million people in our database.  <br />
+								Keep this at 2 for a reasonable processing time. </span>
+							</rich:toolTip>
+							<rich:inputNumberSlider id="degofsep"
+								value="#{searchBean.degreesOfSeparation}" width="150"
+								maxValue="4" step="1" showToolTip="true" />
+							<h:outputText styleClass="SearchPaneWarningText"
+								value="2 degrees usually gives reasonable speeds)" />
+						</rich:panel>
+					</h:panelGroup>
+
+
+
+
+					<h:panelGroup>
+						<rich:panel>
+							<f:facet name="header">
+					       		Stopping Parameters
+					        </f:facet>
+							 <rich:toolTip>
+								<span style="white-space: nowrap">This is experimental.  <br />
+								Please leave this parameter at it's default setting. </span>
+							</rich:toolTip>
+							<rich:inputNumberSlider id="numResults"
+								value="#{searchBean.maxResults}" width="150" minValue="0"
+								maxValue="10000" step="1" showToolTip="true" />
+							<h:outputLabel styleClass="SearchPaneWarningText"
+								value="(Please leave this at the default!!)" />
+						</rich:panel>
+					</h:panelGroup>
+
+
+					<h:panelGroup>
+						<rich:panel id="sample2" styleClass="helpBody">
+
+							<h:outputText styleClass="helpTitle"
+								value="HOW TO USE THIS TOOL:" />
+							<br />
+		
+							<h:outputText
+								value="1: Enter a Query and Click Search to get a google-style result list" />
+							<br />
+							<h:outputText
+								value="2: Select one or more 'seed articles' to expand"
+								styleClass="label"></h:outputText>
+							<br />
+							<h:outputText
+								value="3: Set the degree of separation for your graph (lower=faster)"
+								styleClass="label" />
+							<br />
+							<h:outputText
+								value="4: Click 'Im Feeling Visual' to see the interactive graph of your research area."
+								styleClass="label"></h:outputText>
+							<br />
+
+
+							<h:selectBooleanCheckbox styleClass="smallFont"
+								id="showTooltips" value="#{searchBean.showToolTips}" onclick="onChangeSelect(this);" />
+							<h:outputText value="Show Tooltip Help" styleClass="label"></h:outputText>
+							
+						</rich:panel>
+					</h:panelGroup>
+				</h:panelGrid>
+
+
+
+
+
+
+
+				<h:panelGroup>
+					<a4j:commandButton reRender="titleColumn"
+						action="#{searchBean.search}" value="Search" onclick="this.disabled=true" oncomplete="this.disabled=false"/>
+					<a4j:commandButton id="visualButton" action="#{searchBean.graphIt}"
+						value="I'm Feeling Visual"
+						onclick="document.getElementById('searchForm:visualText1').style.visibility = '';    this.disabled=false;" 
+					   oncomplete="this.disabled=false" />
+					<a4j:commandButton reRender="titleColumn"
+						action="#{searchBean.newSearch}" value="Refresh" />
+
+					<h:outputText id="visualText1" value="Generating Visualization... "
+						style="visibility:hidden;" />
+					<h:outputText id="visualText2"
+						value="#{searchBean.message}" />
+				</h:panelGroup>
+				<a4j:poll id="polling" interval="1500" enabled="true"
+					reRender="visualText2" />
+
+
+
+				<a4j:outputPanel id="resTable" ajaxRendered="true"
+					style="width: 464; height: 150px;">
+
+					<rich:dataTable rendered="#{searchBean.renderResultTable}"
+						rowKeyVar="rkv" id="resList"
+						columnClasses="col" value="#{searchBean.searchResults}"
+						var="result" sortMode="single">
+						<rich:column id="titleColumn">
+							<f:facet name="header">							
+								<a4j:commandLink styleClass="headerText" reRender="resTable" action="#{searchBean.selectAll}" value="Title (click here to select all)"/>
+							<a4j:support event="onclick" action="#{searchBean.selectAll}" reRender="navin"/>
+							</f:facet>
+							<h:selectBooleanCheckbox value="#{result.selected}" />
+							<h:outputText value="#{result.title}" />
+						</rich:column>
+						<rich:column id="authorColumn">
+							<f:facet name="header">
+								<a4j:commandLink styleClass="headerText" reRender="resTable" action="#{searchBean.selectAll}" value="Author(s)"/>
+							</f:facet>
+							<h:outputText value="#{result.authorString}" />
+						</rich:column>
+					</rich:dataTable>
+
+
+
+				</a4j:outputPanel>
+			</rich:panel>
+		</a4j:form>
+
+	</ui:composition>
+</f:view>
+
+</html>

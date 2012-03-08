@@ -1,0 +1,147 @@
+<!--===========================================================================================================
+
+Copyright (c) 2010, University of California, Santa Barbara
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted
+provided that the following conditions are met:
+
+   * Redistributions of source code must retain the above copyright notice, this list of
+conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above copyright notice, this list of
+conditions and the following disclaimer in the documentation and/or other materials provided with
+the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
+THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+=============================================================================================================-->
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+	xmlns:svg="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:rich="http://richfaces.org/rich">
+	<f:view>
+		<ui:composition>
+			<rich:simpleTogglePanel label="Interaction" width="#{paintBean.panelWidth}" switchType="client" opened="#{paintBean.interactionExpanded}">
+				<a4j:support event="onexpand" reRender="interactionSettingsPanel" action="#{paintBean.expandInteraction}" />
+				<a4j:support event="oncollapse" action="#{paintBean.collapseInteraction}" />
+				<a4j:form id="interactionSettingsForm">
+					<a4j:outputPanel id="interactionSettingsPanel"
+						styleClass="settingsPanel">
+						<h:panelGroup>
+									Select Interaction Method:<br />
+							<h:selectOneMenu value="#{paintBean.interactionMethodLabel}">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+								<f:selectItems value="#{paintBean.interactionMethodList}" />
+							</h:selectOneMenu>
+						</h:panelGroup>
+						<br />
+						<br />
+						<h:panelGroup rendered="#{paintBean.showToggleInterpolationActualEdgeDistance}">
+							<h:selectBooleanCheckbox
+								id="interpolationMethodUseActualEdgeDistance"
+								value="#{paintBean.interpolationMethodUseActualEdgeDistance}">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+							</h:selectBooleanCheckbox>	
+	                        <a4j:outputPanel styleClass="hand">
+	                        	<a4j:support event="onclick" action="#{paintBean.toggleInterpolationMethodUseActualEdgeDistance}" reRender="#{paintBean.ajaxComponents},interactionSettingsPanel" />
+			                        Use Actual Edge Length for Interpolation Method.
+	                        </a4j:outputPanel>														
+							</h:panelGroup>
+						<br />
+						<br />
+						<h:panelGroup rendered="#{paintBean.showToggleInterpolationWholeGraph}">
+							<h:selectBooleanCheckbox
+								id="interpolationMethodUseWholeGraph"
+								value="#{paintBean.interpolationMethodUseWholeGraph}">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+							</h:selectBooleanCheckbox>	
+	                        <a4j:outputPanel styleClass="hand">
+	                        	<a4j:support event="onclick" action="#{paintBean.toggleInterpolationMethodUseWholeGraph}" reRender="#{paintBean.ajaxComponents},interactionSettingsPanel" />
+			                        Use Whole Graph for Interpolation Method.
+	                        </a4j:outputPanel>														
+							</h:panelGroup>
+						<br />
+						<br />
+						<h:panelGroup
+							rendered="#{paintBean.showInterpolationDistanceSelector}">
+			                        Distance to farthest affected node:
+			                    <rich:inputNumberSlider
+								id="numberAffected" showInput="true"
+								showBoundaryValues="true" showToolTip="true"
+								value="#{paintBean.numberAffected}" step="1" minValue="0"
+								maxValue="#{paintBean.numberOfNodes}">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+						<h:panelGroup rendered="false">
+			                        S-Curve Min:
+			                    <rich:inputNumberSlider id="sCurveMin"
+								showInput="true" showBoundaryValues="true"
+								showToolTip="true" value="#{paintBean.curveMin}"
+								step="0.01" minValue="0" maxValue="1">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+						<h:panelGroup rendered="false">
+			                        S-Curve Max:
+			                    <rich:inputNumberSlider id="sCurveMax"
+								showInput="true" showBoundaryValues="true"
+								showToolTip="true" value="#{paintBean.curveMax}"
+								step="0.01" minValue="0" maxValue="1">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+							</rich:inputNumberSlider>
+						</h:panelGroup>
+						<br />
+						<br />
+						<rich:panel header="Select and Move Nodes">
+							Number of Nodes to select:
+			                <rich:inputNumberSlider
+								id="numberOfMostHighlyConnectedNodesToSelect" showInput="true"
+								showBoundaryValues="true" showToolTip="true"
+								value="#{paintBean.numberOfMostHighlyConnectedNodesToSelect}" step="1" minValue="1"
+								maxValue="30">
+								<a4j:support event="onchange"
+									reRender="interactionSettingsPanel" />
+							</rich:inputNumberSlider>							
+							<br />
+							<a4j:commandButton id="selectNMostHighlyConnectedNodes"
+								value="Select Nodes With Highest Degree"
+								action="#{paintBean.selectNMostHighlyConnectedNodes}"
+								reRender="#{paintBean.ajaxComponents},interactionSettingsPanel"
+								onclick="this.disabled=true;startImageReload();"
+								oncomplete="stopImageReload()" />
+							<br />
+							<a4j:commandButton id="dragSelected"
+								value="Drag Selected Nodes"
+								action="#{paintBean.dragSelectedNodes}"
+								reRender="#{paintBean.ajaxComponents},interactionSettingsPanel"
+								onclick="this.disabled=true;startImageReload();"
+								oncomplete="stopImageReload()" />
+						</rich:panel>
+					</a4j:outputPanel>
+				</a4j:form>
+			</rich:simpleTogglePanel>		
+		</ui:composition>
+	</f:view>
+</html>

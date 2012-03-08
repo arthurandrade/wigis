@@ -1,0 +1,21 @@
+
+.zoom
+{
+	/*background-color: transparent;
+    display: block;*/
+	
+	position: absolute;
+	
+	font-size: 0px; /* IE fix*/
+	
+/*	border: 3px solid #5D7343;*/
+	border: 3px solid #4a75b5;
+		
+	cursor: move;
+	
+	-moz-user-select: none;
+	
+	z-index: 98;
+	
+	display: none;
+}
