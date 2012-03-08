@@ -19,8 +19,9 @@ Use the following link to download the project as a .war file.
 To run the application, you need to move the WiGi.war file into your server to a specific location. To do this, locate your JBoss Server home directory, and go to the following location : JBOSS_HOME/server/default/deploy/ copy the WiGi.war file and start the JBoss server instance.
 
 ==Access the Application==
-Now that you have restarted the server, the WiGi.war file might be deployed and you might be able to access it at the following URL : http://localhost:8080/WiGi/wigi/WiGiViewerPanel.faces.
+When the server starts up, navigate to following URL in any major browser, as shown in the screenshot below : http://localhost:8080/WiGi/wigi/WiGiViewerPanel.faces.
 
+<place the browser screenshot here also>
 
 ==Complementary Informations==
 _The system has been tested in recent versions of Chrome, Safari and Firefox. In some browsers, a pop-up box may appear to say that the system is not supported._
