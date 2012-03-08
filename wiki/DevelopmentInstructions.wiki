@@ -1,13 +1,84 @@
-#summary One-sentence summary of this page.
+#labels Phase-Deploy
+= Download and Setup Instructions - For developers =
+To anybody who wants to install WiGi and develop new features please follow the following steps. We will explain you the prerequisites that are required to run WiGi and also how to import WiGi into Eclipse.
 
-= Introduction =
+=Prerequisites=
+==Java JDK 1.6.x==
+In order to run the WiGi project, you will need to have Java JDK version 1.6.x installed on your computer. Java JDK is available at http://www.oracle.com/technetwork/java/javase/downloads/index.html.
 
-Add your content here.
+==Eclipse IDE==
+Eclipse will be needed to edit code and run a JBoss server. It is available at http://www.eclipse.org/downloads/.
 
+==JBoss 5.1==
+The WiGi project need to be run on a JBoss server using version 5.1. JBoss is available at http://www.jboss.org/jbossas/downloads/.
 
-= Details =
+==Jboss Tools==
+You will also need to instal JBoss Tools to Eclipse. You can download it at  http://www.jboss.org/tools/download.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+=Setup Instructions=
+For those of you who are not familiar with Eclipse and JBoss you'll find more informations on how to add a JBoss server into Eclipse here : http://ist.berkeley.edu/as-ag/tools/howto/jboss-eclipse.html.
+
+==Get WiGi and WiGi-core projects==
+WiGi and WiGi-core are two Eclipse Java Web projects. Instructions for checking out the latest versions can be found under the "source:" tab in the horizontal menu bar above. The system front end is is coded using a JSF framework, and these components are contained in the WiGi Eclipse project. WiGis project relies on the core libraries (such as layout, clustering, analysis, statistics and other algorithms) which are contained in WiGi-core.
+
+Now that you got WiGi projects and all softwares installed, we will explain you how to add both projects to Eclipse and also how to run the application.
+
+==Add WiGi and WiGi-core to Eclipse==
+# In Eclipse, go to 'File'>'Import'
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image1.png" alt="Tutorial-Image1"/>
+
+# Open the 'General' tab and select 'Existing Projects into Workspace'
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image2.png" alt="Tutorial-Image2"/>
+
+# Hit the 'Next button' and a new windows will appear (see below). Click on the 'Browse' button in the upper right corner.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image3.png" alt="Tutorial-Image3"/>
+
+# This window will ask you to select the directory containing both projects, so locate it, select it and press 'Open'. You might come back to the previous windows and find the following.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image4.png" alt="Tutorial-Image4"/>
+
+# Before pressing the 'Finish' button, make sure that both WiGi et WiGi-core projects are checked and finally hit the 'Finish' button. You'll now find both both projects into your Eclipse Package Explorer as follow.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image5.png" alt="Tutorial-Image5"/>
+_You might get errors (symbolized by a red cross on the project) but these errors will be solved in the next section._
+
+==Configure WiGi-core==
+This phase will explain how to configure the WiGi-core project.
+
+# Select the 'WiGi-core' project into your 'Package Explorer', right click on it and select 'Properties'.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image6.png" alt="Tutorial-Image6"/>
+
+# Select 'Targeted Runtimes' on the right tab and make sure that the 'Targeted Runtime' that is selected is your JBoss server. _If you don't see your JBoss server in the list, your might have done something wrong during the JBoss import to Eclipse._
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image7.png" alt="Tutorial-Image7"/>
+
+# According to your OS, you might have to precise which JRE system to use. For this, go on the 'Java Build Path' link on the left column and click on the 'Libraries' tab at the top of the window. You might have a list of libraries used by the project plus one called 'JRE System Library'.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image9.png" alt="Tutorial-Image9"/>
+
+This tutorial has been realized on a Mac and automatically found the good JRE but you might have to located it and specify it by yourself. For so, select the library called 'JRE System Library' and click on the 'Edit' button on the right side.
+
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image10.png" alt="Tutorial-Image10"/>
+
+# In this new window, you will specify your JRE and click the 'Finish' button. Now WiGi-core is correctly configured.
+
+==Configure WiGi==
+Now that WiGi-core is configured, let's have a look at the WiGi project configuration.
+
+# Same action, select your WiGi project in you 'Package Explorer', right click on it and select 'Properties'. Configure the 'Targeted Runtimes' like we did for WiGi-core by selecting your JBoss server.
+
+# As the WiGi project is working with WiGi-core we need to specify that it refers to WiGi-core. For this, click on 'Project References' tab on the left column and make sure that WiGi-core project is selected.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image8.png" alt="Tutorial-Image8"/>
+
+# Same last step, specify the JRE to use. According to you OS, you might have to precise which JRE system to use. For this, go on the 'Java Build Path' link on the left column and click on the 'Libraries' tab at the top of the window. You might have a list of libraries used by the project plus one called 'JRE System Library'.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image9.png" alt="Tutorial-Image9"/>
+
+This tutorial has been realized on a Mac and automatically found the good JRE but you might have to located it and specify it by yourself. For so, select the library called 'JRE System Library' and click on the 'Edit' button on the right side.
+
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image10.png" alt="Tutorial-Image10"/>
+
+# In this new window, you will specify your JRE and click the 'Finish' button. Now WiGi is correctly configured.
+ 
+
+==Add the project to the server==
+# Everything is now setup and configured, you just have to add the WiGi project to the server, for so right click on your JBoss server (you'll find it by clicking on the 'Server' tab at the bottom of Eclipse). Right click on it and select 'Add and Remove...'.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image11.png" alt="Tutorial-Image11"/>
+
+# A new window will pop up, all projects on the left size are the available projects on Eclipse and the ones on the right are the ones on the server. You therefore want to add WiGi onto the server, for this select WiGi on the left column and click the 'Add' button. The project might now move from the left to the right as following.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image12.png" alt="Tutorial-Image12"/>
