@@ -1,6 +1,6 @@
 #labels Phase-Deploy
 = Download and Setup Instructions - For developers =
-To anybody who wants to install WiGi and develop new features please follow the following steps. We will explain you the prerequisites that are required to run WiGi and also how to import WiGi into Eclipse.
+The following steps explain the development environment setup, including prerequisites that are required to run WiGi, and the import process for Eclipse IDE.
 
 =Prerequisites=
 ==Java JDK 1.6.x==
