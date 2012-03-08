@@ -89,3 +89,6 @@ Last step is to start the JBoss server. For so, right clic on the server and cli
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image13.png" alt="Tutorial-Image13"/>
 
 Once the server started, you can access the application via the following link : http://localhost:8080/WiGi/wigi/WiGiViewerPanel.faces.
+
+==Complementary Informations==
+_The system has been tested in recent versions of Chrome, Safari and Firefox. In some browsers, a pop-up box may appear to say that the system is not supported._
