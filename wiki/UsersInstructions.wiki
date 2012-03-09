@@ -18,6 +18,7 @@ Use the following link to download the project as a .war file.
 ==Graphs==
 A folder containing several graphs is available on our svn repository. In order to respect the path set up in the application, please move the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows).
 You can also modify the path into the file called 'Settings.java' located in WiGi-core > src > net.wigis.settings as shown below.
+
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image15.png" alt="Tutorial-Image15"/>
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image16.png" alt="Tutorial-Image16"/>
 
