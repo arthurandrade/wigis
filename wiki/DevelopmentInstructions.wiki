@@ -21,6 +21,11 @@ For those of you who are not familiar with Eclipse and JBoss you can find more i
 ==Get WiGi and WiGi-core projects==
 WiGi and WiGi-core are two Eclipse Java Web projects. Instructions for checking out the latest versions can be found under the "source:" tab in the horizontal menu bar above. The system front end is is coded using a JSF framework, and these components are contained in the WiGi Eclipse project. WiGis project relies on the core libraries (such as layout, clustering, analysis, statistics and other algorithms) which are contained in WiGi-core.
 
+==Graphs==
+During the svn checkout you downloaded three folders, the two projects and another folder containing a list of graphs. In order to respect the path set up in the application, please move the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows).
+You can also modify the path into the file called 'Settings.java' located in WiGi-core > src > net.wigis.settings as shown below.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image15.png" alt="Tutorial-Image15"/>
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image16.png" alt="Tutorial-Image16"/>
 
 ==Add WiGi and WiGi-core to Eclipse==
   # In Eclipse, go to 'File'>'Import'
