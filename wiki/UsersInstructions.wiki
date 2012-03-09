@@ -20,8 +20,7 @@ To run the application, you need to move the WiGi.war file into your server to a
 
 ==Access the Application==
 When the server starts up, navigate to following URL in any major browser, as shown in the screenshot below : http://localhost:8080/WiGi/wigi/WiGiViewerPanel.faces.
-
-<place the browser screenshot here also>
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image14.png" alt="Tutorial-Image14"/>
 
 ==Complementary Informations==
 _The system has been tested in recent versions of Chrome, Safari and Firefox. In some browsers, a pop-up box may appear to say that the system is not supported._
