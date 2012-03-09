@@ -13,7 +13,13 @@ Once JBoss is installed, follow the remaining instructions here to install WiGi.
 ==Download WiGi==
 Use the following link to download the project as a .war file.
 
-<place link here!>
+<LINK>
+
+==Graphs==
+A folder containing several graphs is available on our svn repository. In order to respect the path set up in the application, please move the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows).
+You can also modify the path into the file called 'Settings.java' located in WiGi-core > src > net.wigis.settings as shown below.
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image15.png" alt="Tutorial-Image15"/>
+<img src="http://wigis.googlecode.com/files/Tutorial-Developers-image16.png" alt="Tutorial-Image16"/>
 
 ==Deploy the Application==
 To run the application, you need to move the WiGi.war file into your server to a specific location. To do this, locate your JBoss Server home directory, and go to the following location : JBOSS_HOME/server/default/deploy/ copy the WiGi.war file and start the JBoss server instance.
