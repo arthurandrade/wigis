@@ -16,5 +16,12 @@ This page explains how a graph is stored into a .dnv file. The example below pre
 </DNVGRAPH>
 }}}
 
+The code is simple to understand and works like an xml file by using tags. There is three different types of tags :
+  * <DNVGRAPH></DNVGRAPH> : everything between these two tags can be either a node or an edge.
+  * <DNVNODE></DNVNODE> : this tag is used to create a new node by giving him several informations such as an 'id', a 'label', a 'size', etc...
+  * <DNVEDGE></DNVEDGE> : this tag is used to create a new edge, connecting two nodes together
+
+_Be careful with the ids, each object (either node or edge) has its own id so don't restart from 0 or 1 when you create the edges._
+
 The above code give the following result : 
 <img src="http://wigis.googlecode.com/files/data.png" alt="data result"/>
