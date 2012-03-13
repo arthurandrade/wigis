@@ -75,7 +75,7 @@ This tutorial refers specifically to a Mac so the JRE was automatically detected
   # In this new window, you will specify your JRE and click the 'Finish' button. Now WiGi should be correctly configured.
 
 ==Graphs==
-A folder containing several graphs is available in our 'Downloads' section at the following link http://code.google.com/p/wigis/downloads/detail?name=graphs.zip&can=2&q=#makechanges. This file contains three graphs but if you want more informations about the structure of a basic .dnv file, please have a look to our 'data' page available at : LINK!! .In order to respect the path set up in the application, please unzip the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows). You can also modify the path into the file called 'Settings.java' located in WiGi-core > src > net.wigis.settings as shown below. 
+A folder containing several graphs is available in our 'Downloads' section at the following link http://code.google.com/p/wigis/downloads/detail?name=graphs.zip&can=2&q=#makechanges. This file contains three graphs but if you want more informations about the structure of a basic .dnv file, please have a look to our 'data' page available at : [Data] .In order to respect the path set up in the application, please unzip the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows). You can also modify the path into the file called 'Settings.java' located in WiGi-core > src > net.wigis.settings as shown below. 
 
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image15.png" alt="Tutorial-Image15"/>
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image16.png" alt="Tutorial-Image16"/>
