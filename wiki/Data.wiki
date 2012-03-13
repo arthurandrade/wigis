@@ -21,9 +21,9 @@ The code structure is simple to understand and works like an XML file (by using 
   * <DNVNODE></DNVNODE> : which create a new node with several informations such as an 'id', a 'label', a 'size', etc...
   * <DNVEDGE></DNVEDGE> : which create a new edge, connecting two nodes together.
 
-We will not describe all attributes (either for nodes or for edges) in this page but the only one that needs to be edited is the id.
+We will not describe all attributes (neither for nodes nor for edges) in this page but the only one that needs to created for each new instance is the 'id'.
 
-_Be careful with the ids, each object (either node or edge) has its own id so don't restart from 0 or 1 when you create the edges or you will get an error message._
+_Be careful with the ids, each object (either nodes or edges) has its own id so don't restart from 0 or 1 when you create the edges or you will get an error message._
 
 The above code give the following result : 
 <img src="http://wigis.googlecode.com/files/data.png" alt="data result"/>
