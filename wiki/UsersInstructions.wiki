@@ -15,7 +15,7 @@ Use the following link to download the project as a .war file.
 http://code.google.com/p/wigis/downloads/detail?name=WiGi.war&can=2&q=#makechanges
 
 ==Graphs==
-A folder containing several graphs is available in our 'Downloads' section at the following link http://code.google.com/p/wigis/downloads/detail?name=graphs.zip&can=2&q=#makechanges. This file contains three graphs but if you want more informations about the structure of a basic .dnv file, please have a look to our 'data' page available at : LINK!! .In order to respect the path set up in the application, please unzip the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows).
+A folder containing several graphs is available in our 'Downloads' section at the following link http://code.google.com/p/wigis/downloads/detail?name=graphs.zip&can=2&q=#makechanges. This file contains three graphs but if you want more informations about the structure of a basic .dnv file, please have a look to our 'data' page available at : [Data]. In order to respect the path set up in the application, please unzip the 'graphs' folder to the root of your main hard drive (i.e : C:\ for windows).
 You can also modify the path into the file called 'Settings.java' located in WiGi-core > src > net.wigis.settings as shown below.
 
 <img src="http://wigis.googlecode.com/files/Tutorial-Developers-image15.png" alt="Tutorial-Image15"/>
