@@ -1,6 +1,6 @@
 =Data=
 
-The WiGi application allow you to visualize graphs saved as .dnv files. A folder called 'graphs' contains three examples of graphs for the application is available at the following address : http://code.google.com/p/wigis/downloads/detail?name=graphs.zip&can=2&q=#makechanges.
+The WiGi application allow you to visualize graphs saved as .dnv files. A folder called 'graphs' contains three examples of graphs for the application and is available at the following address : http://code.google.com/p/wigis/downloads/detail?name=graphs.zip&can=2&q=#makechanges.
 
 This page explains how a graph is stored into a .dnv file. The example below presents you a basic graph composed of two nodes linked by one edge. The aim of this example is to explain you how you can modify graphs or create your own datasets.
 {{{
