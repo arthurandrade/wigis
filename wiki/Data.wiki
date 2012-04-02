@@ -43,11 +43,11 @@ For each nodes part of a level or layer, you can specify a lot of arguments
   * color : define the node color, for those of you who are not familiar with LSL, the three number represent the Red, Green and Blue colors. Each value is the percentage of color, for example 50% of Red will be 0.5.
   * size : a node can have a different size according to its importance in the graph, its size is a float number so you can specify one number after the come such as : 2,3 or 8,1
   * label : it's always good to know which node is which, so for this assign the node a label that will be display on it
-  * mass : used to change the way the layout algorithms act on the node
+  * mass : used to change the way the layout algorithms act on the node (only used by some layout algorithms)
   * fixed : some nodes can be at a fixed position, so according its type assign it a "true" or "false" value
   * icon : images can be rendered into the node, it can either be an image stored on your computer or a link towards the web
-  * type : string type value
-  * BBid : blackbook id
+  * type : only used by TopicNets, can be useful if you need to get all nodes of a certain type, because the nodes are stored in a Hashtable by type
+  * BBid : the regular id is an integer, but this one is a string. Can be useful if you need to be able to quickly access a node based on a string id. 
   * force label : whether or not the label is forced to be displayed
   * alpha : transparency setting
   * label color : change the label color, same LSL process as for color and "null" value if no color
@@ -70,10 +70,10 @@ For each nodes part of a level or layer, you can specify a lot of arguments
   * to : arrival node
   * label : it's always good to know which node is which, so for this assign the node a label that will be display on it
   * bidirectional : boolean value in order to set the edge as bi-directional 
-  * BBid : blackbook id
+  * BBid : the regular id is an integer, but this one is a string. Can be useful if you need to be able to quickly access a node based on a string id. 
   * color : set the edge color, LSL technology
   * force label : whether or not the label is forced to be displayed
-  * type : string type value
+  * type : only used by TopicNets, can be useful if you need to get all nodes of a certain type, because the nodes are stored in a Hashtable by type
   * hassetcolor : boolean, true if a color is already set for the edge
   * alpha : transparency setting
   * label color : change the label color, same LSL process as for color and "null" value if no color
