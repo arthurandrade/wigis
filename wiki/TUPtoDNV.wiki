@@ -11,8 +11,8 @@ The .tup structure is one of the easiest one. All you have to do is list edges a
 1,3
 0,2
 }}}
-For the above example, six edges are listed with for each, an id corresponding to a 'from' node (first row) and an id corresponding to a 'to' node (second row). Basically the uploader will automatically create all nodes and link them by their corresponding edge.
-This technique is easier to implement but also less customizable (no label, color or size).
+For the above example, six edges are listed with for each, an id corresponding to a 'from' node (first row) and an id corresponding to a 'to' node (second row). The uploader will automatically create all nodes and link them by their corresponding edge.
+This technique is easier to implement but unfortunately less customizable (no label, color or size).
 
 ==Upload==
   * An uploader as been implemented in order to allow users to visualize their own data. The uploader can be found at the following URL : http://eire.mat.ucsb.edu:8080/WiGi/upload.faces
