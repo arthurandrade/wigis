@@ -2,7 +2,7 @@
 This page will explain the correct structure of a .tup file to be uploaded to the application.
 
 ==TUP structure==
-The .tup structure is one of the easiest one. Basically you will only list edges as follow :
+The .tup structure is one of the easiest one. All you have to do is list edges as follow :
 {{{
 0,1
 1,2
