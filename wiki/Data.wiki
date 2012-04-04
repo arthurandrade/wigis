@@ -86,9 +86,8 @@ _Always be careful with the ids, each object (either nodes or edges) has its own
 
 =Uploader=
 As mentioned on the main page, an uploader has been implemented in order to ease you to visualize your datasets. The uploader will transform your dataset file into a .DNV file and will automatically be uploaded on the application, therefore you will visualize your datas right after the upload. Three types of files are allowed (please clic on any link below to get more informations about the file structure accepted by the uploader :
-  * CSV files, for more informations on the CSV file structure accepted by the uploader clic on the following link []
-  * XML files,
-  * TUP files.
+  * CSV files, for more informations on the CSV file structure accepted by the uploader clic on the following link [CSVtoDNV]
+  * TUP files, for more informations on the TUP file structure accepted by the uploader clic on the following link [TUPtoDNV]
 
 ==How to upload a file==
   # Once you have your file ready to be uploaded on our server, go to the following URL : http://eire.mat.ucsb.edu:8080/WiGi/upload.faces.
